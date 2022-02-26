@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
 import org.slams.server.court.entity.Texture;
+import org.slams.server.user.dto.response.SupervisorDto;
+import org.slams.server.user.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NewCourtResponse {
 
-	private Long id;
+	private String id;
 	private String name;
 	private double latitude;
 	private double longitude;
@@ -23,10 +25,11 @@ public class NewCourtResponse {
 	private Status status;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	private SupervisorDto supervisor;
 
-	private NewCourtResponse(Long id, String name, double latitude, double longitude,
+	private NewCourtResponse(String id, String name, double latitude, double longitude,
 							 String image, Texture texture, int basketCount, Status status,
-							 LocalDateTime createdAt, LocalDateTime updatedAt) {
+							 LocalDateTime createdAt, LocalDateTime updatedAt, SupervisorDto supervisor) {
 		this.id = id;
 		this.name = name;
 		this.latitude = latitude;
@@ -37,12 +40,13 @@ public class NewCourtResponse {
 		this.status = status;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.supervisor = supervisor;
 	}
 
-	public static NewCourtResponse toResponse(NewCourt newCourt){
-		return new NewCourtResponse(newCourt.getId(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
+	public static NewCourtResponse toResponse(NewCourt newCourt, User supervisor){
+		return new NewCourtResponse(newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
 			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus(),
-			newCourt.getCreatedAt(), newCourt.getUpdateAt());
+			newCourt.getCreatedAt(), newCourt.getUpdateAt(), SupervisorDto.toDto(supervisor));
 	}
 
 }

@@ -37,36 +37,36 @@ public class NewCourtService {
 	private final CourtRepository courtRepository;
 	private final UserRepository userRepository;
 
-	public CursorPageResponse<List<NewCourtResponse>> getNewCourtsInStatus(String status, CursorPageRequest cursorPageRequest) {
-		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
-
-		List<NewCourt> newCourts;
-		switch (status) {
-			case "READY":
-				newCourts = cursorPageRequest.getIsFirst() ?
-					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
-					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
-				break;
-			case "DONE":
-				newCourts = cursorPageRequest.getIsFirst() ?
-					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
-					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
-				break;
-			default:
-				throw new InvalidStatusException(MessageFormat.format("잘못된 상태값입니다. status : {0}", status));
-		}
-
-		List<NewCourtResponse> newCourtList = new ArrayList<>();
-		for (NewCourt newCourt : newCourts) {
-			newCourtList.add(
-				NewCourtResponse.toResponse(newCourt)
-			);
-		}
-
-		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
-
-		return new CursorPageResponse<>(newCourtList, lastId);
-	}
+//	public CursorPageResponse<List<NewCourtResponse>> getNewCourtsInStatus(String status, CursorPageRequest cursorPageRequest) {
+//		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
+//
+//		List<NewCourt> newCourts;
+//		switch (status) {
+//			case "READY":
+//				newCourts = cursorPageRequest.getIsFirst() ?
+//					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
+//					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
+//				break;
+//			case "DONE":
+//				newCourts = cursorPageRequest.getIsFirst() ?
+//					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
+//					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
+//				break;
+//			default:
+//				throw new InvalidStatusException(MessageFormat.format("잘못된 상태값입니다. status : {0}", status));
+//		}
+//
+//		List<NewCourtResponse> newCourtList = new ArrayList<>();
+//		for (NewCourt newCourt : newCourts) {
+//			newCourtList.add(
+//				NewCourtResponse.toResponse(newCourt)
+//			);
+//		}
+//
+//		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+//
+//		return new CursorPageResponse<>(newCourtList, lastId);
+//	}
 
 	@Transactional
 	public CourtInsertResponseDto insert(CourtInsertRequestDto request, Long id) {
@@ -96,6 +96,7 @@ public class NewCourtService {
 
 		newCourt.acceptNewCourt(supervisor);
 
+		// 리팩토링? court save함수를 만들어서 사용해야하지 않을까?
 		Court court = courtRepository.save(Court.builder()
 			.name(newCourt.getName())
 			.latitude(newCourt.getLatitude())
@@ -109,7 +110,7 @@ public class NewCourtService {
 		// 채팅방 생성
 		chatroomMappingService.saveChatRoom(court.getId());
 
-		return NewCourtResponse.toResponse(newCourt);
+		return NewCourtResponse.toResponse(newCourt, supervisor);
 	}
 
 	@Transactional
@@ -126,7 +127,7 @@ public class NewCourtService {
 
 		newCourt.denyNewCourt(supervisor);
 
-		return NewCourtResponse.toResponse(newCourt);
+		return NewCourtResponse.toResponse(newCourt, supervisor);
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.slams.server.management.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
@@ -23,15 +24,16 @@ public class ManagementController {
 	private final NewCourtService newCourtService;
 	private final Jwt jwt;
 
-	@GetMapping("/newCourts")
-	public ResponseEntity<CursorPageResponse<List<NewCourtResponse>>> getNewCourtsInStatus(
-		@RequestParam String status, CursorPageRequest cursorPageRequest) {
-		CursorPageResponse<List<NewCourtResponse>> newCourtResponse
-			= newCourtService.getNewCourtsInStatus(status, cursorPageRequest);
+//	@GetMapping("/newCourts")
+//	public ResponseEntity<CursorPageResponse<List<NewCourtResponse>>> getNewCourtsInStatus(
+//		@RequestParam String status, CursorPageRequest cursorPageRequest) {
+//		CursorPageResponse<List<NewCourtResponse>> newCourtResponse
+//			= newCourtService.getNewCourtsInStatus(status, cursorPageRequest);
+//
+//		return ResponseEntity.ok(newCourtResponse);
+//	}
 
-		return ResponseEntity.ok(newCourtResponse);
-	}
-
+	@ApiOperation("농구장 등록 승인")
 	@PatchMapping("/newCourt/accept")
 	public ResponseEntity<NewCourtResponse> accept(HttpServletRequest request, @RequestBody NewCourtRequest newCourtRequest) {
 		String authorization = request.getHeader("Authorization");
@@ -43,9 +45,10 @@ public class ManagementController {
 		Jwt.Claims claims = jwt.verify(tokenString[1]);
 
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(newCourtService.acceptNewCourt(newCourtRequest.getNewCourtId(), claims.getUserId()));
+			.body(newCourtService.acceptNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), claims.getUserId()));
 	}
 
+	@ApiOperation("농구장 등록 거절")
 	@PatchMapping("/newCourt/deny")
 	public ResponseEntity<NewCourtResponse> deny(HttpServletRequest request, @RequestBody NewCourtRequest newCourtRequest) {
 		String authorization = request.getHeader("Authorization");
@@ -57,7 +60,7 @@ public class ManagementController {
 		Jwt.Claims claims = jwt.verify(tokenString[1]);
 
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(newCourtService.denyNewCourt(newCourtRequest.getNewCourtId(), claims.getUserId()));
+			.body(newCourtService.denyNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), claims.getUserId()));
 	}
 
 }
