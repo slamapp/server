@@ -13,6 +13,6 @@ import javax.validation.constraints.NotNull;
 public class NewCourtRequest {
 
 	@NotNull
-	private Long newCourtId;
+	private String newCourtId;
 
 }
