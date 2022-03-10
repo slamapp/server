@@ -448,7 +448,7 @@ class UserControllerTest {
 				preprocessResponse(prettyPrint()),
 				responseFields(
 					fieldWithPath("user").type(JsonFieldType.OBJECT).description("사용자"),
-					fieldWithPath("user.id").type(JsonFieldType.NUMBER).description("사용자 구별키"),
+					fieldWithPath("user.id").type(JsonFieldType.STRING).description("사용자 구별키"),
 					fieldWithPath("user.nickname").type(JsonFieldType.STRING).description("사용자 닉네임"),
 					fieldWithPath("user.description").type(JsonFieldType.STRING).description("사용자 한줄 소개"),
 					fieldWithPath("user.profileImage").type(JsonFieldType.NULL).description("사용자 프로필 이미지"),

@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserWithoutEmailDto {
 
-	private Long id;
+	private String id;
 	private String nickname;
 	private String profileImage;
 	private String description;
@@ -26,7 +26,7 @@ public class UserWithoutEmailDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	private UserWithoutEmailDto(Long id, String nickname, String profileImage, String description,
+	private UserWithoutEmailDto(String id, String nickname, String profileImage, String description,
 								Role role, Proficiency proficiency, List<Position> positions,
 								LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
@@ -41,7 +41,7 @@ public class UserWithoutEmailDto {
 	}
 
 	public static UserWithoutEmailDto toDto(User user){
-		return new UserWithoutEmailDto(user.getId(), user.getNickname(), user.getProfileImage(), user.getDescription(),
+		return new UserWithoutEmailDto(user.getId().toString(), user.getNickname(), user.getProfileImage(), user.getDescription(),
 			user.getRole(), user.getProficiency(), user.getPositions(),
 			user.getCreatedAt(), user.getUpdateAt());
 	}
