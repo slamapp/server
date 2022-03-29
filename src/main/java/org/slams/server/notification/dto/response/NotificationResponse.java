@@ -17,13 +17,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NotificationResponse {
 
-    private final Long id;
+    private final String id;
 
     private final NotificationType type;
 
     private final Follow follow;
 
-    private final Loudspeaker loudspeaker;
+    private final LoudspeakerResponse loudspeaker;
 
     private final Boolean isRead;
 
@@ -34,10 +34,10 @@ public class NotificationResponse {
 
 
     private NotificationResponse(
-            Long id,
+            String id,
             NotificationType type,
             Follow follow,
-            Loudspeaker loudspeaker,
+            LoudspeakerResponse loudspeaker,
             boolean isRead,
             boolean isClicked,
             LocalDateTime createdAt,
@@ -54,7 +54,7 @@ public class NotificationResponse {
     }
 
     public static NotificationResponse createForFollowNotification(
-            Long id,
+            String id,
             NotificationType type,
             Follow follow,
             boolean isRead,
@@ -66,9 +66,9 @@ public class NotificationResponse {
     }
 
     public static NotificationResponse createForLoudspeakerNotification(
-            Long id,
+            String id,
             NotificationType type,
-            Loudspeaker loudspeaker,
+            LoudspeakerResponse loudspeaker,
             boolean isRead,
             boolean isClicked,
             LocalDateTime createdAt,

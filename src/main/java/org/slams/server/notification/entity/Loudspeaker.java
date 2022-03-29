@@ -11,6 +11,7 @@ import org.slams.server.user.entity.User;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -22,12 +23,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "loudspeaker")
-public class LoudSpeaker extends BaseEntity {
+public class Loudspeaker extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -43,8 +43,8 @@ public class LoudSpeaker extends BaseEntity {
     @Column
     private LocalDateTime endTime;
 
-    public LoudSpeaker (
-            Long id,
+    public Loudspeaker(
+            String id,
             User user,
             Court court,
             LocalDateTime startTime,
@@ -62,7 +62,7 @@ public class LoudSpeaker extends BaseEntity {
         this.endTime = endTime;
     }
 
-    private LoudSpeaker(
+    private Loudspeaker(
             User user,
             Court court,
             LocalDateTime startTime,
@@ -72,18 +72,19 @@ public class LoudSpeaker extends BaseEntity {
         checkArgument(court != null, ValidationMessage.NOTNULL_COURT);
         checkArgument(startTime != null, ValidationMessage.NOTNULL_START_TIME);
         checkArgument(endTime != null, ValidationMessage.NOTNULL_END_TIME);
+        this.id = UUID.randomUUID().toString();
         this.user = user;
         this.court = court;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public static LoudSpeaker of(
+    public static Loudspeaker of(
             User user,
             Court court,
             LocalDateTime startTime,
             LocalDateTime endTime
     ){
-        return new LoudSpeaker(user, court, startTime, endTime);
+        return new Loudspeaker(user, court, startTime, endTime);
     }
 }

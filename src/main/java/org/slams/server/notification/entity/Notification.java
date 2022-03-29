@@ -9,6 +9,8 @@ import org.slams.server.notification.common.ValidationMessage;
 
 import javax.persistence.*;
 
+import java.util.UUID;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -21,9 +23,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Table(name = "notification")
 public class Notification extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private String id;
 
     @Column(nullable = false)
     private Long userId;
@@ -34,7 +35,7 @@ public class Notification extends BaseEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "loudspeaker_id", referencedColumnName = "id")
-    private LoudSpeaker loudSpeaker;
+    private Loudspeaker loudSpeaker;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -45,10 +46,10 @@ public class Notification extends BaseEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean isClicked;
 
-    public Notification(Long id,
+    public Notification(String id,
                         Long userId,
                         Follow follow,
-                        LoudSpeaker loudSpeaker,
+                        Loudspeaker loudSpeaker,
                         NotificationType type,
                         boolean isRead,
                         boolean isClicked){
@@ -66,22 +67,21 @@ public class Notification extends BaseEntity {
     private Notification(
             Long userId,
             Follow follow,
-            LoudSpeaker loudSpeaker,
+            Loudspeaker loudSpeaker,
             NotificationType type
     ){
         checkArgument(id != null, ValidationMessage.NOTNULL_ID);
         checkArgument(userId != null, ValidationMessage.NOTNULL_USERID);
         checkArgument(type != null, ValidationMessage.NOTNULL_NOTIFICATION_TYPE);
+        this.id = UUID.randomUUID().toString();
         this.userId = userId;
         this.follow = follow;
         this.loudSpeaker = loudSpeaker;
         this.type = type;
     }
 
-
-    public static Notification createLoudSpeaker(Long userId, LoudSpeaker loudSpeaker){
+    public static Notification createLoudspeaker(Long userId, Loudspeaker loudSpeaker){
         return new Notification(userId, null, loudSpeaker, NotificationType.LOUDSPEAKER);
-
     }
 
     public static Notification createFollow(Long userId,  Follow follow){

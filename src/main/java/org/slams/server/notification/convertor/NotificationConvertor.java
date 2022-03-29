@@ -4,7 +4,7 @@ import org.slams.server.common.dto.Court;
 import org.slams.server.common.dto.Follow;
 import org.slams.server.common.dto.User;
 import org.slams.server.notification.Exception.InvalidNotificationTypeException;
-import org.slams.server.notification.dto.response.Loudspeaker;
+import org.slams.server.notification.dto.response.LoudspeakerResponse;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.notification.entity.Notification;
 import org.slams.server.notification.entity.NotificationType;
@@ -36,7 +36,7 @@ public class NotificationConvertor {
             return NotificationResponse.createForLoudspeakerNotification(
                     notification.getId(),
                     NotificationType.LOUDSPEAKER,
-                    Loudspeaker.builder()
+                    LoudspeakerResponse.builder()
                             .court(Court.builder()
                                     .id(notification.getLoudSpeaker().getCourt().getId())
                                     .name(notification.getLoudSpeaker().getCourt().getName())

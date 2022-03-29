@@ -13,7 +13,7 @@ import org.slams.server.notification.dto.request.FollowNotificationRequest;
 import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
 import org.slams.server.notification.dto.request.UpdateIsClickedStatusRequest;
 import org.slams.server.notification.dto.response.NotificationResponse;
-import org.slams.server.notification.entity.LoudSpeaker;
+import org.slams.server.notification.entity.Loudspeaker;
 import org.slams.server.notification.entity.Notification;
 import org.slams.server.notification.repository.LoudspeakerRepository;
 import org.slams.server.notification.repository.NotificationRepository;
@@ -25,9 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by yunyun on 2021/12/08.
@@ -49,9 +47,9 @@ public class NotificationService {
 
         /** 예약 도메인 관련 **/
         /** 테스트를 위해 주석처리
-        var reservation = reservationRepository.findById(request.getReservationId())
-                .orElseThrow(() -> new ReservationNotFoundException("존재하지 않은 예약입니다."));
-        **/
+         var reservation = reservationRepository.findById(request.getReservationId())
+         .orElseThrow(() -> new ReservationNotFoundException("존재하지 않은 예약입니다."));
+         **/
 
         /** start time 과 end time 보낼지, start time과 time block으로 보낼지 결정해야 함. 전자라면, start time < end time 요효성 검사해야함 **/
 
@@ -61,7 +59,7 @@ public class NotificationService {
         User sender = userRepository.findById(sendId)
                 .orElseThrow(() -> new UserNotFoundException("공지를 보내는 이는 존재하지 않는 사용지 입니다."));
 
-        LoudSpeaker loudSpeakerNotification = LoudSpeaker.of(
+        Loudspeaker loudSpeakerNotification = Loudspeaker.of(
                 sender,
                 court,
                 request.getStartTime(),
@@ -69,7 +67,7 @@ public class NotificationService {
         );
 
         return notificationConvertor.toDto(notificationRepository.save(
-                Notification.createLoudSpeaker(receiverId, loudSpeakerNotificationRepository.save(loudSpeakerNotification))
+                Notification.createLoudspeaker(receiverId, loudSpeakerNotificationRepository.save(loudSpeakerNotification))
         ));
     }
 

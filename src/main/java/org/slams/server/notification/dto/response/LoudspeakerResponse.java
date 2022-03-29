@@ -15,15 +15,15 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Loudspeaker {
-    private Long id;
+public class LoudspeakerResponse {
+    private String id;
     private User user;
     private Court court;
     private LocalDateTime startTime;
 
     @Builder
-    public Loudspeaker(
-            Long id,
+    public LoudspeakerResponse(
+            String id,
             User user,
             Court court,
             LocalDateTime startTime
