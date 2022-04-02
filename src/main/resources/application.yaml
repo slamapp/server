@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: ${{ secret.DB-DEV-URL }}
+    url: ${{ secret.DB_DEV_URL }}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${{ secret.DB-DEV-USERNAME }}
-    password: ${{ secret.DB-DEV-PASSWORD }}
+    username: ${{ secret.DB_DEV_USERNAME }}
+    password: ${{ secret.DB_DEV_PASSWORD }}
 
   jpa:
     generate-ddl: true
@@ -14,7 +14,7 @@ spring:
       hibernate:
         hbm2ddl:
           query.in_clause_parameter_padding: true
-          auto: none
+          auto: create
 
   security:
     oauth2:
@@ -22,13 +22,13 @@ spring:
         registration:
           kakao:
             client-name: kakao
-            client-id: ${{ secret.KAKAO-CLIENT-ID }}
-            client-secret: ${{ secret.KAKAO-CLIENT-SECRET }}
+            client-id: ${{ secret.KAKAO_CLIENT_ID }}
+            client-secret: ${{ secret.KAKAO_CLIENT_SECRET }}
             scope:
               - profile_nickname
               - profile_image
               - account_email
-            redirect-uri: ${{ secret.KAKAO-REDIRECT-URI }}
+            redirect-uri: ${{ secret.KAKAO_REDIRECT_URI }}
             authorization-grant-type: authorization_code
             client-authentication-method: POST
         provider:
@@ -55,9 +55,9 @@ spring:
 
 jwt:
   header: Authorization
-  issuer: ${{ secret.JWT-ISSUER }}
-  client-secret: ${{ secret.JWT-CLIENT-SECRET }}
-  expiry-seconds: ${{ secret.JWT-EXPIRY-SECONDS }}
+  issuer: ${{ secret.JWT_ISSUER }}
+  client-secret: ${{ secret.JWT_CLIENT_SECRET }}
+  expiry-seconds: ${{ secret.JWT_EXPIRY_SECONDS }}
 
 server:
   servlet:
