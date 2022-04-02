@@ -1,5 +1,6 @@
 package org.slams.server.notification.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.slams.server.chat.dto.response.ChatContentsResponse;
 import org.slams.server.chat.service.ChatContentsService;
 import org.slams.server.common.utils.WebsocketUtil;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 
 @Controller
+@ApiOperation("공지 도메인 - 웹소켓")
 public class NotificationWebSocketController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -62,6 +64,7 @@ public class NotificationWebSocketController {
         );
     }
 
+    @ApiOperation("[공지] 팔로우 공지 전송")
     @MessageMapping("/follow")
     public void saveFollowNotification(
             FollowNotificationRequest message,
@@ -82,6 +85,7 @@ public class NotificationWebSocketController {
                 );
     }
 
+    @ApiOperation("[공지] 팔로우 취소")
     @MessageMapping("/followcancel")
     public void deleteFollowNotification(
             FollowNotificationRequest message,
@@ -93,6 +97,7 @@ public class NotificationWebSocketController {
         notificationService.deleteFollowNotification(message, userId);
     }
 
+    @ApiOperation("[공지] 농구장 확성기 공지 전송")
     @MessageMapping("/loudspeaker")
     public void saveLoudSpeakerAndThenSending(
             LoudspeakerNotificationRequest request,
