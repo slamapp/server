@@ -13,6 +13,22 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      ADMIN_EMAILS: ${{ secret.ADMIN_EMAILS }}
+      ALLOWED_URL: ${{ secret.ALLOWED_URL }}
+      AWS_ACCESSKEY_PRO: ${{ secret.AWS_ACCESSKEY_PRO }}
+      AWS_S3_BUCKET_NAME: ${{ secret.AWS_S3_BUCKET_NAME }}
+      AWS_S3_REGION: ${{ secret.AWS_S3_REGION }}
+      AWS_SECRETKEY_PRO: ${{ secret.AWS_SECRETKEY_PRO }}
+      DB_DEV_PASSWORD: ${{ secret.DB_DEV_PASSWORD }}
+      DB_DEV_URL: ${{ secret.DB_DEV_URL }}
+      DB_DEV_USERNAME: ${{ secret.DB_DEV_USERNAME }}
+      JWT_CLIENT_SECRET: ${{ secret.JWT_CLIENT_SECRET }}
+      JWT_EXPIRY_SECONDS: ${{ secret.JWT_EXPIRY_SECONDS }}
+      JWT_ISSUER: ${{ secret.JWT_ISSUER }}
+      KAKAO_CLIENT_ID: ${{ secret.KAKAO_CLIENT_ID }}
+      KAKAO_CLIENT_SECRET: ${{ secret.KAKAO_CLIENT_SECRET }}
+      KAKAO_REDIRECT_URI: ${{ secret.KAKAO_REDIRECT_URI }}
 
     steps:
     - uses: actions/checkout@v2
@@ -22,22 +38,5 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    - name: Setting evn
-      env:
-        ADMIN_EMAILS: ${{ secret.ADMIN_EMAILS }}
-        ALLOWED_URL: ${{ secret.ALLOWED_URL }}
-        AWS_ACCESSKEY_PRO: ${{ secret.AWS_ACCESSKEY_PRO }}
-        AWS_S3_BUCKET_NAME: ${{ secret.AWS_S3_BUCKET_NAME }}
-        AWS_S3_REGION: ${{ secret.AWS_S3_REGION }}
-        AWS_SECRETKEY_PRO: ${{ secret.AWS_SECRETKEY_PRO }}
-        DB_DEV_PASSWORD: ${{ secret.DB_DEV_PASSWORD }}
-        DB_DEV_URL: ${{ secret.DB_DEV_URL }}
-        DB_DEV_USERNAME: ${{ secret.DB_DEV_USERNAME }}
-        JWT_CLIENT_SECRET: ${{ secret.JWT_CLIENT_SECRET }}
-        JWT_EXPIRY_SECONDS: ${{ secret.JWT_EXPIRY_SECONDS }}
-        JWT_ISSUER: ${{ secret.JWT_ISSUER }}
-        KAKAO_CLIENT_ID: ${{ secret.KAKAO_CLIENT_ID }}
-        KAKAO_CLIENT_SECRET: ${{ secret.KAKAO_CLIENT_SECRET }}
-        KAKAO_REDIRECT_URI: ${{ secret.KAKAO_REDIRECT_URI }}
     - name: Build with Maven
       run: mvn -B package --file pom.xml
