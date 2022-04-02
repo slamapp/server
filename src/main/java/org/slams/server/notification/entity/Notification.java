@@ -70,7 +70,6 @@ public class Notification extends BaseEntity {
             Loudspeaker loudSpeaker,
             NotificationType type
     ){
-        checkArgument(id != null, ValidationMessage.NOTNULL_ID);
         checkArgument(userId != null, ValidationMessage.NOTNULL_USERID);
         checkArgument(type != null, ValidationMessage.NOTNULL_NOTIFICATION_TYPE);
         this.id = UUID.randomUUID().toString();
@@ -80,12 +79,14 @@ public class Notification extends BaseEntity {
         this.type = type;
     }
 
-    public static Notification createLoudspeaker(Long userId, Loudspeaker loudSpeaker){
-        return new Notification(userId, null, loudSpeaker, NotificationType.LOUDSPEAKER);
+
+
+    public static Notification createLoudspeaker(Long receiverId, Loudspeaker loudSpeaker){
+        return new Notification(receiverId, null, loudSpeaker, NotificationType.LOUDSPEAKER);
     }
 
-    public static Notification createFollow(Long userId,  Follow follow){
-        return new Notification(userId, follow, null, NotificationType.FOLLOW);
+    public static Notification createFollow(Long receiverId,  Follow follow){
+        return new Notification(receiverId, follow, null, NotificationType.FOLLOW);
     }
 
 

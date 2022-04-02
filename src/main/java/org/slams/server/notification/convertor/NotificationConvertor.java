@@ -3,7 +3,7 @@ package org.slams.server.notification.convertor;
 import org.slams.server.common.dto.Court;
 import org.slams.server.common.dto.Follow;
 import org.slams.server.common.dto.User;
-import org.slams.server.notification.Exception.InvalidNotificationTypeException;
+import org.slams.server.notification.exception.InvalidNotificationTypeException;
 import org.slams.server.notification.dto.response.LoudspeakerResponse;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.notification.entity.Notification;

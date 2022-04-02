@@ -15,7 +15,7 @@ import java.util.List;
  * Created by yunyun on 2021/12/08.
  */
 
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, String> {
 
     @Query("SELECT a.id FROM Notification a WHERE a.userId =:userId AND a.id < :lastId ORDER BY a.createdAt desc")
     List<Long> findIdByUserLessThanAlarmIdByCreated(

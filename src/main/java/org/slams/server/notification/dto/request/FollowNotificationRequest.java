@@ -1,5 +1,6 @@
 package org.slams.server.notification.dto.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,11 @@ import lombok.Setter;
  */
 
 @Getter
-@Setter
 public class FollowNotificationRequest {
     private Long receiverId;
 
+    @Builder
+    public FollowNotificationRequest(Long receiverId) {
+        this.receiverId = receiverId;
+    }
 }

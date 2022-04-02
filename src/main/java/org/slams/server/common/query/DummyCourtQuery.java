@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+//@Component
 //@ConfigurationProperties(prefix = "excel")
 public class DummyCourtQuery {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

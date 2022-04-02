@@ -2,6 +2,7 @@ package org.slams.server.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
+import lombok.Getter;
 import org.slams.server.notification.common.ValidationMessage;
 import org.slams.server.user.entity.Position;
 import org.slams.server.user.entity.Proficiency;
@@ -15,6 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * Created by yunyun on 2022/01/24.
  */
 
+@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends BaseDto{
 

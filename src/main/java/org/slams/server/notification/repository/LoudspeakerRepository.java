@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by yunyun on 2021/12/15.
  */
-public interface LoudspeakerRepository extends JpaRepository<Loudspeaker, Long> {
+public interface LoudspeakerRepository extends JpaRepository<Loudspeaker, String> {
 
 }
+
+
+

@@ -3,18 +3,13 @@ package org.slams.server.notification.controller;
 import org.slams.server.chat.dto.response.ChatContentsResponse;
 import org.slams.server.chat.service.ChatContentsService;
 import org.slams.server.common.utils.WebsocketUtil;
-import org.slams.server.court.service.CourtService;
-import org.slams.server.follow.repository.FollowRepository;
 import org.slams.server.follow.service.FollowService;
-import org.slams.server.notification.Exception.TokenNotFountException;
 import org.slams.server.notification.dto.WebSocketTestDto;
 import org.slams.server.notification.dto.request.FollowNotificationRequest;
 import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.notification.service.NotificationService;
 import org.slams.server.reservation.repository.ReservationRepository;
-import org.slams.server.user.exception.InvalidTokenException;
-import org.slams.server.user.oauth.jwt.Jwt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,8 +18,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by yunyun on 2021/12/15.
