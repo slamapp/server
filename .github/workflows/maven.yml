@@ -38,6 +38,6 @@ jobs:
         JWT_ISSUER: ${{ secret.JWT_ISSUER }}
         KAKAO_CLIENT_ID: ${{ secret.KAKAO_CLIENT_ID }}
         KAKAO_CLIENT_SECRET: ${{ secret.KAKAO_CLIENT_SECRET }}
-        KAKAO_REDIRECT_URI : ${{ secret.KAKAO_REDIRECT_URI }}
+        KAKAO_REDIRECT_URI: ${{ secret.KAKAO_REDIRECT_URI }}
     - name: Build with Maven
       run: mvn -B package --file pom.xml
