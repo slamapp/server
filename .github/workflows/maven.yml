@@ -40,3 +40,9 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package -DskipTests=true --file pom.xml
+    - name: Docker Build
+      run : |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
+        docker build -t backend . 
+        docker tag backend ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
+        docker push ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7}
