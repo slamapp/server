@@ -1,10 +1,10 @@
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_ACCESSKEY_PRO}
-      secretKey: ${AWS_SECRETKEY_PRO}
+      accessKey: ${AWS_S3_BUCKET_ACCESSKEY}
+      secretKey: ${AWS_S3_BUCKET_SECRETKEY}
     s3:
-      bucket: ${AWS_S3_BUCKET_NAME}
+      bucket: ${AWS_S3_BUCKET_NAME_DEV}
     region:
       static: ${AWS_S3_REGION}
     stack:
