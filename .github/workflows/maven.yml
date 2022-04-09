@@ -30,3 +30,25 @@ jobs:
         docker build -t backend . 
         docker tag backend ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
         docker push ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7}
+    - name: Add public IP to AWS security group
+      uses: sohelamin/aws-security-group-add-ip-action@master
+      with:
+        aws-access-key-id: ${{ secrets.AWS_APPLICATION_DEPLOY_ACCESS_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_APPLICATION_DEPLOY_ACCESS_KEY }}
+        aws-region: 'ap-northeast-2'
+        aws-security-group-id: ${{ secrets.AWS_APPLICATION_DEPLOY_SECURITY_GROUP_ID }}
+        port: '22'
+        to-port: '30'
+        protocol: 'tcp'
+        description: 'GitHub Action'
+    - name: Deploy 
+      uses: appleboy/ssh-action@master 
+      with: 
+        host: ${{ secrets.AWS_APPLICATION_DEPLOY_HOST }}
+        username: ${{ secrets.AWS_APPLICATION_DEPLOY_USERNAME }} 
+        key: ${{ secrets.AWS_APPLICATION_DEPLOY_PRIVATE_KEY }} 
+        envs: GITHUB_SHA 
+        script: | 
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
+          sudo docker tag ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} backend
+          sudo docker service update slam-dev --image backend:${GITHUB_SHA::7} --force
