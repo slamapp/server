@@ -1,5 +1,6 @@
 package org.slams.server.notification.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.ApiResponse;
 import org.slams.server.common.api.CursorPageRequest;
@@ -21,6 +22,7 @@ import java.util.List;
  * Created by yunyun on 2021/12/09.
  */
 
+@ApiOperation("공지 도메인")
 @RestController
 @RequestMapping(value = "/api/v1/notifications")
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class NotificationController {
 
 
     @GetMapping
+    @ApiOperation("특정 사용자가 받은 모든 공지 추출")
     public ResponseEntity<CursorPageResponse<List<NotificationResponse>>> findByUserId(
             CursorPageRequest cursorRequest,
             HttpServletRequest request){
@@ -44,6 +47,7 @@ public class NotificationController {
         ));
     }
 
+    @ApiOperation("읽지 않은 상태의 공지를 읽기 상태로 변환")
     @PutMapping("/read")
     public ResponseEntity<Void> updateIsClicked(HttpServletRequest request){
         Long userId = new TokenGetId(request,jwt).getUserId();

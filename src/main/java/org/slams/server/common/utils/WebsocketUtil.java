@@ -1,6 +1,6 @@
 package org.slams.server.common.utils;
 
-import org.slams.server.notification.Exception.TokenNotFountException;
+import org.slams.server.notification.exception.TokenNotFountException;
 import org.slams.server.user.exception.InvalidTokenException;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;

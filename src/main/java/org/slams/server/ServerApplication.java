@@ -12,11 +12,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class ServerApplication implements CommandLineRunner {
 
-    private final DummyCourtQuery dummyCourtQuery;
-
-    public ServerApplication(DummyCourtQuery dummyCourtQuery){
-        this.dummyCourtQuery = dummyCourtQuery;
-    }
+//    private final DummyCourtQuery dummyCourtQuery;
+//
+//    public ServerApplication(DummyCourtQuery dummyCourtQuery){
+//        this.dummyCourtQuery = dummyCourtQuery;
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(ServerApplication.class, args);

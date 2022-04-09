@@ -1,100 +1,128 @@
 //package org.slams.server.notification.service;
 //
 //import org.junit.jupiter.api.*;
+//import org.junit.jupiter.api.extension.ExtendWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//import org.mockito.Mockito;
+//import org.mockito.junit.jupiter.MockitoExtension;
 //import org.slams.server.common.api.CursorPageRequest;
 //import org.slams.server.court.entity.Court;
 //import org.slams.server.court.entity.Texture;
+//import org.slams.server.follow.repository.FollowRepository;
 //import org.slams.server.follow.service.FollowService;
-//import org.slams.server.notification.dto.request.FollowNotificationRequest;
 //import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
-//import org.slams.server.notification.dto.request.UpdateIsClickedStatusRequest;
 //import org.slams.server.notification.dto.response.NotificationResponse;
-//import org.slams.server.notification.entity.FollowNotification;
-//import org.slams.server.notification.entity.LoudSpeakerNotification;
-//import org.slams.server.notification.entity.NotificationIndex;
-//import org.slams.server.notification.entity.NotificationType;
-//import org.slams.server.notification.repository.FollowNotificationRepository;
-//import org.slams.server.notification.repository.LoudSpeakerNotificationRepository;
-//import org.slams.server.notification.repository.NotificationIndexRepository;
 //import org.slams.server.court.repository.CourtRepository;
+//import org.slams.server.notification.entity.Loudspeaker;
+//import org.slams.server.notification.entity.Notification;
+//import org.slams.server.notification.repository.LoudspeakerRepository;
+//import org.slams.server.notification.repository.NotificationRepository;
 //import org.slams.server.user.entity.Position;
 //import org.slams.server.user.entity.Proficiency;
 //import org.slams.server.user.entity.Role;
 //import org.slams.server.user.entity.User;
 //import org.slams.server.user.repository.UserRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.transaction.annotation.Transactional;
 //
+//
+//import java.time.LocalDateTime;
+//import java.util.Arrays;
 //import java.util.List;
+//import java.util.UUID;
 //
 //import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.hamcrest.CoreMatchers.*;
+//import static org.mockito.BDDMockito.given;
+//import static org.mockito.Mockito.when;
 //
 ///**
 // * Created by yunyun on 2021/12/09.
 // */
 //
-//@SpringBootTest
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@ExtendWith(MockitoExtension.class)
 //class NotificationServiceTest {
 //
-//    @Autowired
-//    private NotificationIndexRepository notificationIndexRepository;
+//    @Mock
+//    private NotificationRepository notificationRepository;
 //
-//    @Autowired
-//    private NotificationService notificationService;
-//
-//    @Autowired
+//    @Mock
 //    private CourtRepository courtRepository;
 //
-//    @Autowired
+//    @Mock
 //    private UserRepository userRepository;
 //
-//    @Autowired
-//    private FollowNotificationRepository followNotificationRepository;
+//    @Mock
+//    private FollowRepository followRepository;
 //
-//    @Autowired
-//    private LoudSpeakerNotificationRepository loudSpeakerNotificationRepository;
+//    @Mock
+//    private LoudspeakerRepository loudspeakerRepository;
 //
-//    @Autowired
+//    @InjectMocks
 //    private FollowService followService;
 //
-//    User creator = null;
-//    User user = null;
-//    Court court =null;
-//
-//    @BeforeAll
-//    void setUp(){
-//
-//        //userRepository.deleteAll();
+//    @InjectMocks
+//    private NotificationService notificationService;
 //
 //
-//        creator = User.of(
-//                "receiver-socialId",
-//                "receiver@test.com",
-//                "receiver",
-//                "http://test-image-location-receiver",
-//                "소개-receiver",
-//                Role.USER,
-//                Proficiency.INTERMEDIATE,
-//                List.of(Position.PG)
-//        );
-//        user = User.of(
-//                "socialId-user",
-//                "user@test.com",
-//                "user",
-//                "http://test-image-location-user",
-//                "소개-user",
-//                Role.USER,
-//                Proficiency.INTERMEDIATE,
-//                List.of(Position.TBD)
-//        );
+//    Court court;
+//    User receiver;
+//    User creator;
 //
-//        userRepository.save(creator);
-//        userRepository.save(user);
+//    @BeforeEach
+//    void setup(){
+//        //Given
+////        court = Court.builder()
+////                .id(1L)
+////                .name("잠실 농구장")
+////                .image("https://image.basketball.com/court1")
+////                .latitude(1203.20302)
+////                .longitude(12.20302)
+////                .texture(Texture.CONCRETE)
+////                .basketCount(1)
+////                .build();
+////        receiver = User.builder()
+////                .id(1L)
+////                .nickname("receiver")
+////                .profileImage("https://image.user.com/receiver1")
+////                .description("receiver 입니다.")
+////                .proficiency(Proficiency.BEGINNER)
+////                .positions(Arrays.asList(Position.SG, Position.PG))
+////                .build();
+////        creator = User.builder()
+////                .id(2L)
+////                .nickname("creator")
+////                .profileImage("https://image.user.com/creator1")
+////                .description("creator 입니다.")
+////                .proficiency(Proficiency.MASTER)
+////                .positions(Arrays.asList(Position.C, Position.PG))
+////                .build();
+//
+//        User creatorEntity = User.builder()
+//                .email("creator@gmail.com")
+//                .nickname("creator")
+//                .socialId("creator-1234")
+//                .profileImage("s3에 저장된 이미지 url")
+//                .description("한줄 소개")
+//                .role(Role.USER)
+//                .proficiency(Proficiency.BEGINNER)
+//                .positions(Arrays.asList(Position.SG, Position.PG))
+//                .createdAt(LocalDateTime.now())
+//                .updatedAt(LocalDateTime.now())
+//                .build();
+//        var test = given(userRepository.save(creatorEntity)).willReturn(creatorEntity);
+//
+//        User receiverEntity = User.builder()
+//                .email("receiver@gmail.com")
+//                .nickname("receiver")
+//                .socialId("receiver-1234")
+//                .profileImage("receiver.s3에 저장된 이미지 url")
+//                .description("receiver 한줄 소개")
+//                .role(Role.USER)
+//                .proficiency(Proficiency.BEGINNER)
+//                .positions(Arrays.asList(Position.SG, Position.PG))
+//                .createdAt(LocalDateTime.now())
+//                .updatedAt(LocalDateTime.now())
+//                .build();
 //
 //        Court courtEntity = new Court(
 //                "잠실 농구장",
@@ -104,61 +132,181 @@
 //                1,
 //                Texture.CONCRETE
 //        );
-//        courtRepository.save(courtEntity);
-//        court = courtRepository.findAll().get(0);
-//
-////        /** following 알림 메시지 **/
-////        FollowNotification followNotification = FollowNotification.of(
-////                creator,
-////                user.getId(),
-////                NotificationType.FOLLOWING
-////        );
-////        notificationIndexRepository.save(NotificationIndex.of(followNotification.getId(), user.getId()));
-////        followNotificationRepository.save(
-////                followNotification
-////        );
 //    }
 //
-//    @AfterAll
-//    void tearDown(){
-////        loudSpeakerNotificationRepository.deleteAll();
-////        followNotificationRepository.deleteAll();
-////        notificationIndexRepository.deleteAll();
-////        userRepository.deleteAll();
-////        courtRepository.deleteAll();
 //
+//
+//    @Test
+//    @DisplayName("팔로우 공지를 저장할 수 있다.")
+//    void saveForFollowNotification(){
+//        //Given
+////        User creator = User.builder()
+////                .email("test@test.com")
+////                .nickname("creator")
+////                .socialId("creator-1234")
+////                .profileImage("s3에 저장된 이미지 url")
+////                .description("한줄 소개")
+////                .role(Role.USER)
+////                .proficiency(Proficiency.BEGINNER)
+////                .positions(Arrays.asList(Position.SG, Position.PG))
+////                .createdAt(LocalDateTime.now())
+////                .updatedAt(LocalDateTime.now())
+////                .build();
+////
+////        User receiver = User.builder()
+////                .email("test@test.com")
+////                .nickname("creator")
+////                .socialId("creator-1234")
+////                .profileImage("s3에 저장된 이미지 url")
+////                .description("한줄 소개")
+////                .role(Role.USER)
+////                .proficiency(Proficiency.BEGINNER)
+////                .positions(Arrays.asList(Position.SG, Position.PG))
+////                .createdAt(LocalDateTime.now())
+////                .updatedAt(LocalDateTime.now())
+////                .build();
+////
+////        //When, Then
+////        Follow followEntity = Follow.of(creator, receiver);
+////        Notification followNotification = Notification.createFollow(1L, followEntity);
+////        Mockito.lenient().when(notificationRepository.save(followNotification)).thenReturn(followNotification);
 //    }
 //
 //    @Test
-//    void save(){
-//        followService.follow(creator.getId(), user.getId());
-//
-//        CursorPageRequest cursorRequest = new CursorPageRequest(5, 2L, false);
-//
-//        FollowNotificationRequest request = new FollowNotificationRequest();
-//        request.setReceiverId(user.getId());
-//        notificationService.saveForFollowNotification(request, creator.getId());
-//
-//        followService.unfollow(creator.getId(), user.getId());
-//
-//        List<NotificationResponse> notificationResponseList = notificationService.findAllByUserId(user.getId(), cursorRequest);
-//        System.out.println(notificationResponseList.size());
-//        FollowNotificationRequest followNotificationRequest = new FollowNotificationRequest();
-//        followNotificationRequest.setReceiverId(user.getId());
-//        notificationService.deleteFollowNotification(
-//                followNotificationRequest,
-//                creator.getId()
+//    @DisplayName("확성기 공지를 저장할 수 있다.")
+//    void saveForLoudspeakerNotification(){
+//        //When, Then
+//        LoudspeakerNotificationRequest loudspeakerNotificationRequest = new LoudspeakerNotificationRequest(
+//                court.getId(),
+//                LocalDateTime.now(),
+//                LocalDateTime.now().plusHours(2),
+//                1L
 //        );
 //
+//        NotificationResponse notificationResponse = notificationService
+//                .saveForLoudSpeakerNotification(
+//                        loudspeakerNotificationRequest,
+//                        receiver.getId(),
+//                        creator.getId()
+//                );
 //
-//        List<NotificationResponse> notificationResponseList2 = notificationService.findAllByUserId(user.getId(), cursorRequest);
-//        System.out.println(notificationResponseList2.size());
+//        Mockito.lenient()
+//                .when(notificationResponse)
+//                .thenReturn(
+//                        NotificationResponse.createForLoudspeakerNotification(
+//                                notificationResponse.getId(),
+//                                notificationResponse.getType(),
+//                                notificationResponse.getLoudspeaker(),
+//                                notificationResponse.getIsRead(),
+//                                notificationResponse.getIsClicked(),
+//                                notificationResponse.getCreatedAt(),
+//                                notificationResponse.getUpdatedAt()
+//                        )
+//                );
+//
 //    }
+//
+//
 //    @Test
-//    void test(){
+//    @DisplayName("사용자 구별키를 이용하여, 공지의 최초 정보부터 특정 개수의 정보를 추출할 수 있다.")
+//    void findAllByUserIdIsFirstTrue(){
+//        //Given
+////        CursorPageRequest cursorRequest = new CursorPageRequest(5, 2L, true);
+////        Court courtEntity = new Court(
+////                "잠실 농구장",
+////                1203.20302,
+////                2038.2939,
+////                "https://court-image",
+////                1,
+////                Texture.CONCRETE
+////        );
+////        User userA = User.builder()
+////                .email("userA@gmail.com")
+////                .nickname("userA")
+////                .socialId("userA-1234")
+////                .profileImage("userA s3에 저장된 이미지 url")
+////                .description("userA 한줄 소개")
+////                .role(Role.USER)
+////                .proficiency(Proficiency.MASTER)
+////                .positions(Arrays.asList(Position.SG, Position.PG))
+////                .createdAt(LocalDateTime.now())
+////                .updatedAt(LocalDateTime.now())
+////                .build();
+////        User userB = User.builder()
+////                .email("userB@gmail.com")
+////                .nickname("userB")
+////                .socialId("userB-1234")
+////                .profileImage("userB s3에 저장된 이미지 url")
+////                .description("userB 한줄 소개")
+////                .role(Role.USER)
+////                .proficiency(Proficiency.BEGINNER)
+////                .positions(Arrays.asList(Position.SG))
+////                .createdAt(LocalDateTime.now())
+////                .updatedAt(LocalDateTime.now())
+////                .build();
+////
+////        Long receiverId = 1L;
+//
+//        /** 농구장 확성기 메시지 **/
+////        Loudspeaker loudspeakerEntityA = Loudspeaker.of(userA, courtEntity, LocalDateTime.now(), LocalDateTime.now());
+////        notificationRepository.save(
+////                Notification.createLoudspeaker(receiverId, loudspeakerEntityA)
+////        );
+//
+//        /** 농구장 확성기 메시지 **/
+////        Loudspeaker loudspeakerEntityB = Loudspeaker.of(userB, courtEntity, LocalDateTime.now(), LocalDateTime.now());
+////        notificationRepository.save(
+////                Notification.createLoudspeaker(receiverId, loudspeakerEntityB)
+////        );
+//
+//        /** 팔로우 메시지 **/
+////        Follow followEntity = Follow.of(userA, userB);
+////        notificationRepository.save(
+////                Notification.createFollow(receiverId, followEntity)
+////        );
+//
+//        //When, Then
+////        notificationService.findAllByUserId()
+//
 //
 //
 //    }
+//
+//    @Test
+//    @DisplayName("사용자 구별키를 이용하여, 마지막으로 읽은 공지부터 특정 개수의 정보를 추출할 수 있다.")
+//    void findAllByUserIdIsFirstFalse(){
+//        //Given
+//        CursorPageRequest cursorRequest = new CursorPageRequest(5, 2L, false);
+//
+//        //When
+//
+//        //Then
+//
+//    }
+//
+//
+//    @Test
+//    @DisplayName("읽음 표기 기능을 할 수 있다.")
+//    void updateIsClickedStatus(){
+//        //When
+//
+//        //Given
+//
+//        //Then
+//
+//    }
+//
+//    @Test
+//    @DisplayName("공지의 마지막 인데스 값을 알 수 있다.")
+//    void findLastId(){
+//        //When
+//
+//        //Given
+//
+//        //Then
+//
+//    }
+//
 //
 //
 ////    @Test
