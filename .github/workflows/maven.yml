@@ -51,4 +51,4 @@ jobs:
         script: | 
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
           sudo docker tag ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} backend
-          sudo docker service update slam-dev --image backend:${GITHUB_SHA::7} --force
+          sudo docker service update slam-dev --image backend:latest --force
