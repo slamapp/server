@@ -1,4 +1,4 @@
-package org.slams.server.notification.Exception;
+package org.slams.server.notification.exception;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 

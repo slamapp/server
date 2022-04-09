@@ -1,20 +1,16 @@
 package org.slams.server.notification.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.slams.server.chat.dto.response.ChatContentsResponse;
 import org.slams.server.chat.service.ChatContentsService;
 import org.slams.server.common.utils.WebsocketUtil;
-import org.slams.server.court.service.CourtService;
-import org.slams.server.follow.repository.FollowRepository;
 import org.slams.server.follow.service.FollowService;
-import org.slams.server.notification.Exception.TokenNotFountException;
 import org.slams.server.notification.dto.WebSocketTestDto;
 import org.slams.server.notification.dto.request.FollowNotificationRequest;
 import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.notification.service.NotificationService;
 import org.slams.server.reservation.repository.ReservationRepository;
-import org.slams.server.user.exception.InvalidTokenException;
-import org.slams.server.user.oauth.jwt.Jwt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,14 +19,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by yunyun on 2021/12/15.
  */
 
 @Controller
+@ApiOperation("공지 도메인 - 웹소켓")
 public class NotificationWebSocketController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -69,6 +64,7 @@ public class NotificationWebSocketController {
         );
     }
 
+    @ApiOperation("[공지] 팔로우 공지 전송")
     @MessageMapping("/follow")
     public void saveFollowNotification(
             FollowNotificationRequest message,
@@ -89,6 +85,7 @@ public class NotificationWebSocketController {
                 );
     }
 
+    @ApiOperation("[공지] 팔로우 취소")
     @MessageMapping("/followcancel")
     public void deleteFollowNotification(
             FollowNotificationRequest message,
@@ -100,26 +97,27 @@ public class NotificationWebSocketController {
         notificationService.deleteFollowNotification(message, userId);
     }
 
+    @ApiOperation("[공지] 농구장 확성기 공지 전송")
     @MessageMapping("/loudspeaker")
     public void saveLoudSpeakerAndThenSending(
             LoudspeakerNotificationRequest request,
             SimpMessageHeaderAccessor headerAccessor
     ){
-        Long userId = websocketUtil.findTokenFromHeader(headerAccessor);
-        List<Long> bookerIds = reservationRepository.findBeakerIdByCourtId(request.getCourtId());
+        Long sendId = websocketUtil.findTokenFromHeader(headerAccessor);
+        List<Long> receiverIds = reservationRepository.findBeakerIdByCourtId(request.getCourtId());
 
-        for (Long bookId : bookerIds){
-            if (bookId.equals(userId)){
+        for (Long receiverId : receiverIds){
+            if (receiverId.equals(sendId)){
                 continue;
             }
-            NotificationResponse notification = notificationService.saveForLoudSpeakerNotification(request, bookId);
+            NotificationResponse notification = notificationService.saveForLoudSpeakerNotification(request, receiverId, sendId);
             websocket.convertAndSend(
-                    String.format("/user/%d/notification", bookId),
+                    String.format("/user/%d/notification", receiverId),
                     notification
             );
         }
 
-        ChatContentsResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(request, userId);
+        ChatContentsResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(request, sendId);
         websocket.convertAndSend(
                 String.format("/user/%d/chat", request.getCourtId()),
                 chatContentsResponse

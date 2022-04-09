@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+//@Component
 //@ConfigurationProperties(prefix = "excel")
 public class DummyCourtQuery {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -126,11 +126,11 @@ public class DummyCourtQuery {
     }
 
     public void insertNotificationDummy(Long userId, int dataSize){
-        LoudspeakerNotificationRequest request = new LoudspeakerNotificationRequest(1L, LocalDateTime.now().getHour(), 1L);
+        LoudspeakerNotificationRequest request = new LoudspeakerNotificationRequest(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(2L), 1L);
 
         int index = 0;
         while (index < dataSize){
-            notificationService.saveForLoudSpeakerNotification(request, userId);
+            notificationService.saveForLoudSpeakerNotification(request, userId, userId);
             index = index + 1;
         }
 
