@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(EntityNotFoundException.class)
 	protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
 		log.error("handleEntityNotFoundException", e);
-		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND);
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
 
 		return ResponseEntity.badRequest().body(errorResponse);
 	}
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(InvalidValueException.class)
 	protected ResponseEntity<ErrorResponse> handleInvalidValueException(InvalidValueException e) {
 		log.error("handleInvalidValueException", e);
-		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
 
 		return ResponseEntity.badRequest().body(errorResponse);
 	}
