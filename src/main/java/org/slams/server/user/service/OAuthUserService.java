@@ -61,6 +61,7 @@ public class OAuthUserService {
 				String nickname = (String) properties.get("nickname");
 				String email = (String) accounts.get("email");
 				String profileImage = (String) accountsDetail.get("profile_image_url");
+				profileImage= "https" + profileImage.substring(4); // http -> https 변환하여 저장
 				Boolean isDefaultImage = (Boolean) accountsDetail.get("is_default_image");
 				if (isDefaultImage) {
 					profileImage = null;
