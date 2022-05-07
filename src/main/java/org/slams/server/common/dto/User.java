@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends BaseDto{
 
-    private Long id;
+    private String id;
     private String nickname;
     private String profileImage;
     private String description;
@@ -29,7 +29,7 @@ public class User extends BaseDto{
 
     @Builder
     public User(
-            Long id,
+            String id,
             String nickname,
             String profileImage,
             String description,

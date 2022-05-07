@@ -61,7 +61,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Notification n WHERE n.follow.follower.id=:sendId AND n.userId=:receiverId AND n.type='FOLLOW'")
+    @Query("DELETE FROM Notification n WHERE n.follow.id in (SELECT f.id FROM Follow f WHERE f.follower.id=:sendId) AND n.userId=:receiverId AND n.type='FOLLOW'")
     void deleteByReceiverIdAndSendIdOnFollowNotification(
             @Param("receiverId") Long receiverId,
             @Param("sendId") Long sendId

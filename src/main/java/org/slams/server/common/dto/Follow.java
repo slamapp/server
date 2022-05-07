@@ -11,15 +11,15 @@ import lombok.Getter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Follow extends BaseDto{
-    private User creator;
+    private User sender;
     private User receiver;
 
     @Builder
     public Follow(
-            User creator,
+            User sender,
             User receiver
     ){
-        this.creator = creator;
+        this.sender = sender;
         this.receiver = receiver;
     }
 

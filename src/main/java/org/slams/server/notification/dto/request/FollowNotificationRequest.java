@@ -10,10 +10,12 @@ import lombok.Setter;
 
 @Getter
 public class FollowNotificationRequest {
-    private Long receiverId;
+    private String receiverId;
+
+    public FollowNotificationRequest() {}
 
     @Builder
-    public FollowNotificationRequest(Long receiverId) {
+    public FollowNotificationRequest(String receiverId) {
         this.receiverId = receiverId;
     }
 }

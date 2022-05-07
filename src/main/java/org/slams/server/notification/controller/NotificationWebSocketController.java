@@ -76,11 +76,11 @@ public class NotificationWebSocketController {
             throw new RuntimeException("자기 자신을 팔로우 할 수 없습니다.");
         }
 
-        followService.follow(userId, message.getReceiverId());
+        followService.follow(userId, Long.valueOf(message.getReceiverId()));
         NotificationResponse notification = notificationService.saveForFollowNotification(message, userId);
 
         websocket.convertAndSend(
-                String.format("/user/%d/notification", message.getReceiverId()),
+                String.format("/user/%s/notification", message.getReceiverId()),
                 notification
                 );
     }
@@ -93,8 +93,8 @@ public class NotificationWebSocketController {
     ){
         Long userId = websocketUtil.findTokenFromHeader(headerAccessor);
 
-        followService.unfollow(userId, message.getReceiverId());
         notificationService.deleteFollowNotification(message, userId);
+        followService.unfollow(userId, Long.valueOf(message.getReceiverId()));
     }
 
     @ApiOperation("[공지] 농구장 확성기 공지 전송")
@@ -104,7 +104,7 @@ public class NotificationWebSocketController {
             SimpMessageHeaderAccessor headerAccessor
     ){
         Long sendId = websocketUtil.findTokenFromHeader(headerAccessor);
-        List<Long> receiverIds = reservationRepository.findBeakerIdByCourtId(request.getCourtId());
+        List<Long> receiverIds = reservationRepository.findBeakerIdByCourtId(Long.valueOf(request.getCourtId()));
 
         for (Long receiverId : receiverIds){
             if (receiverId.equals(sendId)){
@@ -112,14 +112,14 @@ public class NotificationWebSocketController {
             }
             NotificationResponse notification = notificationService.saveForLoudSpeakerNotification(request, receiverId, sendId);
             websocket.convertAndSend(
-                    String.format("/user/%d/notification", receiverId),
+                    String.format("/user/%s/notification", receiverId),
                     notification
             );
         }
 
         ChatContentsResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(request, sendId);
         websocket.convertAndSend(
-                String.format("/user/%d/chat", request.getCourtId()),
+                String.format("/user/%s/chat", request.getCourtId()),
                 chatContentsResponse
         );
     }

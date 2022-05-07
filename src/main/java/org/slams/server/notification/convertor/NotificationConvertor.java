@@ -38,7 +38,7 @@ public class NotificationConvertor {
                     NotificationType.LOUDSPEAKER,
                     LoudspeakerResponse.builder()
                             .court(Court.builder()
-                                    .id(notification.getLoudSpeaker().getCourt().getId())
+                                    .id(notification.getLoudSpeaker().getCourt().getId().toString())
                                     .name(notification.getLoudSpeaker().getCourt().getName())
                                     .texture(notification.getLoudSpeaker().getCourt().getTexture())
                                     .longitude(notification.getLoudSpeaker().getCourt().getLongitude())
@@ -60,9 +60,9 @@ public class NotificationConvertor {
                     notification.getId(),
                     NotificationType.FOLLOW,
                     Follow.builder()
-                            .creator(
+                            .sender(
                                     User.builder()
-                                            .id(notification.getFollow().getFollower().getId())
+                                            .id(notification.getFollow().getFollower().getId().toString())
                                             .profileImage(notification.getFollow().getFollower().getProfileImage())
                                             .nickname(notification.getFollow().getFollower().getNickname())
                                             .build()

@@ -54,7 +54,7 @@ public class NotificationService {
         /** start time 과 end time 보낼지, start time과 time block으로 보낼지 결정해야 함. 전자라면, start time < end time 요효성 검사해야함 **/
 
         Court court = courtRepository
-                .findById(request.getCourtId())
+                .findById(Long.valueOf(request.getCourtId()))
                 .orElseThrow(() -> new CourtNotFoundException("해당 코트가 존재하지 않습니다."));
         User sender = userRepository.findById(sendId)
                 .orElseThrow(() -> new UserNotFoundException("공지를 보내는 이는 존재하지 않는 사용지 입니다."));
@@ -78,7 +78,7 @@ public class NotificationService {
                 .orElseThrow(() -> new UserNotFoundException("팔로우한 해당 사용자는 존재하지 않는 사용자 입니다."));
 
         User receiver = userRepository
-                .findById(request.getReceiverId())
+                .findById(Long.valueOf(request.getReceiverId()))
                 .orElseThrow(() -> new UserNotFoundException("팔로우 당한 사용자는 존재하지 않는 사용자 입니다."));
 
         /** follow service 에서 follow 저장하는 로직의 리턴 값을 저장된 객체로 요청해보기. 지금 리턴값은 void 임
@@ -91,7 +91,7 @@ public class NotificationService {
                 .orElseThrow(() -> new FollowNotFoundException("존재하지 않는 follow 정보 입니다."));
 
         return notificationConvertor.toDto(notificationRepository.save(
-                Notification.createFollow(request.getReceiverId(), follow)
+                Notification.createFollow(Long.valueOf(request.getReceiverId()), follow)
         ));
     }
 
@@ -137,7 +137,7 @@ public class NotificationService {
 
     @Transactional
     public void deleteFollowNotification(FollowNotificationRequest request, Long userId){
-        notificationRepository.deleteByReceiverIdAndSendIdOnFollowNotification(request.getReceiverId(), userId);
+        notificationRepository.deleteByReceiverIdAndSendIdOnFollowNotification(Long.valueOf(request.getReceiverId()), userId);
     }
 
 //    public Notification findByReceiverIdCreatorId(Long receiverId, Long creatorId){

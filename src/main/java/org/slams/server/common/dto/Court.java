@@ -15,7 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Court {
-    private final Long id;
+    private final String id;
     private final String name;
     private final double latitude;
     private final double longitude;
@@ -25,7 +25,7 @@ public class Court {
 
     @Builder
     public Court(
-            Long id,
+            String id,
             String name,
             double latitude,
             double longitude,

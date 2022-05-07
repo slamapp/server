@@ -72,7 +72,7 @@ public class ChatContentsService {
 
     @Transactional
     public ChatContentsResponse saveChatLoudSpeakerContent(LoudspeakerNotificationRequest request, Long userId){
-        Court court = courtRepository.findById(request.getCourtId())
+        Court court = courtRepository.findById(Long.valueOf(request.getCourtId()))
                 .orElseThrow(() -> new CourtNotFoundException("해당 농구장이 존재하지 않습니다."));
 
         User user = userRepository.findById(userId)
@@ -88,7 +88,7 @@ public class ChatContentsService {
                 chatLoudSpeakerContent
         );
         chatContentsRepository.save(chatContents);
-        courtChatroomMappingRepository.updateUpdatedAtByCourtId(request.getCourtId());
+        courtChatroomMappingRepository.updateUpdatedAtByCourtId(Long.valueOf(request.getCourtId()));
         return chatContentConvertor.toDto(chatContents);
     }
 
