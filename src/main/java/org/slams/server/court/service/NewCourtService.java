@@ -6,6 +6,7 @@ import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.CourtInsertRequestDto;
 import org.slams.server.court.dto.response.CourtInsertResponseDto;
+import org.slams.server.court.dto.response.NewCourtLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.entity.NewCourt;
@@ -37,36 +38,43 @@ public class NewCourtService {
 	private final CourtRepository courtRepository;
 	private final UserRepository userRepository;
 
-//	public CursorPageResponse<List<NewCourtResponse>> getNewCourtsInStatus(String status, CursorPageRequest cursorPageRequest) {
-//		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
-//
-//		List<NewCourt> newCourts;
-//		switch (status) {
-//			case "READY":
-//				newCourts = cursorPageRequest.getIsFirst() ?
-//					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
-//					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
-//				break;
-//			case "DONE":
-//				newCourts = cursorPageRequest.getIsFirst() ?
-//					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
-//					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
-//				break;
-//			default:
-//				throw new InvalidStatusException(MessageFormat.format("잘못된 상태값입니다. status : {0}", status));
-//		}
-//
-//		List<NewCourtResponse> newCourtList = new ArrayList<>();
-//		for (NewCourt newCourt : newCourts) {
-//			newCourtList.add(
-//				NewCourtResponse.toResponse(newCourt)
-//			);
-//		}
-//
-//		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
-//
-//		return new CursorPageResponse<>(newCourtList, lastId);
-//	}
+	public CursorPageResponse<List<NewCourtLookUpResponse>> getNewCourtsInReady(CursorPageRequest cursorPageRequest){
+		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
+
+		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
+			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
+			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
+
+		List<NewCourtLookUpResponse> newCourtList = new ArrayList<>();
+		for (NewCourt newCourt : newCourts) {
+			newCourtList.add(
+				NewCourtLookUpResponse.toResponse(newCourt)
+			);
+		}
+
+		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+
+		return new CursorPageResponse<>(newCourtList, lastId);
+	}
+
+	public CursorPageResponse<List<NewCourtLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest){
+		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
+
+		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
+			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
+			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
+
+		List<NewCourtLookUpResponse> newCourtList = new ArrayList<>();
+		for (NewCourt newCourt : newCourts) {
+			newCourtList.add(
+				NewCourtLookUpResponse.toResponse(newCourt)
+			);
+		}
+
+		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+
+		return new CursorPageResponse<>(newCourtList, lastId);
+	}
 
 	@Transactional
 	public CourtInsertResponseDto insert(CourtInsertRequestDto request, Long id) {
