@@ -3,6 +3,7 @@ package org.slams.server.user.dto.response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.slams.server.user.entity.Role;
 import org.slams.server.user.entity.User;
 
 @Getter
@@ -11,15 +12,14 @@ public class SupervisorDto {
 
 	private String id;
 	private String nickname;
-	private String profileImage;
 
-	private SupervisorDto(String id, String nickname, String profileImage) {
+	private SupervisorDto(String id, String nickname) {
 		this.id = id;
 		this.nickname = nickname;
-		this.profileImage = profileImage;
 	}
 
-	public static SupervisorDto toDto(User supervisor){
-		return new SupervisorDto(supervisor.getId().toString(), supervisor.getNickname(), supervisor.getProfileImage());
+	public static SupervisorDto toDto(User user){
+		return new SupervisorDto(user.getId().toString(), user.getNickname());
 	}
+
 }

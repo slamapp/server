@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtRequest;
+import org.slams.server.court.dto.response.NewCourtInDoneLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtInReadyLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.service.NewCourtService;
@@ -36,8 +37,8 @@ public class ManagementController {
 
 	@ApiOperation("사용자가 추가한 농구장 중에서 처리 완료된 농구장 목록 조회")
 	@GetMapping("/newCourts/done")
-	public ResponseEntity<CursorPageResponse<List<NewCourtInReadyLookUpResponse>>> getNewCourtsInDone(CursorPageRequest cursorPageRequest) {
-		CursorPageResponse<List<NewCourtInReadyLookUpResponse>> newCourtResponse
+	public ResponseEntity<CursorPageResponse<List<NewCourtInDoneLookUpResponse>>> getNewCourtsInDone(CursorPageRequest cursorPageRequest) {
+		CursorPageResponse<List<NewCourtInDoneLookUpResponse>> newCourtResponse
 			= newCourtService.getNewCourtsInDone(cursorPageRequest);
 
 		return ResponseEntity.ok(newCourtResponse);
