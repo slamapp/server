@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtRequest;
+import org.slams.server.court.dto.response.NewCourtInDoneLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtInReadyLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.entity.NewCourt;
@@ -86,7 +87,7 @@ class ManagementControllerTest {
 		// given
 		CursorPageRequest request = new CursorPageRequest(3, 5L, false);
 
-		NewCourt acceptedCourt = NewCourt.builder()
+		NewCourt newCourt = NewCourt.builder()
 			.id(1L)
 			.name("관악구민운동장 농구장")
 			.latitude(38.987654)
@@ -104,7 +105,7 @@ class ManagementControllerTest {
 			.updateAt(LocalDateTime.now())
 			.build();
 
-		List<NewCourtInReadyLookUpResponse> newCourts = List.of(NewCourtInReadyLookUpResponse.toResponse(acceptedCourt));
+		List<NewCourtInReadyLookUpResponse> newCourts = List.of(NewCourtInReadyLookUpResponse.toResponse(newCourt));
 
 		CursorPageResponse<List<NewCourtInReadyLookUpResponse>> response = new CursorPageResponse<>(newCourts, 5L);
 
@@ -146,6 +147,95 @@ class ManagementControllerTest {
 					fieldWithPath("contents[].creator.nickname").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 닉네임"),
 					fieldWithPath("contents[].creator.profileImage").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 프로필 이미지"),
 					fieldWithPath("contents[].creator.role").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 권한"),
+					fieldWithPath("lastId").type(JsonFieldType.NUMBER).description("서버에서 제공한 마지막 데이터의 구별키").optional()
+				)
+			));
+	}
+
+	@Test
+	void getNewCourtsInDone() throws Exception {
+		// given
+		CursorPageRequest request = new CursorPageRequest(3, 5L, false);
+
+		User creator = User.builder()
+			.id(1L)
+			.nickname("sally")
+			.profileImage("s3에 저장된 사용자 프로필 이미지 url")
+			.role(Role.USER).build();
+		NewCourt acceptedCourt = NewCourt.builder()
+			.id(1L)
+			.name("관악구민운동장 농구장")
+			.latitude(38.987654)
+			.longitude(12.309472)
+			.image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
+			.texture(Texture.ASPHALT)
+			.basketCount(2)
+			.proposer(creator)
+			.createdAt(LocalDateTime.now())
+			.updateAt(LocalDateTime.now())
+			.build();
+		NewCourt deniedCourt = NewCourt.builder()
+			.id(2L)
+			.name("바닷속 농구장")
+			.latitude(24.987654)
+			.longitude(77.273472)
+			.image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
+			.texture(Texture.ASPHALT)
+			.basketCount(2)
+			.proposer(creator)
+			.createdAt(LocalDateTime.now())
+			.updateAt(LocalDateTime.now())
+			.build();
+
+		acceptedCourt.acceptNewCourt(creator);
+		deniedCourt.denyNewCourt(creator);
+
+		List<NewCourtInDoneLookUpResponse> newCourts = List.of(
+			NewCourtInDoneLookUpResponse.toResponse(deniedCourt), NewCourtInDoneLookUpResponse.toResponse(acceptedCourt));
+
+		CursorPageResponse<List<NewCourtInDoneLookUpResponse>> response = new CursorPageResponse<>(newCourts, 5L);
+
+		given(newCourtService.getNewCourtsInDone(any())).willReturn(response);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/management/newCourts/done")
+				.header("Authorization", jwtToken)
+				.param("size", String.valueOf(request.getSize()))
+				.param("lastId", String.valueOf(request.getLastId()))
+				.param("isFirst", request.getIsFirst().toString())
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andDo(document("management/newCourt-getNewCourtsInDone", preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestParameters(
+					parameterWithName("size").description("요청할 데이터의 수"),
+					parameterWithName("lastId").description("화면에 보여준 마지막 데이터의 구별키"),
+					parameterWithName("isFirst").description("처음으로 요청했는지 여부")
+				),
+				responseFields(
+					fieldWithPath("contents").type(JsonFieldType.ARRAY).description("사용자가 추가한 농구장 목록"),
+					fieldWithPath("contents[].newCourt").type(JsonFieldType.OBJECT).description("사용자가 추가한 농구장"),
+					fieldWithPath("contents[].newCourt.id").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 구별키"),
+					fieldWithPath("contents[].newCourt.name").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이름"),
+					fieldWithPath("contents[].newCourt.latitude").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 위도"),
+					fieldWithPath("contents[].newCourt.longitude").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 경도"),
+					fieldWithPath("contents[].newCourt.image").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이미지"),
+					fieldWithPath("contents[].newCourt.texture").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 바닥 재질"),
+					fieldWithPath("contents[].newCourt.basketCount").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 골대 수"),
+					fieldWithPath("contents[].newCourt.status").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 승인여부"),
+					fieldWithPath("contents[].newCourt.createdAt").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 정보 최초 생성시간"),
+					fieldWithPath("contents[].newCourt.updatedAt").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 정보 최근 수정시간"),
+					fieldWithPath("contents[].creator").type(JsonFieldType.OBJECT).description("농구장 추가를 요청한 사용자"),
+					fieldWithPath("contents[].creator.id").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 구별키"),
+					fieldWithPath("contents[].creator.nickname").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 닉네임"),
+					fieldWithPath("contents[].creator.profileImage").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 프로필 이미지"),
+					fieldWithPath("contents[].creator.role").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 권한"),
+					fieldWithPath("contents[].supervisor").type(JsonFieldType.OBJECT).description("승인/거부한 관리자"),
+					fieldWithPath("contents[].supervisor.id").type(JsonFieldType.STRING).description("승인/거부한 관리자 구별키"),
+					fieldWithPath("contents[].supervisor.nickname").type(JsonFieldType.STRING).description("승인/거부한 관리자 닉네임"),
 					fieldWithPath("lastId").type(JsonFieldType.NUMBER).description("서버에서 제공한 마지막 데이터의 구별키").optional()
 				)
 			));
