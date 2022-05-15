@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.slams.server.chat.service.ChatroomMappingService;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
-import org.slams.server.court.dto.response.CourtInsertResponseDto;
+import org.slams.server.court.dto.request.NewCourtInsertRequest;
+import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.court.dto.response.NewCourtLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
-import org.slams.server.court.exception.InvalidStatusException;
 import org.slams.server.court.exception.NewCourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.court.repository.NewCourtRepository;
@@ -77,16 +76,16 @@ public class NewCourtService {
 	}
 
 	@Transactional
-	public CourtInsertResponseDto insert(CourtInsertRequestDto request, Long id) {
-		// user검색후 없으면 반환
+	public NewCourtInsertResponse insert(NewCourtInsertRequest request, Long id) {
 		User user = userRepository.findById(id)
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", id)));
 
-		NewCourt newCourt = request.insertRequestDtoToEntity(request);
+		NewCourt newCourt = request.toEntity(request, user);
 
 		newCourtRepository.save(newCourt);
-		return new CourtInsertResponseDto(newCourt);
+
+		return NewCourtInsertResponse.toResponse(newCourt);
 	}
 
 

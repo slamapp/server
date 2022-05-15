@@ -4,16 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.common.utils.AwsS3Uploader;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
 import org.slams.server.court.dto.request.RequestParamVo;
 import org.slams.server.court.dto.request.TimeEnum;
 import org.slams.server.court.dto.response.*;
 import org.slams.server.court.entity.Court;
-import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.court.repository.NewCourtRepository;
-import org.slams.server.favorite.dto.response.FavoriteSelectResponseDto;
-import org.slams.server.reservation.entity.Reservation;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.user.entity.User;
 import org.slams.server.user.repository.UserRepository;
@@ -21,13 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.slams.server.court.exception.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 

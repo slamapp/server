@@ -1,24 +1,18 @@
 package org.slams.server.favorite.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.TokenGetId;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
-import org.slams.server.court.dto.response.CourtInsertResponseDto;
-import org.slams.server.court.service.CourtService;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequestDto;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponseDto;
 import org.slams.server.favorite.service.FavoriteService;
-import org.slams.server.reservation.dto.response.ReservationDeleteResponseDto;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
