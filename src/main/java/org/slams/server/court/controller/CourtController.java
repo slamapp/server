@@ -1,6 +1,9 @@
 package org.slams.server.court.controller;
 
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +34,10 @@ public class CourtController {
 	private final NewCourtService newCourtService;
 	private final Jwt jwt;
 
+	@ApiOperation("사용자가 새 농구장 추가")
+	@ApiResponses({
+		@ApiResponse(code = 201, message = "추가 성공")
+	})
 	@PostMapping("/new")
 	public ResponseEntity<NewCourtInsertResponse> insert(HttpServletRequest request, @Valid @RequestBody NewCourtInsertRequest newCourtInsertRequest) {
 		TokenGetId token = new TokenGetId(request, jwt);
