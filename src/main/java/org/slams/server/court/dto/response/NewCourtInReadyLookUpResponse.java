@@ -5,22 +5,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.user.dto.response.CreatorDto;
-import org.slams.server.user.entity.User;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class NewCourtLookUpResponse {
+public class NewCourtInReadyLookUpResponse {
 
 	private NewCourtDto newCourt;
 	private CreatorDto creator;
 
-	private NewCourtLookUpResponse(NewCourtDto newCourt, CreatorDto creator) {
+	private NewCourtInReadyLookUpResponse(NewCourtDto newCourt, CreatorDto creator) {
 		this.newCourt = newCourt;
 		this.creator = creator;
 	}
 
-	public static NewCourtLookUpResponse toResponse(NewCourt newCourt){
-		return new NewCourtLookUpResponse(NewCourtDto.toDto(newCourt), CreatorDto.toDto(newCourt.getProposer()));
+	public static NewCourtInReadyLookUpResponse toResponse(NewCourt newCourt){
+		return new NewCourtInReadyLookUpResponse(NewCourtDto.toDto(newCourt), CreatorDto.toDto(newCourt.getProposer()));
 	}
 
 }

@@ -6,7 +6,7 @@ import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
 import org.slams.server.court.dto.response.NewCourtInsertResponse;
-import org.slams.server.court.dto.response.NewCourtLookUpResponse;
+import org.slams.server.court.dto.response.NewCourtInReadyLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.entity.NewCourt;
@@ -37,17 +37,17 @@ public class NewCourtService {
 	private final CourtRepository courtRepository;
 	private final UserRepository userRepository;
 
-	public CursorPageResponse<List<NewCourtLookUpResponse>> getNewCourtsInReady(CursorPageRequest cursorPageRequest){
+	public CursorPageResponse<List<NewCourtInReadyLookUpResponse>> getNewCourtsInReady(CursorPageRequest cursorPageRequest){
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 
 		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
 			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
 			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
 
-		List<NewCourtLookUpResponse> newCourtList = new ArrayList<>();
+		List<NewCourtInReadyLookUpResponse> newCourtList = new ArrayList<>();
 		for (NewCourt newCourt : newCourts) {
 			newCourtList.add(
-				NewCourtLookUpResponse.toResponse(newCourt)
+				NewCourtInReadyLookUpResponse.toResponse(newCourt)
 			);
 		}
 
@@ -56,17 +56,17 @@ public class NewCourtService {
 		return new CursorPageResponse<>(newCourtList, lastId);
 	}
 
-	public CursorPageResponse<List<NewCourtLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest){
+	public CursorPageResponse<List<NewCourtInReadyLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest){
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 
 		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
 			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
 			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
 
-		List<NewCourtLookUpResponse> newCourtList = new ArrayList<>();
+		List<NewCourtInReadyLookUpResponse> newCourtList = new ArrayList<>();
 		for (NewCourt newCourt : newCourts) {
 			newCourtList.add(
-				NewCourtLookUpResponse.toResponse(newCourt)
+				NewCourtInReadyLookUpResponse.toResponse(newCourt)
 			);
 		}
 
