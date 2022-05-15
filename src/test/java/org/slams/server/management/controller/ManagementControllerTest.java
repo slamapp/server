@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtRequest;
+import org.slams.server.court.dto.response.NewCourtLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
 import org.slams.server.court.entity.Texture;
 import org.slams.server.court.service.NewCourtService;
+import org.slams.server.user.entity.Role;
 import org.slams.server.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -77,6 +79,76 @@ class ManagementControllerTest {
 		// 프로퍼티 정보 얻기
 		String token = env.getProperty("token");
 		jwtToken = "Bearer " + token;
+	}
+
+	@Test
+	void getNewCourtsInReady() throws Exception {
+		// given
+		CursorPageRequest request = new CursorPageRequest(3, 5L, false);
+
+		NewCourt acceptedCourt = NewCourt.builder()
+			.id(1L)
+			.name("관악구민운동장 농구장")
+			.latitude(38.987654)
+			.longitude(12.309472)
+			.image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
+			.texture(Texture.ASPHALT)
+			.basketCount(2)
+			.status(Status.READY)
+			.proposer(User.builder()
+				.id(1L)
+				.nickname("sally")
+				.profileImage("s3에 저장된 사용자 프로필 이미지 url")
+				.role(Role.USER).build())
+			.createdAt(LocalDateTime.now())
+			.updateAt(LocalDateTime.now())
+			.build();
+
+		List<NewCourtLookUpResponse> newCourts = List.of(NewCourtLookUpResponse.toResponse(acceptedCourt));
+
+		CursorPageResponse<List<NewCourtLookUpResponse>> response = new CursorPageResponse<>(newCourts, 5L);
+
+		given(newCourtService.getNewCourtsInReady(any())).willReturn(response);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/management/newCourts/ready")
+				.header("Authorization", jwtToken)
+				.param("size", String.valueOf(request.getSize()))
+				.param("lastId", String.valueOf(request.getLastId()))
+				.param("isFirst", request.getIsFirst().toString())
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andDo(document("management/newCourt-getNewCourtsInReady", preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestParameters(
+					parameterWithName("size").description("요청할 데이터의 수"),
+					parameterWithName("lastId").description("화면에 보여준 마지막 데이터의 구별키"),
+					parameterWithName("isFirst").description("처음으로 요청했는지 여부")
+				),
+				responseFields(
+					fieldWithPath("contents").type(JsonFieldType.ARRAY).description("사용자가 추가한 농구장 목록"),
+					fieldWithPath("contents[].newCourt").type(JsonFieldType.OBJECT).description("사용자가 추가한 농구장"),
+					fieldWithPath("contents[].newCourt.id").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 구별키"),
+					fieldWithPath("contents[].newCourt.name").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이름"),
+					fieldWithPath("contents[].newCourt.latitude").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 위도"),
+					fieldWithPath("contents[].newCourt.longitude").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 경도"),
+					fieldWithPath("contents[].newCourt.image").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이미지"),
+					fieldWithPath("contents[].newCourt.texture").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 바닥 재질"),
+					fieldWithPath("contents[].newCourt.basketCount").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 골대 수"),
+					fieldWithPath("contents[].newCourt.status").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 승인여부"),
+					fieldWithPath("contents[].newCourt.createdAt").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 정보 최초 생성시간"),
+					fieldWithPath("contents[].newCourt.updatedAt").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 정보 최근 수정시간"),
+					fieldWithPath("contents[].creator").type(JsonFieldType.OBJECT).description("농구장 추가를 요청한 사용자"),
+					fieldWithPath("contents[].creator.id").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 구별키"),
+					fieldWithPath("contents[].creator.nickname").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 닉네임"),
+					fieldWithPath("contents[].creator.profileImage").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 프로필 이미지"),
+					fieldWithPath("contents[].creator.role").type(JsonFieldType.STRING).description("농구장 추가를 요청한 사용자 권한"),
+					fieldWithPath("lastId").type(JsonFieldType.NUMBER).description("서버에서 제공한 마지막 데이터의 구별키").optional()
+				)
+			));
 	}
 
 //	@Test
