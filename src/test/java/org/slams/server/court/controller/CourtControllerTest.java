@@ -3,28 +3,21 @@ package org.slams.server.court.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
+import org.slams.server.court.dto.request.NewCourtInsertRequest;
 import org.slams.server.court.dto.response.CourtDetailResponseDto;
-import org.slams.server.court.dto.response.CourtInsertResponseDto;
-import org.slams.server.court.dto.response.CourtReservationResponseDetailDto;
+import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.court.dto.response.CourtReservationResponseDto;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
 import org.slams.server.court.entity.Texture;
-import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.court.service.CourtService;
 import org.slams.server.court.service.NewCourtService;
-import org.slams.server.reservation.dto.request.ReservationInsertRequestDto;
-import org.slams.server.reservation.dto.response.ReservationInsertResponseDto;
-import org.slams.server.reservation.dto.response.ReservationUpcomingResponseDto;
 import org.slams.server.reservation.entity.Reservation;
-import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.user.entity.Position;
 import org.slams.server.user.entity.Proficiency;
 import org.slams.server.user.entity.Role;
 import org.slams.server.user.entity.User;
-import org.slams.server.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,8 +31,8 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,10 +42,13 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
 @SpringBootTest
@@ -169,57 +165,54 @@ public class CourtControllerTest {
 
 
     @Test
-    @DisplayName("[POST] '/api/v1/courts/new'")
-    void testInsertCall() throws Exception {
-        // GIVEN
-        CourtInsertRequestDto givenRequest = CourtInsertRequestDto.builder()
+    @DisplayName("[POST] /api/v1/courts/new")
+    void insert() throws Exception {
+        // given
+        NewCourtInsertRequest givenRequest = NewCourtInsertRequest.builder()
                 .name("관악구민운동장 농구장")
                 .latitude(38.987654)
                 .longitude(12.309472)
-                .image("data:image/png;base64,atasdfskdajfklsadjfkl")
+                .image("s3에 저장된 새 농구장 이미지 url")
                 .texture(Texture.ASPHALT)
                 .basketCount(2)
-                .status(Status.READY)
                 .build();
 
-
-
-        CourtInsertResponseDto stubResponse = new CourtInsertResponseDto(newCourt);
+        NewCourtInsertResponse stubResponse = NewCourtInsertResponse.toResponse(newCourt);
         given(newCourtService.insert(any(), any())).willReturn(stubResponse);
 
-        RequestBuilder request = MockMvcRequestBuilders.post("/api/v1/courts/new")
-                .header("Authorization",jwtToken)
-                .contentType(MediaType.APPLICATION_JSON) // TODO: 사진 들어오면 multipart/form-data
-                .content(objectMapper.writeValueAsString(givenRequest));
+        // when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/courts/new")
+                .header("Authorization", jwtToken)
+                .content(objectMapper.writeValueAsString(givenRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print());
 
-        // WHEN // THEN
-        mockMvc.perform(request)
-                .andExpect(status().isCreated())
-                .andDo(print())
-                .andDo(document("user-court-save",
-                        requestFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("코트 이름"),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("코트 이미지"),
-                                fieldWithPath("texture").type(JsonFieldType.STRING).description("코트 재질"),
-                                fieldWithPath("basketCount").type(JsonFieldType.NUMBER).description("골대 갯수"),
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("농구장 준비상태")
-                        ),
-                        responseFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("신규 코트 이름"),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("코트 이미지"),
-                                fieldWithPath("texture").type(JsonFieldType.STRING).description("코트 재질"),
-                                fieldWithPath("basketCount").type(JsonFieldType.NUMBER).description("골대 갯수"),
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("신규 농구장 준비상태"),
-                                fieldWithPath("newCourtId").type(JsonFieldType.NUMBER).description("신규 농구장 코트 번호"),
-                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("신규 코트 생성일자"),
-                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("신규 코트 수정일자"),
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("신규 코트 상태")
-                        )
-                ));
+        // then
+        resultActions.andExpect(status().isCreated())
+            .andDo(document("courts/newCourt-insertNewCourt", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("name").type(JsonFieldType.STRING).description("새 농구장 이름"),
+                    fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
+                    fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
+                    fieldWithPath("image").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이미지"),
+                    fieldWithPath("texture").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 재질"),
+                    fieldWithPath("basketCount").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 골대 갯수")
+                ),
+                responseFields(
+                    fieldWithPath("newCourt").type(JsonFieldType.OBJECT).description("사용자가 추가한 농구장"),
+                    fieldWithPath("newCourt.id").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 구별키"),
+                    fieldWithPath("newCourt.name").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이름"),
+                    fieldWithPath("newCourt.latitude").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 위도"),
+                    fieldWithPath("newCourt.longitude").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 경도"),
+                    fieldWithPath("newCourt.image").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 이미지"),
+                    fieldWithPath("newCourt.texture").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 재질"),
+                    fieldWithPath("newCourt.basketCount").type(JsonFieldType.NUMBER).description("사용자가 추가한 농구장 골대 갯수"),
+                    fieldWithPath("newCourt.status").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 승인여부"),
+                    fieldWithPath("newCourt.createdAt").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 정보 최초 생성일자"),
+                    fieldWithPath("newCourt.updatedAt").type(JsonFieldType.STRING).description("사용자가 추가한 농구장 정보 최근 수정일자")
+                )
+            ));
     }
 
 
