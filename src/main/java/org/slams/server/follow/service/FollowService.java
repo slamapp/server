@@ -36,7 +36,7 @@ public class FollowService {
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 		List<Follow> followers = cursorPageRequest.getIsFirst() ?
 			followRepository.findByFollowingIdOrderByIdDesc(userId, pageable) :
-			followRepository.findByFollowingIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastId(), pageable);
+			followRepository.findByFollowingIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastIdParedForLong(), pageable);
 
 		List<FollowerResponse> followerList = new ArrayList<>();
 		followers.forEach(follow -> followerList.add(FollowerResponse.toResponse(follow)));
@@ -54,7 +54,7 @@ public class FollowService {
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 		List<Follow> followings = cursorPageRequest.getIsFirst() ?
 			followRepository.findByFollowerIdOrderByIdDesc(userId, pageable) :
-			followRepository.findByFollowerIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastId(), pageable);
+			followRepository.findByFollowerIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastIdParedForLong(), pageable);
 
 		List<FollowingResponse> followingList = new ArrayList<>();
 		followings.forEach(follow -> followingList.add(FollowingResponse.toResponse(follow)));

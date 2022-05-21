@@ -181,7 +181,7 @@ public class ReservationService {
         PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
         List<Reservation> reservations = cursorPageRequest.getIsFirst() ?
                 reservationRepository.findByUserByExpiredOrderByDesc(userId, localDateTime,pageable) :
-                reservationRepository.findByUserByAndIdLessThanExpiredOrderByDesc(cursorPageRequest.getLastId(), pageable);
+                reservationRepository.findByUserByAndIdLessThanExpiredOrderByDesc(cursorPageRequest.getLastIdParedForLong(), pageable);
 
         List<ReservationExpiredResponseDto> reservationExpiredResponseDtoList = new ArrayList<>();
 

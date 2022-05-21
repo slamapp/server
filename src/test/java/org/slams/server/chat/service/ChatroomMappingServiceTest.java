@@ -118,7 +118,7 @@ class ChatroomMappingServiceTest {
     void findUserChatRoomByUserId(){
         //Given
         Long userId = user.getId();
-        CursorPageRequest cursorRequest = new CursorPageRequest(5, 0L, Boolean.TRUE);
+        CursorPageRequest cursorRequest = new CursorPageRequest(5, "0", Boolean.TRUE);
 
         //When
         List<ChatroomResponse> chatroomResponseList = chatroomMappingService.findUserChatRoomByUserId(userId, cursorRequest);

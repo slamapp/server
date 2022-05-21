@@ -41,7 +41,7 @@ public class UserService {
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
 
-		List<NotificationResponse> top10Notifications = notificationService.findAllByUserId(userId, new CursorPageRequest(10, 0L, true));
+		List<NotificationResponse> top10Notifications = notificationService.findAllByUserId(userId, new CursorPageRequest(10, "0", true));
 
 		return DefaultUserInfoResponse.toResponse(user, top10Notifications);
 	}

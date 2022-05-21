@@ -81,7 +81,7 @@ class FollowControllerTest {
 	@Test
 	void followerPage() throws Exception {
 		// given
-		CursorPageRequest request = new CursorPageRequest(2, 5L, false);
+		CursorPageRequest request = new CursorPageRequest(2, "5", false);
 
 		User user1 = User.builder()
 			.id(1L)
@@ -156,7 +156,7 @@ class FollowControllerTest {
 	@Test
 	void followingPage() throws Exception {
 		// given
-		CursorPageRequest request = new CursorPageRequest(2, 5L, false);
+		CursorPageRequest request = new CursorPageRequest(2, "5", false);
 
 		User user1 = User.builder()
 			.id(1L)

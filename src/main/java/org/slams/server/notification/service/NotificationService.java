@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -102,16 +103,18 @@ public class NotificationService {
 
     public List<Notification> cursorPageForFindAllByUserId(Long userId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
+        LocalDateTime createdAt = notificationRepository.getById(cursorRequest.getLastId()).getCreatedAt();
         return cursorRequest.getIsFirst() ?
                 notificationRepository.findAllByUserByCreated(userId, pageable) :
-                notificationRepository.findAllByUserLessThanAlarmIdByCreated(userId, cursorRequest.getLastId(), pageable);
+                notificationRepository.findAllByUserLessThanCreatedAtOrderByCreatedAt(userId, createdAt, pageable);
     }
 
     public Long findNotificationLastId(Long userId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
+        LocalDateTime createdAt = notificationRepository.getById(cursorRequest.getLastId()).getCreatedAt();
         List<Long> ids = cursorRequest.getIsFirst() ?
                 notificationRepository.findIdByUserByCreated(userId, pageable) :
-                notificationRepository.findIdByUserLessThanAlarmIdByCreated(userId, cursorRequest.getLastId(), pageable);
+                notificationRepository.findIdByUserLessThanCreatedAtOrderByCreatedAt(userId, createdAt, pageable);
 
         // 빈 배열 일 때
         if (ids.size()-1 < 0) {
