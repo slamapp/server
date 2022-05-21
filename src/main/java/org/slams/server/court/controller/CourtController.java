@@ -46,12 +46,11 @@ public class CourtController {
 		return new ResponseEntity<NewCourtInsertResponse>(newCourtService.insert(newCourtInsertRequest, userId), HttpStatus.CREATED);
 	}
 
-
+	@ApiOperation("농구장 상세정보 불러오기 api")
 	@GetMapping("/detail/{courtId}/{date}/{time}")
-	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<CourtDetailResponse> getDetail(
 		@PathVariable Long courtId, @PathVariable String date, @PathVariable String time) {
-		return ResponseEntity.ok().body(courtService.findDetail(courtId, date, time));
+		return ResponseEntity.ok(courtService.findDetail(courtId, date, time));
 	}
 
 	@GetMapping("/{courtId}/reservations/{date}")
