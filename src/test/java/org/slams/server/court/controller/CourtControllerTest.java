@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
-import org.slams.server.court.dto.response.CourtDetailResponseDto;
+import org.slams.server.court.dto.response.CourtDetailResponse;
 import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.court.dto.response.CourtReservationResponseDto;
 import org.slams.server.court.entity.Court;
@@ -217,57 +217,57 @@ public class CourtControllerTest {
 
 
 
-    @Test
-    @DisplayName("[GET] '/api/v1/courts/detail/{courtId}/{date}/{time}")
-    void testDetailCourt() throws Exception {
-
-        // 사용자가 예약한 코트에 대한 정보 알기
-
-        // GIVEN
-        LocalDateTime now = LocalDateTime.now();
-        court=Court.builder()
-                .id(1L)
-                .name("관악구민운동장 농구장")
-                .latitude(38.987654)
-                .longitude(12.309472)
-                .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
-                .texture(Texture.ASPHALT)
-                .basketCount(2)
-                .build();
-
-        court.setCreatedAt(now);
-        court.setUpdateAt(now);
-
-
-        CourtDetailResponseDto courtDetailResponseDto=new CourtDetailResponseDto(court, 3L);
-
-        given(courtService.findDetail(any(),any(),any())).willReturn(courtDetailResponseDto);
-        String date="2019-04-20";
-        String time="dawn";
-
-
-        RequestBuilder request = MockMvcRequestBuilders.get("/api/v1/courts/detail/1/"+date+"/"+time)
-                .header("Authorization",jwtToken)
-                .contentType(MediaType.APPLICATION_JSON); // TODO: 사진 들어오면 multipart/form-data
-
-        // WHEN // THEN
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("AllCourt-select",
-                        responseFields(
-                                fieldWithPath("courtName").type(JsonFieldType.STRING).description("코트 이름"),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("코트 이미지"),
-                                fieldWithPath("texture").type(JsonFieldType.STRING).description("코트 재질"),
-                                fieldWithPath("basketCount").type(JsonFieldType.NUMBER).description("골대 갯수"),
-                                fieldWithPath("courtReservation").type(JsonFieldType.NUMBER).description("농구장 코트 예약한 수"),
-                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("코트 생성일자"),
-                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("코트 수정일자")
-                        )
-                ));
-    }
+//    @Test
+//    @DisplayName("[GET] '/api/v1/courts/detail/{courtId}/{date}/{time}")
+//    void testDetailCourt() throws Exception {
+//
+//        // 사용자가 예약한 코트에 대한 정보 알기
+//
+//        // GIVEN
+//        LocalDateTime now = LocalDateTime.now();
+//        court=Court.builder()
+//                .id(1L)
+//                .name("관악구민운동장 농구장")
+//                .latitude(38.987654)
+//                .longitude(12.309472)
+//                .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
+//                .texture(Texture.ASPHALT)
+//                .basketCount(2)
+//                .build();
+//
+//        court.setCreatedAt(now);
+//        court.setUpdateAt(now);
+//
+//
+//        CourtDetailResponse courtDetailResponse =new CourtDetailResponse(court, 3L);
+//
+//        given(courtService.findDetail(any(),any(),any())).willReturn(courtDetailResponse);
+//        String date="2019-04-20";
+//        String time="dawn";
+//
+//
+//        RequestBuilder request = MockMvcRequestBuilders.get("/api/v1/courts/detail/1/"+date+"/"+time)
+//                .header("Authorization",jwtToken)
+//                .contentType(MediaType.APPLICATION_JSON); // TODO: 사진 들어오면 multipart/form-data
+//
+//        // WHEN // THEN
+//        mockMvc.perform(request)
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andDo(document("AllCourt-select",
+//                        responseFields(
+//                                fieldWithPath("courtName").type(JsonFieldType.STRING).description("코트 이름"),
+//                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
+//                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
+//                                fieldWithPath("image").type(JsonFieldType.STRING).description("코트 이미지"),
+//                                fieldWithPath("texture").type(JsonFieldType.STRING).description("코트 재질"),
+//                                fieldWithPath("basketCount").type(JsonFieldType.NUMBER).description("골대 갯수"),
+//                                fieldWithPath("courtReservation").type(JsonFieldType.NUMBER).description("농구장 코트 예약한 수"),
+//                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("코트 생성일자"),
+//                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("코트 수정일자")
+//                        )
+//                ));
+//    }
 
 
 

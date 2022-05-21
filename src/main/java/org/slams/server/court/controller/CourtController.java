@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
 import org.slams.server.court.dto.request.RequestParamVo;
-import org.slams.server.court.dto.response.CourtDetailResponseDto;
-import org.slams.server.court.dto.response.NewCourtInsertResponse;
+import org.slams.server.court.dto.response.CourtDetailResponse;
+import org.slams.server.court.dto.response.CourtInsertResponseDto;
 import org.slams.server.court.service.CourtService;
 import org.slams.server.court.service.NewCourtService;
 import org.slams.server.user.oauth.jwt.Jwt;
@@ -49,12 +49,10 @@ public class CourtController {
 
 	@GetMapping("/detail/{courtId}/{date}/{time}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<CourtDetailResponseDto> getDetail(@PathVariable Long courtId, @PathVariable String date, @PathVariable String time) {
-
-		// 여기에 추가로 header 토큰 정보가 들어가야 함.
+	public ResponseEntity<CourtDetailResponse> getDetail(
+		@PathVariable Long courtId, @PathVariable String date, @PathVariable String time) {
 		return ResponseEntity.ok().body(courtService.findDetail(courtId, date, time));
 	}
-
 
 	@GetMapping("/{courtId}/reservations/{date}")
 	@ResponseStatus(HttpStatus.OK)

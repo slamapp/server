@@ -25,35 +25,29 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Slf4j
+@Transactional(readOnly = true)
 @AllArgsConstructor
 @Service
 public class CourtService {
 
     private final CourtRepository courtRepository;
     private final UserRepository userRepository;
-    private final NewCourtRepository newCourtRepository;
     private final AwsS3Uploader awsS3Uploader;
     private final ReservationRepository reservationRepository;
 
-    @Transactional
-    public CourtDetailResponseDto findDetail(Long courtId, String date, String time) {
+    public CourtDetailResponse findDetail(Long courtId, String date, String time) {
+        Court court = courtRepository.findById(courtId)
+            .orElseThrow(() -> new CourtNotFoundException(
+                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", courtId)));
 
         List<LocalDateTime> localDateTimes = changeTimeZone(date, time);
-        LocalDateTime startLocalDateTime=localDateTimes.get(0);
-        LocalDateTime endLocalDateTime=localDateTimes.get(1);
+        LocalDateTime startLocalDateTime = localDateTimes.get(0);
+        LocalDateTime endLocalDateTime = localDateTimes.get(1);
 
-        Court court=courtRepository.findById(courtId)
-                .orElseThrow(() -> new CourtNotFoundException(ErrorCode.NOT_EXIST_COURT.getMessage()));
+        Long reservationMaxCount = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, courtId);
 
-        // 여기에서 다시 디비 뒤져서 -> reservationCount 세기
-        Long reservations = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, courtId);
-
-        CourtDetailResponseDto courtDetailResponseDto=new CourtDetailResponseDto(court, reservations);
-
-        return courtDetailResponseDto;
-
+        return CourtDetailResponse.toResponse(court, reservationMaxCount);
     }
 
 
@@ -137,7 +131,7 @@ public class CourtService {
 
     }
 
-    public List<LocalDateTime> changeTimeZone(String date, String time) {
+    private List<LocalDateTime> changeTimeZone(String date, String time) {
 
         LocalDate dateTime = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
         List<LocalDateTime> dateTimeList=new ArrayList<>();
