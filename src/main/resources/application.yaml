@@ -1,0 +1,67 @@
+spring:
+  datasource:
+    url: ${DB_DEV_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_DEV_USERNAME}
+    password: ${DB_DEV_PASSWORD}
+
+  jpa:
+    generate-ddl: true
+    database: mysql
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        hbm2ddl:
+          query.in_clause_parameter_padding: true
+          auto: none
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  config:
+    import:
+      - classpath:aws.yaml
+      - classpath:app.properties
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+
+jwt:
+  header: Authorization
+  issuer: ${JWT_ISSUER}
+  client-secret: ${JWT_CLIENT_SECRET}
+  expiry-seconds: ${JWT_EXPIRY_SECONDS}
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
