@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.slams.server.chat.service.ChatroomMappingService;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
-import org.slams.server.court.dto.response.CourtInsertResponseDto;
+import org.slams.server.court.dto.request.NewCourtInsertRequest;
+import org.slams.server.court.dto.response.NewCourtInDoneLookUpResponse;
+import org.slams.server.court.dto.response.NewCourtInsertResponse;
+import org.slams.server.court.dto.response.NewCourtInReadyLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
-import org.slams.server.court.exception.InvalidStatusException;
 import org.slams.server.court.exception.NewCourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.court.repository.NewCourtRepository;
@@ -37,48 +38,55 @@ public class NewCourtService {
 	private final CourtRepository courtRepository;
 	private final UserRepository userRepository;
 
-//	public CursorPageResponse<List<NewCourtResponse>> getNewCourtsInStatus(String status, CursorPageRequest cursorPageRequest) {
-//		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
-//
-//		List<NewCourt> newCourts;
-//		switch (status) {
-//			case "READY":
-//				newCourts = cursorPageRequest.getIsFirst() ?
-//					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
-//					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
-//				break;
-//			case "DONE":
-//				newCourts = cursorPageRequest.getIsFirst() ?
-//					newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
-//					newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
-//				break;
-//			default:
-//				throw new InvalidStatusException(MessageFormat.format("잘못된 상태값입니다. status : {0}", status));
-//		}
-//
-//		List<NewCourtResponse> newCourtList = new ArrayList<>();
-//		for (NewCourt newCourt : newCourts) {
-//			newCourtList.add(
-//				NewCourtResponse.toResponse(newCourt)
-//			);
-//		}
-//
-//		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
-//
-//		return new CursorPageResponse<>(newCourtList, lastId);
-//	}
+	public CursorPageResponse<List<NewCourtInReadyLookUpResponse>> getNewCourtsInReady(CursorPageRequest cursorPageRequest){
+		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
+
+		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
+			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
+			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
+
+		List<NewCourtInReadyLookUpResponse> newCourtList = new ArrayList<>();
+		for (NewCourt newCourt : newCourts) {
+			newCourtList.add(
+				NewCourtInReadyLookUpResponse.toResponse(newCourt)
+			);
+		}
+
+		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+
+		return new CursorPageResponse<>(newCourtList, lastId);
+	}
+
+	public CursorPageResponse<List<NewCourtInDoneLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest){
+		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
+
+		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
+			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
+			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
+
+		List<NewCourtInDoneLookUpResponse> newCourtList = new ArrayList<>();
+		for (NewCourt newCourt : newCourts) {
+			newCourtList.add(
+				NewCourtInDoneLookUpResponse.toResponse(newCourt)
+			);
+		}
+
+		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+
+		return new CursorPageResponse<>(newCourtList, lastId);
+	}
 
 	@Transactional
-	public CourtInsertResponseDto insert(CourtInsertRequestDto request, Long id) {
-		// user검색후 없으면 반환
+	public NewCourtInsertResponse insert(NewCourtInsertRequest request, Long id) {
 		User user = userRepository.findById(id)
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", id)));
 
-		NewCourt newCourt = request.insertRequestDtoToEntity(request);
+		NewCourt newCourt = request.toEntity(request, user);
 
 		newCourtRepository.save(newCourt);
-		return new CourtInsertResponseDto(newCourt);
+
+		return NewCourtInsertResponse.toResponse(newCourt);
 	}
 
 

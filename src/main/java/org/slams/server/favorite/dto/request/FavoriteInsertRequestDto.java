@@ -1,10 +1,6 @@
 package org.slams.server.favorite.dto.request;
 
 import lombok.*;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
-import org.slams.server.court.entity.Court;
-import org.slams.server.favorite.entity.Favorite;
-import org.slams.server.user.entity.User;
 
 @Getter
 @AllArgsConstructor

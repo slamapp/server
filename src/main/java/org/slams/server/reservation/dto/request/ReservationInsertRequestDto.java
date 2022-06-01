@@ -1,20 +1,13 @@
 package org.slams.server.reservation.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
-import org.slams.server.court.entity.NewCourt;
-import org.slams.server.court.entity.Status;
-import org.slams.server.court.entity.Texture;
 import org.slams.server.reservation.entity.Reservation;
-import org.slams.server.user.entity.User;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @EqualsAndHashCode
 @Getter

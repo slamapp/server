@@ -8,18 +8,22 @@ import org.slams.server.user.entity.User;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SupervisorDto {
+public class CreatorDto {
 
 	private String id;
 	private String nickname;
+	private String profileImage;
+	private Role role;
 
-	private SupervisorDto(String id, String nickname) {
+	private CreatorDto(String id, String nickname, String profileImage, Role role) {
 		this.id = id;
 		this.nickname = nickname;
+		this.profileImage = profileImage;
+		this.role = role;
 	}
 
-	public static SupervisorDto toDto(User user){
-		return new SupervisorDto(user.getId().toString(), user.getNickname());
+	public static CreatorDto toDto(User user){
+		return new CreatorDto(user.getId().toString(), user.getNickname(), user.getProfileImage(), user.getRole());
 	}
 
 }

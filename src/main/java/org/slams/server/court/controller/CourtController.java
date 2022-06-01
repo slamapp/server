@@ -1,23 +1,20 @@
 package org.slams.server.court.controller;
 
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slams.server.common.api.TokenGetId;
-import org.slams.server.court.dto.request.CourtInsertRequestDto;
-import org.slams.server.court.dto.request.CourtReservationRequestDto;
+import org.slams.server.court.dto.request.NewCourtInsertRequest;
 import org.slams.server.court.dto.request.RequestParamVo;
 import org.slams.server.court.dto.response.CourtDetailResponseDto;
-import org.slams.server.court.dto.response.CourtInsertResponseDto;
-import org.slams.server.court.dto.response.CourtReservationResponseDto;
+import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.court.service.CourtService;
 import org.slams.server.court.service.NewCourtService;
-import org.slams.server.reservation.dto.response.ReservationInsertResponseDto;
-import org.slams.server.user.exception.InvalidTokenException;
 import org.slams.server.user.oauth.jwt.Jwt;
-import org.slams.server.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -38,16 +34,16 @@ public class CourtController {
 	private final NewCourtService newCourtService;
 	private final Jwt jwt;
 
+	@ApiOperation("사용자가 새 농구장 추가")
+	@ApiResponses({
+		@ApiResponse(code = 201, message = "추가 성공")
+	})
 	@PostMapping("/new")
-	public ResponseEntity<CourtInsertResponseDto> insert(@Valid @RequestBody CourtInsertRequestDto courtInsertRequestDto, HttpServletRequest request) {
-
-
+	public ResponseEntity<NewCourtInsertResponse> insert(HttpServletRequest request, @Valid @RequestBody NewCourtInsertRequest newCourtInsertRequest) {
 		TokenGetId token = new TokenGetId(request, jwt);
 		Long userId = token.getUserId();
 
-
-		return new ResponseEntity<CourtInsertResponseDto>(newCourtService.insert(courtInsertRequestDto, userId), HttpStatus.CREATED);
-
+		return new ResponseEntity<NewCourtInsertResponse>(newCourtService.insert(newCourtInsertRequest, userId), HttpStatus.CREATED);
 	}
 
 
