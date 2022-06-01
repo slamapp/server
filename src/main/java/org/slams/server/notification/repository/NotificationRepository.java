@@ -19,14 +19,14 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, String> {
 
     @Query("SELECT a.id FROM Notification a WHERE a.userId =:userId AND a.createdAt < :createdAt ORDER BY a.createdAt desc")
-    List<Long> findIdByUserLessThanCreatedAtOrderByCreatedAt(
+    List<String> findIdByUserLessThanCreatedAtOrderByCreatedAt(
             @Param("userId") Long userId,
             @Param("createdAt") LocalDateTime createdAt,
             Pageable pageable
     );
 
     @Query("SELECT a.id FROM Notification a WHERE a.userId =:userId ORDER BY a.createdAt desc")
-    List<Long> findIdByUserByCreated(
+    List<String> findIdByUserByCreated(
             @Param("userId") Long userId,
             Pageable pageable
     );

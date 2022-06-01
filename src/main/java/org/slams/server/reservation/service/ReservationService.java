@@ -199,7 +199,7 @@ public class ReservationService {
 
         Long lastId = reservations.size() < cursorPageRequest.getSize() ? null : reservations.get(reservations.size() - 1).getId();
 
-        return new CursorPageResponse<>(reservationExpiredResponseDtoList, lastId);
+        return new CursorPageResponse<>(reservationExpiredResponseDtoList, lastId.toString());
     }
 
 

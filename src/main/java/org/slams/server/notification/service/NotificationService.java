@@ -2,6 +2,7 @@ package org.slams.server.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
+import org.slams.server.common.error.exception.EntityNotFoundException;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
@@ -15,6 +16,7 @@ import org.slams.server.notification.dto.request.UpdateIsClickedStatusRequest;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.notification.entity.Loudspeaker;
 import org.slams.server.notification.entity.Notification;
+import org.slams.server.notification.exception.NotificationNotFoundException;
 import org.slams.server.notification.repository.LoudspeakerRepository;
 import org.slams.server.notification.repository.NotificationRepository;
 import org.slams.server.reservation.repository.ReservationRepository;
@@ -35,7 +37,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-
     private final NotificationRepository notificationRepository;
     private final LoudspeakerRepository loudSpeakerNotificationRepository;
     private final UserRepository userRepository;
@@ -103,18 +104,37 @@ public class NotificationService {
 
     public List<Notification> cursorPageForFindAllByUserId(Long userId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
-        LocalDateTime createdAt = notificationRepository.getById(cursorRequest.getLastId()).getCreatedAt();
         return cursorRequest.getIsFirst() ?
-                notificationRepository.findAllByUserByCreated(userId, pageable) :
-                notificationRepository.findAllByUserLessThanCreatedAtOrderByCreatedAt(userId, createdAt, pageable);
+                notificationRepository.findAllByUserByCreated(
+                        userId,
+                        pageable
+                ) :
+                notificationRepository.findAllByUserLessThanCreatedAtOrderByCreatedAt(
+                        userId,
+                        notificationRepository.findById(cursorRequest.getLastId())
+                                .orElseThrow(
+                                        () -> new NotificationNotFoundException("요청하신 공지는 존재하지 않습니다.")
+                                ).getCreatedAt(),
+                        pageable
+                );
     }
 
-    public Long findNotificationLastId(Long userId, CursorPageRequest cursorRequest){
+    public String findNotificationLastId(Long userId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
-        LocalDateTime createdAt = notificationRepository.getById(cursorRequest.getLastId()).getCreatedAt();
-        List<Long> ids = cursorRequest.getIsFirst() ?
-                notificationRepository.findIdByUserByCreated(userId, pageable) :
-                notificationRepository.findIdByUserLessThanCreatedAtOrderByCreatedAt(userId, createdAt, pageable);
+
+        List<String> ids = cursorRequest.getIsFirst() ?
+                notificationRepository.findIdByUserByCreated(
+                        userId,
+                        pageable
+                ) :
+                notificationRepository.findIdByUserLessThanCreatedAtOrderByCreatedAt(
+                        userId,
+                        notificationRepository.findById(cursorRequest.getLastId())
+                                .orElseThrow(
+                                        () -> new NotificationNotFoundException("요청하신 공지는 존재하지 않습니다.")
+                                ).getCreatedAt(),
+                        pageable
+                );
 
         // 빈 배열 일 때
         if (ids.size()-1 < 0) {

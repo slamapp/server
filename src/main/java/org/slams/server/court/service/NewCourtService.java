@@ -43,7 +43,7 @@ public class NewCourtService {
 
 		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
 			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.READY), pageable) :
-			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastId(), pageable);
+			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.READY), cursorPageRequest.getLastIdParedForLong(), pageable);
 
 		List<NewCourtInReadyLookUpResponse> newCourtList = new ArrayList<>();
 		for (NewCourt newCourt : newCourts) {
@@ -54,7 +54,7 @@ public class NewCourtService {
 
 		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
 
-		return new CursorPageResponse<>(newCourtList, lastId);
+		return new CursorPageResponse<>(newCourtList, lastId.toString());
 	}
 
 	public CursorPageResponse<List<NewCourtInDoneLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest){
@@ -62,7 +62,7 @@ public class NewCourtService {
 
 		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
 			newCourtRepository.findByStatusOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), pageable) :
-			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastId(), pageable);
+			newCourtRepository.findByStatusLessThanIdOrderByIdDesc(List.of(Status.ACCEPT, Status.DENY), cursorPageRequest.getLastIdParedForLong(), pageable);
 
 		List<NewCourtInDoneLookUpResponse> newCourtList = new ArrayList<>();
 		for (NewCourt newCourt : newCourts) {
@@ -73,7 +73,7 @@ public class NewCourtService {
 
 		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
 
-		return new CursorPageResponse<>(newCourtList, lastId);
+		return new CursorPageResponse<>(newCourtList, lastId.toString());
 	}
 
 	@Transactional

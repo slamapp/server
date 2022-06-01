@@ -118,7 +118,7 @@ class FollowControllerTest {
 			FollowerResponse.toResponse(follow1)
 		);
 
-		CursorPageResponse<List<FollowerResponse>> response = new CursorPageResponse<>(followerList, 1L);
+		CursorPageResponse<List<FollowerResponse>> response = new CursorPageResponse<>(followerList, "1");
 
 		given(followService.followerPage(anyLong(), any())).willReturn(response);
 
@@ -193,7 +193,7 @@ class FollowControllerTest {
 			FollowingResponse.toResponse(follow1)
 		);
 
-		CursorPageResponse<List<FollowingResponse>> response = new CursorPageResponse<>(followingList, 1L);
+		CursorPageResponse<List<FollowingResponse>> response = new CursorPageResponse<>(followingList, "1");
 
 		given(followService.followingPage(anyLong(), any())).willReturn(response);
 

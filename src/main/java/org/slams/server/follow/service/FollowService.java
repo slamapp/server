@@ -43,7 +43,7 @@ public class FollowService {
 
 		Long lastId = followers.size() < cursorPageRequest.getSize() ? null : followers.get(followers.size() - 1).getId();
 
-		return new CursorPageResponse<>(followerList, lastId);
+		return new CursorPageResponse<>(followerList, lastId.toString());
 	}
 
 	public CursorPageResponse<List<FollowingResponse>> followingPage(Long userId, CursorPageRequest cursorPageRequest) {
@@ -61,7 +61,7 @@ public class FollowService {
 
 		Long lastId = followings.size() < cursorPageRequest.getSize() ? null : followings.get(followings.size() - 1).getId();
 
-		return new CursorPageResponse<>(followingList, lastId);
+		return new CursorPageResponse<>(followingList, lastId.toString());
 	}
 
 	@Transactional
