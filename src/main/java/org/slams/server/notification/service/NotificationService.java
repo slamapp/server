@@ -139,16 +139,16 @@ public class NotificationService {
         // 빈 배열 일 때
         if (ids.size()-1 < 0) {
             return null;
-        }else{
-            // 마지막 데이터 인지 확인
-            if (cursorRequest.getSize() > ids.size()){
-                // 마지막 데이터 일 때
-                return null;
-            }else {
-                // 마지막 데이터가 아닐 때
-                return ids.get(ids.size()-1);
-            }
         }
+        // 마지막 데이터 인지 확인
+        if (cursorRequest.getSize() > ids.size()){
+            // 마지막 데이터 일 때
+            return null;
+        }else {
+            // 마지막 데이터가 아닐 때
+            return ids.get(ids.size()-1);
+        }
+
     }
 
     @Transactional
