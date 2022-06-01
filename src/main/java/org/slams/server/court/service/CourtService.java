@@ -9,7 +9,6 @@ import org.slams.server.court.dto.request.TimeEnum;
 import org.slams.server.court.dto.response.*;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.repository.CourtRepository;
-import org.slams.server.court.repository.NewCourtRepository;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.user.entity.User;
 import org.slams.server.user.repository.UserRepository;
@@ -81,10 +80,7 @@ public class CourtService {
 
     }
 
-
-    @Transactional
-    public List<CourtByDateByBoundaryResponseDto> findByDateByBoundary(RequestParamVo requestParamVo) {
-
+    public List<CourtByDateAndBoundaryResponse> findByDateAndBoundary(RequestParamVo requestParamVo) {
         String date=requestParamVo.getDate();
         String time=requestParamVo.getTime();
 
@@ -92,43 +88,26 @@ public class CourtService {
         LocalDateTime startLocalDateTime=localDateTimes.get(0);
         LocalDateTime endLocalDateTime=localDateTimes.get(1);
 
-        List<String> latitude = requestParamVo.getLatitude();
-
-
-        List<Double> latitudes = changeValue(requestParamVo.getLatitude());
+        List<Double> latitudes = requestParamVo.getLatitude();
         Collections.sort(latitudes);
-        List<Double> longitudes = changeValue(requestParamVo.getLongitude());
-        Collections.sort(longitudes);
-
-
-        log.info("localDateTIme"+startLocalDateTime.toString());
-        log.info("endDateTime"+endLocalDateTime.toString());
-        log.info("latitudes"+latitudes.toString());
-        log.info("longitudes"+longitudes.toString());
         double startLatitude=latitudes.get(0);
         double endLatitude=latitudes.get(1);
 
+        List<Double> longitudes = requestParamVo.getLongitude();
+        Collections.sort(longitudes);
         double startLongitude=longitudes.get(0);
         double endLongitude=longitudes.get(1);
 
-        // 위도 경도로 코트 찾고
-        List<Court> byBoundary = courtRepository.findByBoundary(startLatitude, endLatitude, startLongitude, endLongitude);
+        List<Court> courtsByBoundary = courtRepository.findByBoundary(startLatitude, endLatitude, startLongitude, endLongitude);
 
+        List<CourtByDateAndBoundaryResponse> courtByDateAndBoundaryResponseList =new ArrayList<>();
+        for (Court court:courtsByBoundary) {
+            Long reservations = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, court.getId());
 
-        List<CourtByDateByBoundaryResponseDto> courtByDateByBoundaryResponseDtoList=new ArrayList<>();
-        for (Court court:byBoundary) {
-            Long courtId=court.getId();
-            Long reservations = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, courtId);
-//            Long reservations = reservationRepository.findByDate(courtId);
-
-            log.info("courtId:"+courtId);
-            log.info("reservations:"+reservations);
-
-            courtByDateByBoundaryResponseDtoList.add(new CourtByDateByBoundaryResponseDto(court,reservations));
+            courtByDateAndBoundaryResponseList.add(CourtByDateAndBoundaryResponse.toResponse(court,reservations));
         }
 
-        return courtByDateByBoundaryResponseDtoList;
-
+        return courtByDateAndBoundaryResponseList;
     }
 
     private List<LocalDateTime> changeTimeZone(String date, String time) {
@@ -165,18 +144,6 @@ public class CourtService {
 
         return dateTimeList;
 
-    }
-
-
-
-    public List<Double> changeValue(List<String> value) {
-        List<Double> doubleValue=new ArrayList<>();
-
-        for (String val:value) {
-            doubleValue.add(Double.valueOf(val));
-        }
-
-        return doubleValue;
     }
 
 }
