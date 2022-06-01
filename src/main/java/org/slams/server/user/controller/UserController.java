@@ -1,8 +1,11 @@
 package org.slams.server.user.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.user.dto.request.ExtraUserInfoRequest;
 import org.slams.server.user.dto.response.*;
 import org.slams.server.user.exception.InvalidTokenException;
@@ -56,8 +59,19 @@ public class UserController {
 		return ResponseEntity.ok(myProfileResponse);
 	}
 
+	@ApiResponses({
+		@ApiResponse(
+			code = 200
+			, message = "조회 성공"
+		),
+		@ApiResponse(
+			code = 400
+			, message = "존재하지 않는 유저에 접근"
+			, response = ErrorResponse.class
+		)
+	})
 	@GetMapping("/{userId}")
-	public ResponseEntity<UserProfileResponse> getUserInfo(HttpServletRequest request, @PathVariable Long userId){
+	public ResponseEntity<UserProfileResponse> getUserInfo(HttpServletRequest request, @PathVariable Long userId) {
 		String authorization = request.getHeader("Authorization");
 		String[] tokenString = authorization.split(" ");
 		if (!tokenString[0].equals("Bearer")) {
