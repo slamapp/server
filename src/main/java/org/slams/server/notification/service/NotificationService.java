@@ -73,14 +73,14 @@ public class NotificationService {
         ));
     }
 
-    public NotificationResponse saveForFollowNotification(FollowNotificationRequest request, Long userId){
+    public NotificationResponse saveForFollowNotification(Long receiverId, Long userId){
 
         User creator = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("팔로우한 해당 사용자는 존재하지 않는 사용자 입니다."));
 
         User receiver = userRepository
-                .findById(Long.valueOf(request.getReceiverId()))
+                .findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException("팔로우 당한 사용자는 존재하지 않는 사용자 입니다."));
 
         /** follow service 에서 follow 저장하는 로직의 리턴 값을 저장된 객체로 요청해보기. 지금 리턴값은 void 임
@@ -93,7 +93,7 @@ public class NotificationService {
                 .orElseThrow(() -> new FollowNotFoundException("존재하지 않는 follow 정보 입니다."));
 
         return notificationConvertor.toDto(notificationRepository.save(
-                Notification.createFollow(Long.valueOf(request.getReceiverId()), follow)
+                Notification.createFollow(receiverId, follow)
         ));
     }
 
@@ -159,8 +159,8 @@ public class NotificationService {
     }
 
     @Transactional
-    public void deleteFollowNotification(FollowNotificationRequest request, Long userId){
-        notificationRepository.deleteByReceiverIdAndSendIdOnFollowNotification(Long.valueOf(request.getReceiverId()), userId);
+    public void deleteFollowNotification(Long receiverId, Long userId){
+        notificationRepository.deleteByReceiverIdAndSendIdOnFollowNotification(receiverId, userId);
     }
 
 //    public Notification findByReceiverIdCreatorId(Long receiverId, Long creatorId){

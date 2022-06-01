@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 @Controller
-@ApiOperation("공지 도메인 - 웹소켓")
+@ApiOperation("(삭제 예정) 공지 도메인 - 웹소켓")
 public class NotificationWebSocketController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -64,9 +64,9 @@ public class NotificationWebSocketController {
         );
     }
 
-    @ApiOperation("[공지] 팔로우 공지 전송")
+    @ApiOperation("[삭제예정] 팔로우 공지 전송")
     @MessageMapping("/follow")
-    public void saveFollowNotification(
+    public void saveFollowNotificationWebsocket(
             FollowNotificationRequest message,
             SimpMessageHeaderAccessor headerAccessor
             ){
@@ -77,7 +77,7 @@ public class NotificationWebSocketController {
         }
 
         followService.follow(userId, Long.valueOf(message.getReceiverId()));
-        NotificationResponse notification = notificationService.saveForFollowNotification(message, userId);
+        NotificationResponse notification = notificationService.saveForFollowNotification(Long.parseLong(message.getReceiverId()), userId);
 
         websocket.convertAndSend(
                 String.format("/user/%s/notification", message.getReceiverId()),
@@ -85,21 +85,21 @@ public class NotificationWebSocketController {
                 );
     }
 
-    @ApiOperation("[공지] 팔로우 취소")
+    @ApiOperation("[삭제예정] 팔로우 취소")
     @MessageMapping("/followcancel")
-    public void deleteFollowNotification(
+    public void deleteFollowNotificationWebsocket(
             FollowNotificationRequest message,
             SimpMessageHeaderAccessor headerAccessor
     ){
         Long userId = websocketUtil.findTokenFromHeader(headerAccessor);
 
-        notificationService.deleteFollowNotification(message, userId);
+        notificationService.deleteFollowNotification(Long.parseLong(message.getReceiverId()), userId);
         followService.unfollow(userId, Long.valueOf(message.getReceiverId()));
     }
 
-    @ApiOperation("[공지] 농구장 확성기 공지 전송")
+    @ApiOperation("[삭제예정] 농구장 확성기 공지 전송")
     @MessageMapping("/loudspeaker")
-    public void saveLoudSpeakerAndThenSending(
+    public void saveLoudSpeakerAndThenSendingWebsocket(
             LoudspeakerNotificationRequest request,
             SimpMessageHeaderAccessor headerAccessor
     ){
