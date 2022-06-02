@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -215,6 +216,43 @@ public class CourtControllerTest {
             ));
     }
 
+    @Test
+    @DisplayName("[GET] /api/v1/courts/{courtId}/detail")
+    void getDetail() throws Exception {
+        // given
+		CourtDetailResponse response = CourtDetailResponse.toResponse(court, 1L);
+
+		given(courtService.findDetail(anyLong(), any(), any())).willReturn(response);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/courts/{courtId}/detail", court.getId())
+				.header("Authorization", jwtToken)
+                .param("date", "2022-01-01")
+                .param("time", "dawn")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+        // then
+
+        resultActions.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json;charset=UTF-8"))
+			.andDo(document("courts/court-getDetail", preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				responseFields(
+					fieldWithPath("court").type(JsonFieldType.OBJECT).description("농구장"),
+                    fieldWithPath("court.id").type(JsonFieldType.STRING).description("농구장 구별키"),
+                    fieldWithPath("court.name").type(JsonFieldType.STRING).description("농구장 이름"),
+                    fieldWithPath("court.latitude").type(JsonFieldType.NUMBER).description("농구장 위도"),
+                    fieldWithPath("court.longitude").type(JsonFieldType.NUMBER).description("농구장 경도"),
+                    fieldWithPath("court.image").type(JsonFieldType.STRING).description("농구장 이미지"),
+                    fieldWithPath("court.basketCount").type(JsonFieldType.NUMBER).description("농구장 골대 갯수"),
+                    fieldWithPath("court.texture").type(JsonFieldType.STRING).description("농구장 바닥 재질"),
+                    fieldWithPath("court.createdAt").type(JsonFieldType.STRING).description("농구장 정보 최초 생성시간"),
+                    fieldWithPath("court.updatedAt").type(JsonFieldType.STRING).description("농구장 정보 최근 수정시간"),
+                    fieldWithPath("reservationMaxCount").type(JsonFieldType.NUMBER).description("농구장 예약 최대 갯수")
+				)
+			));
+    }
 
 
 //    @Test
