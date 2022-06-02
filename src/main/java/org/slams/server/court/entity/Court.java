@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import org.slams.server.reservation.entity.Reservation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +20,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "court")
-@Builder
-@AllArgsConstructor
 public class Court extends BaseEntity {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +67,19 @@ public class Court extends BaseEntity {
         this.image = image;
         this.basketCount = basketCount;
         this.texture = texture;
+    }
+
+    @Builder
+    public Court(LocalDateTime createdAt, LocalDateTime updatedAt, Long id, String name, double latitude, double longitude, String image, int basketCount, Texture texture, List<Reservation> reservations) {
+        super(createdAt, updatedAt);
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.image = image;
+        this.basketCount = basketCount;
+        this.texture = texture;
+        this.reservations = reservations;
     }
 
 }

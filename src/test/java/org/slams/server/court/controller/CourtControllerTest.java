@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
+import org.slams.server.court.dto.request.RequestParamVo;
+import org.slams.server.court.dto.response.CourtByDateAndBoundaryResponse;
 import org.slams.server.court.dto.response.CourtDetailResponse;
 import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.court.dto.response.CourtReservationResponseDto;
@@ -33,6 +35,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,7 +59,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-@Slf4j
 public class CourtControllerTest {
 
     @Autowired
@@ -254,57 +257,56 @@ public class CourtControllerTest {
 			));
     }
 
+    @Test
+    @DisplayName("[GET] /api/v1/courts")
+    void getAllByDateAndBoundary() throws Exception {
+        // given
+        RequestParamVo requestParamVo = new RequestParamVo("2022-01-01", "DAWN", List.of(0.00, 300.00), List.of(0.00, 300.00));
 
-//    @Test
-//    @DisplayName("[GET] '/api/v1/courts/detail/{courtId}/{date}/{time}")
-//    void testDetailCourt() throws Exception {
-//
-//        // 사용자가 예약한 코트에 대한 정보 알기
-//
-//        // GIVEN
-//        LocalDateTime now = LocalDateTime.now();
-//        court=Court.builder()
-//                .id(1L)
-//                .name("관악구민운동장 농구장")
-//                .latitude(38.987654)
-//                .longitude(12.309472)
-//                .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
-//                .texture(Texture.ASPHALT)
-//                .basketCount(2)
-//                .build();
-//
-//        court.setCreatedAt(now);
-//        court.setUpdateAt(now);
-//
-//
-//        CourtDetailResponse courtDetailResponse =new CourtDetailResponse(court, 3L);
-//
-//        given(courtService.findDetail(any(),any(),any())).willReturn(courtDetailResponse);
-//        String date="2019-04-20";
-//        String time="dawn";
-//
-//
-//        RequestBuilder request = MockMvcRequestBuilders.get("/api/v1/courts/detail/1/"+date+"/"+time)
-//                .header("Authorization",jwtToken)
-//                .contentType(MediaType.APPLICATION_JSON); // TODO: 사진 들어오면 multipart/form-data
-//
-//        // WHEN // THEN
-//        mockMvc.perform(request)
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andDo(document("AllCourt-select",
-//                        responseFields(
-//                                fieldWithPath("courtName").type(JsonFieldType.STRING).description("코트 이름"),
-//                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
-//                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
-//                                fieldWithPath("image").type(JsonFieldType.STRING).description("코트 이미지"),
-//                                fieldWithPath("texture").type(JsonFieldType.STRING).description("코트 재질"),
-//                                fieldWithPath("basketCount").type(JsonFieldType.NUMBER).description("골대 갯수"),
-//                                fieldWithPath("courtReservation").type(JsonFieldType.NUMBER).description("농구장 코트 예약한 수"),
-//                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("코트 생성일자"),
-//                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("코트 수정일자")
-//                        )
-//                ));
-//    }
+        Court court2 = Court.builder()
+            .id(2L)
+            .name("슬램시 농구장")
+            .latitude(193.45903)
+            .longitude(63.29484)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+
+        CourtByDateAndBoundaryResponse response1 = CourtByDateAndBoundaryResponse.toResponse(court, 1L);
+        CourtByDateAndBoundaryResponse response2 = CourtByDateAndBoundaryResponse.toResponse(court2, 3L);
+
+        given(courtService.findByDateAndBoundary(any())).willReturn(List.of(response1, response2));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/courts")
+                .header("Authorization", jwtToken)
+                .param("date", "2022-01-01")
+                .param("time", "DAWN")
+                .param("latitude", "0.00")
+                .param("latitude", "300.00")
+                .param("longitude", "0.00")
+                .param("longitude", "300.00")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print());
+
+        // then
+
+        resultActions.andExpect(status().isOk())
+            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andDo(document("courts/court-getAllByDateAndBoundary", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("[]").type(JsonFieldType.ARRAY).description("농구장 목록"),
+                    fieldWithPath("[].court").type(JsonFieldType.OBJECT).description("농구장"),
+                    fieldWithPath("[].court.id").type(JsonFieldType.STRING).description("농구장 구별키"),
+                    fieldWithPath("[].court.name").type(JsonFieldType.STRING).description("농구장 이름"),
+                    fieldWithPath("[].court.latitude").type(JsonFieldType.NUMBER).description("농구장 위도"),
+                    fieldWithPath("[].court.longitude").type(JsonFieldType.NUMBER).description("농구장 경도"),
+                    fieldWithPath("[].court.createdAt").type(JsonFieldType.STRING).description("농구장 정보 최초 생성시간"),
+                    fieldWithPath("[].court.updatedAt").type(JsonFieldType.STRING).description("농구장 정보 최근 수정시간"),
+                    fieldWithPath("[].reservationMaxCount").type(JsonFieldType.NUMBER).description("농구장 예약 최대 갯수")
+                )
+            ));
+    }
 
 }
