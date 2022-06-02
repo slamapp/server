@@ -45,9 +45,9 @@ public class CourtController {
 	}
 
 	@ApiOperation("농구장 상세정보 조회")
-	@GetMapping("/detail/{courtId}/{date}/{time}")
+	@GetMapping("/{courtId}/detail")
 	public ResponseEntity<CourtDetailResponse> getDetail(
-		@PathVariable Long courtId, @PathVariable String date, @PathVariable String time) {
+		@PathVariable Long courtId, @RequestParam String date, @RequestParam String time) {
 		return ResponseEntity.ok(courtService.findDetail(courtId, date, time));
 	}
 
