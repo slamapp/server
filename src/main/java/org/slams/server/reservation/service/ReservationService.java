@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.error.exception.ErrorCode;
+import org.slams.server.court.dto.response.CourtReservationResponseDto;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
@@ -25,11 +26,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Slf4j
@@ -201,6 +204,21 @@ public class ReservationService {
 
         return new CursorPageResponse<>(reservationExpiredResponseDtoList, lastId.toString());
     }
+
+
+//    public List<CourtReservationResponseDto> findCourtReservationsByDate(Long courtId, String date) {
+//        Court court=courtRepository.findById(courtId)
+//            .orElseThrow(() -> new CourtNotFoundException(
+//                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", courtId)));
+//
+//        LocalDate dateTime = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
+//        LocalDateTime startLocalDateTime=dateTime.atStartOfDay();
+//        LocalDateTime endLocalDateTime= dateTime.atTime(23,59,59);
+//
+//        return reservationRepository.findByIdAndDate(courtId,startLocalDateTime,endLocalDateTime).stream()
+//            .map(CourtReservationResponseDto::new)
+//            .collect(Collectors.toList());
+//    }
 
 
 

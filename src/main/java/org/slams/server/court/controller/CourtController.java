@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
@@ -22,11 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/courts")
@@ -55,25 +51,6 @@ public class CourtController {
 		return ResponseEntity.ok(courtService.findDetail(courtId, date, time));
 	}
 
-	@GetMapping("/{courtId}/reservations/{date}")
-	public ResponseEntity<Map<String, Object>> getReservationCourts(@PathVariable Long courtId, @PathVariable String date, HttpServletRequest request) {
-
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
-
-		log.info("userId" + userId);
-
-
-		Map<String, Object> result = new HashMap<>();
-		result.put("courtId", courtId);
-		result.put("date", date);
-		result.put("reservations", courtService.findCourtReservations(courtId, date, userId));
-
-
-		// 여기에 추가로 header 토큰 정보가 들어가야 함.
-		return ResponseEntity.ok().body(result);
-	}
 	@ApiOperation("날짜, 시간, 바운더리로 농구장 검색")
 	@GetMapping()
 	public ResponseEntity<List<CourtByDateAndBoundaryResponse>> getAllByDateAndBoundary(

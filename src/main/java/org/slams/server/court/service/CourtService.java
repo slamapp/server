@@ -2,7 +2,6 @@ package org.slams.server.court.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.common.utils.AwsS3Uploader;
 import org.slams.server.court.dto.request.RequestParamVo;
 import org.slams.server.court.dto.request.TimeEnum;
@@ -10,7 +9,6 @@ import org.slams.server.court.dto.response.*;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.reservation.repository.ReservationRepository;
-import org.slams.server.user.entity.User;
 import org.slams.server.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,6 @@ import java.util.stream.Collectors;
 public class CourtService {
 
     private final CourtRepository courtRepository;
-    private final UserRepository userRepository;
     private final AwsS3Uploader awsS3Uploader;
     private final ReservationRepository reservationRepository;
 
@@ -47,37 +44,6 @@ public class CourtService {
         Long reservationMaxCount = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, courtId);
 
         return CourtDetailResponse.toResponse(court, reservationMaxCount);
-    }
-
-
-
-    @Transactional
-    public List<CourtReservationResponseDto> findCourtReservations(Long courtId, String date, Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new org.slams.server.user.exception.UserNotFoundException(
-                        MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
-
-
-        // court 검색
-        Court court=courtRepository.findById(courtId)
-                .orElseThrow(() -> new CourtNotFoundException(ErrorCode.NOT_EXIST_COURT.getMessage()));
-
-        LocalDate dateTime = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-        LocalDateTime startLocalDateTime=dateTime.atStartOfDay();
-        LocalDateTime endLocalDateTime= dateTime.atTime(23,59,59);
-
-
-        log.info("localDateTIme"+startLocalDateTime.toString());
-        log.info("endDateTime"+endLocalDateTime.toString());
-
-//        List<Reservation> byCourt = reservationRepository.findByCourt(courtId);
-
-
-        return reservationRepository.findAllByCourtAndDate(courtId,startLocalDateTime,endLocalDateTime).stream()
-                .map(CourtReservationResponseDto::new)
-                .collect(Collectors.toList());
-
     }
 
     public List<CourtByDateAndBoundaryResponse> findByDateAndBoundary(RequestParamVo requestParamVo) {
@@ -143,7 +109,6 @@ public class CourtService {
         dateTimeList.add(endLocalDateTime);
 
         return dateTimeList;
-
     }
 
 }
