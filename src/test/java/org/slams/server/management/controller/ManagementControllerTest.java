@@ -85,7 +85,7 @@ class ManagementControllerTest {
 	@Test
 	void getNewCourtsInReady() throws Exception {
 		// given
-		CursorPageRequest request = new CursorPageRequest(3, 5L, false);
+		CursorPageRequest request = new CursorPageRequest(3, "5", false);
 
 		NewCourt newCourt = NewCourt.builder()
 			.id(1L)
@@ -107,7 +107,7 @@ class ManagementControllerTest {
 
 		List<NewCourtInReadyLookUpResponse> newCourts = List.of(NewCourtInReadyLookUpResponse.toResponse(newCourt));
 
-		CursorPageResponse<List<NewCourtInReadyLookUpResponse>> response = new CursorPageResponse<>(newCourts, 5L);
+		CursorPageResponse<List<NewCourtInReadyLookUpResponse>> response = new CursorPageResponse<>(newCourts, "5");
 
 		given(newCourtService.getNewCourtsInReady(any())).willReturn(response);
 
@@ -155,7 +155,7 @@ class ManagementControllerTest {
 	@Test
 	void getNewCourtsInDone() throws Exception {
 		// given
-		CursorPageRequest request = new CursorPageRequest(3, 5L, false);
+		CursorPageRequest request = new CursorPageRequest(3, "5", false);
 
 		User creator = User.builder()
 			.id(1L)
@@ -193,7 +193,7 @@ class ManagementControllerTest {
 		List<NewCourtInDoneLookUpResponse> newCourts = List.of(
 			NewCourtInDoneLookUpResponse.toResponse(deniedCourt), NewCourtInDoneLookUpResponse.toResponse(acceptedCourt));
 
-		CursorPageResponse<List<NewCourtInDoneLookUpResponse>> response = new CursorPageResponse<>(newCourts, 5L);
+		CursorPageResponse<List<NewCourtInDoneLookUpResponse>> response = new CursorPageResponse<>(newCourts, "5");
 
 		given(newCourtService.getNewCourtsInDone(any())).willReturn(response);
 

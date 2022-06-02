@@ -81,7 +81,7 @@ class FollowControllerTest {
 	@Test
 	void followerPage() throws Exception {
 		// given
-		CursorPageRequest request = new CursorPageRequest(2, 5L, false);
+		CursorPageRequest request = new CursorPageRequest(2, "5", false);
 
 		User user1 = User.builder()
 			.id(1L)
@@ -118,7 +118,7 @@ class FollowControllerTest {
 			FollowerResponse.toResponse(follow1)
 		);
 
-		CursorPageResponse<List<FollowerResponse>> response = new CursorPageResponse<>(followerList, 1L);
+		CursorPageResponse<List<FollowerResponse>> response = new CursorPageResponse<>(followerList, "1");
 
 		given(followService.followerPage(anyLong(), any())).willReturn(response);
 
@@ -156,7 +156,7 @@ class FollowControllerTest {
 	@Test
 	void followingPage() throws Exception {
 		// given
-		CursorPageRequest request = new CursorPageRequest(2, 5L, false);
+		CursorPageRequest request = new CursorPageRequest(2, "5", false);
 
 		User user1 = User.builder()
 			.id(1L)
@@ -193,7 +193,7 @@ class FollowControllerTest {
 			FollowingResponse.toResponse(follow1)
 		);
 
-		CursorPageResponse<List<FollowingResponse>> response = new CursorPageResponse<>(followingList, 1L);
+		CursorPageResponse<List<FollowingResponse>> response = new CursorPageResponse<>(followingList, "1");
 
 		given(followService.followingPage(anyLong(), any())).willReturn(response);
 

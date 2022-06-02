@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 public class CursorPageResponse<T> {
 
 	private T contents;
-	private Long lastId;
+	private String lastId;
 
 }

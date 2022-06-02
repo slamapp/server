@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,23 +18,23 @@ import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification, String> {
 
-    @Query("SELECT a.id FROM Notification a WHERE a.userId =:userId AND a.id < :lastId ORDER BY a.createdAt desc")
-    List<Long> findIdByUserLessThanAlarmIdByCreated(
+    @Query("SELECT a.id FROM Notification a WHERE a.userId =:userId AND a.createdAt < :createdAt ORDER BY a.createdAt desc")
+    List<String> findIdByUserLessThanCreatedAtOrderByCreatedAt(
             @Param("userId") Long userId,
-            @Param("lastId") Long lastId,
+            @Param("createdAt") LocalDateTime createdAt,
             Pageable pageable
     );
 
     @Query("SELECT a.id FROM Notification a WHERE a.userId =:userId ORDER BY a.createdAt desc")
-    List<Long> findIdByUserByCreated(
+    List<String> findIdByUserByCreated(
             @Param("userId") Long userId,
             Pageable pageable
     );
 
-    @Query("SELECT a FROM Notification a WHERE a.userId =:userId AND a.id < :lastId ORDER BY a.createdAt desc")
-    List<Notification> findAllByUserLessThanAlarmIdByCreated(
+    @Query("SELECT a FROM Notification a WHERE a.userId =:userId AND a.createdAt < :createdAt ORDER BY a.createdAt desc")
+    List<Notification> findAllByUserLessThanCreatedAtOrderByCreatedAt(
             @Param("userId") Long userId,
-            @Param("lastId") Long lastId,
+            @Param("createdAt") LocalDateTime createdAt,
             Pageable pageable
     );
 

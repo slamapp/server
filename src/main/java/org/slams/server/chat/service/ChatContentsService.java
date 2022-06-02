@@ -96,18 +96,18 @@ public class ChatContentsService {
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
         return cursorRequest.getIsFirst() ?
                 chatContentsRepository.findAllByCourtIdByCreated(courtId, pageable):
-                chatContentsRepository.findAllByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastId(), pageable);
+                chatContentsRepository.findAllByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastIdParedForLong(), pageable);
     }
 
     public ChatContentsResponse sendChatContent(ChatContents chatContents){
         return chatContentConvertor.toDto(chatContents);
     }
 
-    public Long findLastId(Long courtId, CursorPageRequest cursorRequest){
+    public String findLastId(Long courtId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
-        List<Long> ids = cursorRequest.getIsFirst() ?
+        List<String> ids = cursorRequest.getIsFirst() ?
                 chatContentsRepository.findIdByCourtIdByCreated(courtId, pageable):
-                chatContentsRepository.findIdByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastId(), pageable);
+                chatContentsRepository.findIdByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastIdParedForLong(), pageable);
 
         // 빈 배열 일 때
         if (ids.size() -1 < 0) {

@@ -36,14 +36,14 @@ public class FollowService {
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 		List<Follow> followers = cursorPageRequest.getIsFirst() ?
 			followRepository.findByFollowingIdOrderByIdDesc(userId, pageable) :
-			followRepository.findByFollowingIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastId(), pageable);
+			followRepository.findByFollowingIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastIdParedForLong(), pageable);
 
 		List<FollowerResponse> followerList = new ArrayList<>();
 		followers.forEach(follow -> followerList.add(FollowerResponse.toResponse(follow)));
 
 		Long lastId = followers.size() < cursorPageRequest.getSize() ? null : followers.get(followers.size() - 1).getId();
 
-		return new CursorPageResponse<>(followerList, lastId);
+		return new CursorPageResponse<>(followerList, lastId.toString());
 	}
 
 	public CursorPageResponse<List<FollowingResponse>> followingPage(Long userId, CursorPageRequest cursorPageRequest) {
@@ -54,14 +54,14 @@ public class FollowService {
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 		List<Follow> followings = cursorPageRequest.getIsFirst() ?
 			followRepository.findByFollowerIdOrderByIdDesc(userId, pageable) :
-			followRepository.findByFollowerIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastId(), pageable);
+			followRepository.findByFollowerIdAndIdLessThanOrderByIdDesc(userId, cursorPageRequest.getLastIdParedForLong(), pageable);
 
 		List<FollowingResponse> followingList = new ArrayList<>();
 		followings.forEach(follow -> followingList.add(FollowingResponse.toResponse(follow)));
 
 		Long lastId = followings.size() < cursorPageRequest.getSize() ? null : followings.get(followings.size() - 1).getId();
 
-		return new CursorPageResponse<>(followingList, lastId);
+		return new CursorPageResponse<>(followingList, lastId.toString());
 	}
 
 	@Transactional

@@ -8,19 +8,10 @@ import lombok.Getter;
 public class CursorPageRequest {
 
 	private int size;
-	private Long lastId;
+	private String lastId;
 	private Boolean isFirst;
 
-//	public void setSize(int size) {
-//		this.size = size;
-//	}
-//
-//	public void setLastId(Long lastId) {
-//		this.lastId = lastId;
-//	}
-//
-//	public void setIsFirst(Boolean first) {
-//		this.isFirst = first;
-//	}
-
+	public Long getLastIdParedForLong() {
+		return lastId == null ? null : Long.parseLong(lastId);
+	}
 }
