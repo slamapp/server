@@ -31,7 +31,7 @@ public class CourtDetailDto extends BaseResponse {
 		this.texture = texture;
 	}
 
-	public static CourtDetailDto toDto(Court court){
+	public static CourtDetailDto toDto(Court court) {
 		return new CourtDetailDto(court.getId().toString(), court.getName(), court.getLatitude(), court.getLongitude(),
 			court.getImage(), court.getBasketCount(), court.getTexture(), court.getCreatedAt(), court.getUpdateAt());
 	}

@@ -22,64 +22,64 @@ import java.util.List;
 @Table(name = "court")
 public class Court extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+	@Column(nullable = false, length = 50)
+	private String name;
 
-    @Column(nullable = false)
-    private double latitude;
+	@Column(nullable = false)
+	private double latitude;
 
-    @Column(nullable = false)
-    private double longitude;
+	@Column(nullable = false)
+	private double longitude;
 
-    private String image;
+	private String image;
 
-    @Column(nullable = false, name = "basket_count")
-    private int basketCount;
+	@Column(nullable = false, name = "basket_count")
+	private int basketCount;
 
-    @Enumerated(EnumType.STRING)
-    private Texture texture;
+	@Enumerated(EnumType.STRING)
+	private Texture texture;
 
-    //Court - Reservation 양방향 매핑
-    @OneToMany(mappedBy = "court")
-    private List<Reservation> reservations = new ArrayList<>();
+	//Court - Reservation 양방향 매핑
+	@OneToMany(mappedBy = "court")
+	private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "new_court_id", referencedColumnName = "id")
-    private NewCourt newCourt;
+	@OneToOne
+	@JoinColumn(name = "new_court_id", referencedColumnName = "id")
+	private NewCourt newCourt;
 
-    public void addReservation(Reservation reservation) {
-        reservations.add(reservation);
-    }
+	public void addReservation(Reservation reservation) {
+		reservations.add(reservation);
+	}
 
-    public void removeReservation(Reservation reservation) {
-        reservations.remove(reservation);
-    }
+	public void removeReservation(Reservation reservation) {
+		reservations.remove(reservation);
+	}
 
-    public Court(String name, double latitude, double longitude, String image, int basketCount, Texture texture) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.image = image;
-        this.basketCount = basketCount;
-        this.texture = texture;
-    }
+	public Court(String name, double latitude, double longitude, String image, int basketCount, Texture texture) {
+		this.name = name;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.image = image;
+		this.basketCount = basketCount;
+		this.texture = texture;
+	}
 
-    @Builder
-    public Court(LocalDateTime createdAt, LocalDateTime updatedAt, Long id, String name, double latitude, double longitude, String image, int basketCount, Texture texture, List<Reservation> reservations) {
-        super(createdAt, updatedAt);
-        this.id = id;
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.image = image;
-        this.basketCount = basketCount;
-        this.texture = texture;
-        this.reservations = reservations;
-    }
+	@Builder
+	public Court(LocalDateTime createdAt, LocalDateTime updatedAt, Long id, String name, double latitude, double longitude, String image, int basketCount, Texture texture, List<Reservation> reservations) {
+		super(createdAt, updatedAt);
+		this.id = id;
+		this.name = name;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.image = image;
+		this.basketCount = basketCount;
+		this.texture = texture;
+		this.reservations = reservations;
+	}
 
 }

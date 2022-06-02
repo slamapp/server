@@ -5,5 +5,4 @@ package org.slams.server.court.entity;
  */
 public enum Texture {
     RUBBER,URETHANE,ASPHALT,SOIL,CONCRETE,ETC
-
 }

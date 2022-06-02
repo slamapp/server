@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.error.exception.ErrorCode;
-import org.slams.server.court.dto.response.CourtReservationResponseDto;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;

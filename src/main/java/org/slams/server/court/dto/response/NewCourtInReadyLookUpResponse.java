@@ -18,7 +18,7 @@ public class NewCourtInReadyLookUpResponse {
 		this.creator = creator;
 	}
 
-	public static NewCourtInReadyLookUpResponse toResponse(NewCourt newCourt){
+	public static NewCourtInReadyLookUpResponse toResponse(NewCourt newCourt) {
 		return new NewCourtInReadyLookUpResponse(NewCourtDto.toDto(newCourt), CreatorDto.toDto(newCourt.getProposer()));
 	}
 

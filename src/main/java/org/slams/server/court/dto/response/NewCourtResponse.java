@@ -43,7 +43,7 @@ public class NewCourtResponse {
 		this.supervisor = supervisor;
 	}
 
-	public static NewCourtResponse toResponse(NewCourt newCourt, User supervisor){
+	public static NewCourtResponse toResponse(NewCourt newCourt, User supervisor) {
 		return new NewCourtResponse(newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
 			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus(),
 			newCourt.getCreatedAt(), newCourt.getUpdateAt(), SupervisorDto.toDto(supervisor));
