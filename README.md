@@ -67,4 +67,4 @@
 <br>
 
 ## 🔗 Client Git Repo
-[slam-client](https://github.com/prgrms-web-devcourse/slam-client)
+[slam-client](https://github.com/slamapp/client)
