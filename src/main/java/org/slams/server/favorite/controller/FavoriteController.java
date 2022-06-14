@@ -51,13 +51,14 @@ public class FavoriteController {
             favoriteService.insert(favoriteInsertRequest, userId), HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<FavoriteLookUpResponse>> getAll(HttpServletRequest request) {
-        TokenGetId token = new TokenGetId(request, jwt);
-        Long userId = token.getUserId();
+	@ApiOperation("즐겨칮기 목록 조회")
+	@GetMapping()
+	public ResponseEntity<List<FavoriteLookUpResponse>> getAll(HttpServletRequest request) {
+		TokenGetId token = new TokenGetId(request, jwt);
+		Long userId = token.getUserId();
 
-        return ResponseEntity.ok().body(favoriteService.getAll(userId));
-    }
+		return ResponseEntity.ok().body(favoriteService.getAll(userId));
+	}
 
     @DeleteMapping("{favoriteId}")
     public ResponseEntity<FavoriteDeleteResponseDto> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
