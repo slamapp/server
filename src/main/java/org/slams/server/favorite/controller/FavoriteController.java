@@ -3,9 +3,9 @@ package org.slams.server.favorite.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.TokenGetId;
-import org.slams.server.favorite.dto.request.FavoriteInsertRequestDto;
+import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
-import org.slams.server.favorite.dto.response.FavoriteInsertResponseDto;
+import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
 import org.slams.server.favorite.service.FavoriteService;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
@@ -25,12 +25,13 @@ public class FavoriteController {
     private final Jwt jwt;
 
     @PostMapping()
-    public ResponseEntity<FavoriteInsertResponseDto> insert(@RequestBody FavoriteInsertRequestDto favoriteInsertRequestDto , HttpServletRequest request) {
+    public ResponseEntity<FavoriteInsertResponse> insert(@RequestBody FavoriteInsertRequest favoriteInsertRequest, HttpServletRequest request) {
 
         TokenGetId token=new TokenGetId(request,jwt);
         Long userId=token.getUserId();
 
-        return new ResponseEntity<FavoriteInsertResponseDto>(favoriteService.insert(favoriteInsertRequestDto, userId), HttpStatus.CREATED);
+        return new ResponseEntity<FavoriteInsertResponse>(
+            favoriteService.insert(favoriteInsertRequest, userId), HttpStatus.CREATED);
     }
 
     @GetMapping()

@@ -6,9 +6,9 @@ import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
-import org.slams.server.favorite.dto.request.FavoriteInsertRequestDto;
+import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
-import org.slams.server.favorite.dto.response.FavoriteInsertResponseDto;
+import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
 import org.slams.server.favorite.dto.response.FavoriteSelectResponseDto;
 import org.slams.server.favorite.entity.Favorite;
 import org.slams.server.favorite.repository.FavoriteRepository;
@@ -32,22 +32,19 @@ public class FavoriteService {
     private final CourtRepository courtRepository;
 
 
-
     @Transactional
-    public FavoriteInsertResponseDto insert(FavoriteInsertRequestDto favoriteInsertRequestDto, Long userId) {
-        // User 검색 후 없으면 반환
-        User user =userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(
-                        MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
-        // 코트 검색 후 없으면 반환
-        Court court=courtRepository.findById(favoriteInsertRequestDto.getCourtId())
-                .orElseThrow(() -> new CourtNotFoundException(ErrorCode.NOT_EXIST_COURT.getMessage()));
+    public FavoriteInsertResponse insert(FavoriteInsertRequest favoriteInsertRequest, Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(
+                MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
+        Court court = courtRepository.findById(Long.parseLong(favoriteInsertRequest.getCourtId()))
+            .orElseThrow(() -> new CourtNotFoundException(
+                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", Long.parseLong(favoriteInsertRequest.getCourtId()))));
 
-        Favorite favorite1=Favorite.of(court,user);
-        Favorite save = favoriteRepository.save(favorite1);
+        Favorite favorite = favoriteInsertRequest.toEntity(court, user);
+        favoriteRepository.save(favorite);
 
-        return new FavoriteInsertResponseDto(save);
-
+        return FavoriteInsertResponse.of(favorite);
     }
 
 
