@@ -3,6 +3,7 @@ package org.slams.server.favorite.service;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
@@ -10,15 +11,18 @@ import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
-import org.slams.server.favorite.dto.response.FavoriteLookUpResponseDto;
+import org.slams.server.favorite.dto.response.FavoriteLookUpResponse;
 import org.slams.server.favorite.entity.Favorite;
 import org.slams.server.favorite.repository.FavoriteRepository;
 import org.slams.server.user.entity.User;
 import org.slams.server.user.exception.UserNotFoundException;
 import org.slams.server.user.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,17 +61,14 @@ public class FavoriteService {
         );
     }
 
-
-    // 내가 즐겨찾기 한 코트 검색
-    @Transactional
-    public List<FavoriteSelectResponseDto> getAll(Long userId) {
+    public List<FavoriteLookUpResponse> getAll(Long userId) {
         User user =userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(
-                        MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
+            .orElseThrow(() -> new UserNotFoundException(
+                MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
 
-        return favoriteRepository.findAllByUser(user).stream()
-                .map(FavoriteSelectResponseDto::new)
-                .collect(Collectors.toList());
+        return favoriteRepository.findAllByUserOrderByCreatedAtDesc(user).stream()
+            .map(FavoriteLookUpResponse::toResponse)
+            .collect(Collectors.toList());
     }
 
 

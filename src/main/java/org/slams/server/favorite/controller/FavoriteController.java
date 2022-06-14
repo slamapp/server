@@ -10,6 +10,7 @@ import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
+import org.slams.server.favorite.dto.response.FavoriteLookUpResponse;
 import org.slams.server.favorite.service.FavoriteService;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -50,19 +52,12 @@ public class FavoriteController {
     }
 
     @GetMapping()
-    public ResponseEntity<Map<String,Object>> getAll(HttpServletRequest request) {
+    public ResponseEntity<List<FavoriteLookUpResponse>> getAll(HttpServletRequest request) {
+        TokenGetId token = new TokenGetId(request, jwt);
+        Long userId = token.getUserId();
 
-        // 여기에 추가로 header 토큰 정보가 들어가야 함.
-        // 내가 즐겨찾기 한 코트를 찾아야 함.
-        TokenGetId token=new TokenGetId(request,jwt);
-        Long userId=token.getUserId();
-
-        Map<String,Object>result=new HashMap<>();
-        result.put("favorites",favoriteService.getAll(userId));
-
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(favoriteService.getAll(userId));
     }
-
 
     @DeleteMapping("{favoriteId}")
     public ResponseEntity<FavoriteDeleteResponseDto> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
