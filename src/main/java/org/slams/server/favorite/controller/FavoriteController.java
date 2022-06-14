@@ -17,38 +17,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/favorites")
 public class FavoriteController {
-    private final FavoriteService favoriteService;
-    private final Jwt jwt;
 
-    @ApiOperation("즐겨찾기 추가")
-    @ApiResponses({
-        @ApiResponse(
-            code = 201, message = "추가 성공"
-        ),
-        @ApiResponse(
-            code = 400
-            , message = "존재하지 않는 농구장에 접근"
-            , response = ErrorResponse.class
-        )
-    })
-    @PostMapping()
-    public ResponseEntity<FavoriteInsertResponse> insert(@RequestBody FavoriteInsertRequest favoriteInsertRequest, HttpServletRequest request) {
+	private final FavoriteService favoriteService;
+	private final Jwt jwt;
 
-        TokenGetId token=new TokenGetId(request,jwt);
-        Long userId=token.getUserId();
+	@ApiOperation("즐겨찾기 추가")
+	@ApiResponses({
+		@ApiResponse(
+			code = 201, message = "추가 성공"
+		),
+		@ApiResponse(
+			code = 400
+			, message = "존재하지 않는 농구장에 접근"
+			, response = ErrorResponse.class
+		)
+	})
+	@PostMapping()
+	public ResponseEntity<FavoriteInsertResponse> insert(@RequestBody FavoriteInsertRequest favoriteInsertRequest, HttpServletRequest request) {
 
-        return new ResponseEntity<FavoriteInsertResponse>(
-            favoriteService.insert(favoriteInsertRequest, userId), HttpStatus.CREATED);
-    }
+		TokenGetId token = new TokenGetId(request, jwt);
+		Long userId = token.getUserId();
+
+		return new ResponseEntity<FavoriteInsertResponse>(
+			favoriteService.insert(favoriteInsertRequest, userId), HttpStatus.CREATED);
+	}
 
 	@ApiOperation("즐겨칮기 목록 조회")
 	@GetMapping()
@@ -63,20 +61,14 @@ public class FavoriteController {
 	@ApiResponses({
 		@ApiResponse(code = 204, message = "삭제(취소) 성공")
 	})
-    @DeleteMapping("{favoriteId}")
-    public ResponseEntity<Void> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
-        TokenGetId token=new TokenGetId(request,jwt);
-        Long userId=token.getUserId();
+	@DeleteMapping("{favoriteId}")
+	public ResponseEntity<Void> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
+		TokenGetId token = new TokenGetId(request, jwt);
+		Long userId = token.getUserId();
 
-        favoriteService.delete(favoriteId);
+		favoriteService.delete(favoriteId);
 
-        return ResponseEntity.noContent().build();
-    }
-
-
-
-
-
-
+		return ResponseEntity.noContent().build();
+	}
 
 }

@@ -10,18 +10,18 @@ import java.time.LocalDateTime;
 @Getter
 public class FavoriteInsertResponse extends BaseResponse {
 
-    private String id;
-    private CourtInMapDto court;
+	private String id;
+	private CourtInMapDto court;
 
-    private FavoriteInsertResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, CourtInMapDto court) {
-        super(createdAt, updatedAt);
-        this.id = id;
-        this.court = court;
-    }
+	private FavoriteInsertResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, CourtInMapDto court) {
+		super(createdAt, updatedAt);
+		this.id = id;
+		this.court = court;
+	}
 
-    public static FavoriteInsertResponse toResponse(Favorite favorite){
-        return new FavoriteInsertResponse(
-            favorite.getCreatedAt(), favorite.getUpdatedAt(), favorite.getId().toString(), CourtInMapDto.toDto(favorite.getCourt()));
-    }
+	public static FavoriteInsertResponse toResponse(Favorite favorite) {
+		return new FavoriteInsertResponse(
+			favorite.getCreatedAt(), favorite.getUpdatedAt(), favorite.getId().toString(), CourtInMapDto.toDto(favorite.getCourt()));
+	}
 
 }

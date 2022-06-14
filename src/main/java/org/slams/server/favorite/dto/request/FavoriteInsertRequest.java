@@ -9,15 +9,15 @@ import org.slams.server.user.entity.User;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FavoriteInsertRequest {
 
-    private String courtId;
+	private String courtId;
 
-    @Builder
-    public FavoriteInsertRequest(String courtId) {
-        this.courtId = courtId;
-    }
+	@Builder
+	public FavoriteInsertRequest(String courtId) {
+		this.courtId = courtId;
+	}
 
-    public Favorite toEntity(Court court, User user){
-        return new Favorite(court, user);
-    }
+	public Favorite toEntity(Court court, User user) {
+		return new Favorite(court, user);
+	}
 
 }

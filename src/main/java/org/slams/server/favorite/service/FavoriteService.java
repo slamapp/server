@@ -27,51 +27,51 @@ import java.util.stream.Collectors;
 @Service
 public class FavoriteService {
 
-    private final FavoriteRepository favoriteRepository;
-    private final UserRepository userRepository;
-    private final CourtRepository courtRepository;
+	private final FavoriteRepository favoriteRepository;
+	private final UserRepository userRepository;
+	private final CourtRepository courtRepository;
 
 
-    @Transactional
-    public FavoriteInsertResponse insert(FavoriteInsertRequest favoriteInsertRequest, Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(
-                MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
-        Court court = courtRepository.findById(Long.parseLong(favoriteInsertRequest.getCourtId()))
-            .orElseThrow(() -> new CourtNotFoundException(
-                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", Long.parseLong(favoriteInsertRequest.getCourtId()))));
+	@Transactional
+	public FavoriteInsertResponse insert(FavoriteInsertRequest favoriteInsertRequest, Long userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserNotFoundException(
+				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
+		Court court = courtRepository.findById(Long.parseLong(favoriteInsertRequest.getCourtId()))
+			.orElseThrow(() -> new CourtNotFoundException(
+				MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", Long.parseLong(favoriteInsertRequest.getCourtId()))));
 
-        return FavoriteInsertResponse.toResponse(
-            favoriteRepository.findByCourtAndUser(court, user)
-                .map(favorite -> {
-                    log.warn("Already exists : favorite-courtId({}), userId({})", court.getId(), user.getId());
-                    return favorite;
-                })
-                .orElseGet(() -> {
-                    Favorite favorite = favoriteInsertRequest.toEntity(court, user);
-                    favoriteRepository.save(favorite);
-                    return favorite;
-                })
-        );
-    }
+		return FavoriteInsertResponse.toResponse(
+			favoriteRepository.findByCourtAndUser(court, user)
+				.map(favorite -> {
+					log.warn("Already exists : favorite-courtId({}), userId({})", court.getId(), user.getId());
+					return favorite;
+				})
+				.orElseGet(() -> {
+					Favorite favorite = favoriteInsertRequest.toEntity(court, user);
+					favoriteRepository.save(favorite);
+					return favorite;
+				})
+		);
+	}
 
-    public List<FavoriteLookUpResponse> getAll(Long userId) {
-        User user =userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(
-                MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
+	public List<FavoriteLookUpResponse> getAll(Long userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserNotFoundException(
+				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
 
-        return favoriteRepository.findAllByUserOrderByCreatedAtDesc(user).stream()
-            .map(FavoriteLookUpResponse::toResponse)
-            .collect(Collectors.toList());
-    }
+		return favoriteRepository.findAllByUserOrderByCreatedAtDesc(user).stream()
+			.map(FavoriteLookUpResponse::toResponse)
+			.collect(Collectors.toList());
+	}
 
-    @Transactional
-    public void delete(Long favoriteId) {
-        Favorite reservation= favoriteRepository.findById(favoriteId)
-                .orElseThrow(() -> new FavoriteNotFoundException(
-                    MessageFormat.format("찾고자하는 즐겨찾기를 찾을 수 없습니다. id : {0}", favoriteId)));
+	@Transactional
+	public void delete(Long favoriteId) {
+		Favorite reservation = favoriteRepository.findById(favoriteId)
+			.orElseThrow(() -> new FavoriteNotFoundException(
+				MessageFormat.format("찾고자하는 즐겨찾기를 찾을 수 없습니다. id : {0}", favoriteId)));
 
-        favoriteRepository.delete(reservation);
-    }
+		favoriteRepository.delete(reservation);
+	}
 
 }

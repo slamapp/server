@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "favorite", uniqueConstraints = {@UniqueConstraint(columnNames={"court_id", "user_id"})})
+@Table(name = "favorite", uniqueConstraints = {@UniqueConstraint(columnNames = {"court_id", "user_id"})})
 public class Favorite extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
