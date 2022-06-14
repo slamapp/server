@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
-import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
 import org.slams.server.favorite.dto.response.FavoriteLookUpResponse;
 import org.slams.server.favorite.service.FavoriteService;
@@ -61,11 +60,13 @@ public class FavoriteController {
 	}
 
     @DeleteMapping("{favoriteId}")
-    public ResponseEntity<FavoriteDeleteResponseDto> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
+    public ResponseEntity<Void> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
         TokenGetId token=new TokenGetId(request,jwt);
         Long userId=token.getUserId();
 
-        return new ResponseEntity<FavoriteDeleteResponseDto>(favoriteService.delete(userId, favoriteId), HttpStatus.ACCEPTED);
+        favoriteService.delete(favoriteId);
+
+        return ResponseEntity.noContent().build();
 
     }
 
