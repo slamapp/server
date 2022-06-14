@@ -44,7 +44,7 @@ public class FavoriteService {
         Favorite favorite = favoriteInsertRequest.toEntity(court, user);
         favoriteRepository.save(favorite);
 
-        return FavoriteInsertResponse.of(favorite);
+        return FavoriteInsertResponse.toResponse(favorite);
     }
 
 

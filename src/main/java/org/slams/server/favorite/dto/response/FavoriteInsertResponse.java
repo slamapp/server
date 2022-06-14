@@ -19,7 +19,7 @@ public class FavoriteInsertResponse extends BaseResponse {
         this.court = court;
     }
 
-    public static FavoriteInsertResponse of(Favorite favorite){
+    public static FavoriteInsertResponse toResponse(Favorite favorite){
         return new FavoriteInsertResponse(
             favorite.getCreatedAt(), favorite.getUpdatedAt(), favorite.getId().toString(), CourtInMapDto.toDto(favorite.getCourt()));
     }

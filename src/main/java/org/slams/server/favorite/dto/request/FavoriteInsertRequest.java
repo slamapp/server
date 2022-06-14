@@ -11,8 +11,13 @@ public class FavoriteInsertRequest {
 
     private String courtId;
 
+    @Builder
+    public FavoriteInsertRequest(String courtId) {
+        this.courtId = courtId;
+    }
+
     public Favorite toEntity(Court court, User user){
-        return Favorite.of(court, user);
+        return new Favorite(court, user);
     }
 
 }
