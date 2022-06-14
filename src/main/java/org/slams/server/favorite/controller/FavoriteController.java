@@ -1,8 +1,12 @@
 package org.slams.server.favorite.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.TokenGetId;
+import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
@@ -24,6 +28,17 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
     private final Jwt jwt;
 
+    @ApiOperation("즐겨찾기 추가")
+    @ApiResponses({
+        @ApiResponse(
+            code = 201, message = "추가 성공"
+        ),
+        @ApiResponse(
+            code = 400
+            , message = "존재하지 않는 농구장에 접근"
+            , response = ErrorResponse.class
+        )
+    })
     @PostMapping()
     public ResponseEntity<FavoriteInsertResponse> insert(@RequestBody FavoriteInsertRequest favoriteInsertRequest, HttpServletRequest request) {
 
