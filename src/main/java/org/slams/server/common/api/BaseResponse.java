@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public abstract class BaseResponse {
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
+
 }
 

@@ -9,14 +9,14 @@ import org.slams.server.court.entity.NewCourt;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NewCourtInsertResponse {
 
-    private NewCourtDto newCourt;
+	private NewCourtDto newCourt;
 
-    private NewCourtInsertResponse(NewCourtDto newCourt) {
-        this.newCourt = newCourt;
-    }
+	private NewCourtInsertResponse(NewCourtDto newCourt) {
+		this.newCourt = newCourt;
+	}
 
-    public static NewCourtInsertResponse toResponse(NewCourt newCourt){
-        return new NewCourtInsertResponse(NewCourtDto.toDto(newCourt));
-    }
+	public static NewCourtInsertResponse toResponse(NewCourt newCourt) {
+		return new NewCourtInsertResponse(NewCourtDto.toDto(newCourt));
+	}
 
 }

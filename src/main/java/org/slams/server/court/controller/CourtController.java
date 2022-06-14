@@ -5,12 +5,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
 import org.slams.server.court.dto.request.RequestParamVo;
-import org.slams.server.court.dto.response.CourtDetailResponseDto;
+import org.slams.server.court.dto.response.CourtByDateAndBoundaryResponse;
+import org.slams.server.court.dto.response.CourtDetailResponse;
 import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.court.service.CourtService;
 import org.slams.server.court.service.NewCourtService;
@@ -21,10 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/courts")
@@ -46,49 +44,18 @@ public class CourtController {
 		return new ResponseEntity<NewCourtInsertResponse>(newCourtService.insert(newCourtInsertRequest, userId), HttpStatus.CREATED);
 	}
 
-
-	@GetMapping("/detail/{courtId}/{date}/{time}")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<CourtDetailResponseDto> getDetail(@PathVariable Long courtId, @PathVariable String date, @PathVariable String time) {
-
-		// 여기에 추가로 header 토큰 정보가 들어가야 함.
-		return ResponseEntity.ok().body(courtService.findDetail(courtId, date, time));
+	@ApiOperation("농구장 상세정보 조회")
+	@GetMapping("/{courtId}/detail")
+	public ResponseEntity<CourtDetailResponse> getDetail(
+		@PathVariable Long courtId, @RequestParam String date, @RequestParam String time) {
+		return ResponseEntity.ok(courtService.findDetail(courtId, date, time));
 	}
 
-
-	@GetMapping("/{courtId}/reservations/{date}")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Map<String, Object>> getReservationCourts(@PathVariable Long courtId, @PathVariable String date, HttpServletRequest request) {
-
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
-
-		log.info("userId" + userId);
-
-
-		Map<String, Object> result = new HashMap<>();
-		result.put("courtId", courtId);
-		result.put("date", date);
-		result.put("reservations", courtService.findCourtReservations(courtId, date, userId));
-
-
-		// 여기에 추가로 header 토큰 정보가 들어가야 함.
-		return ResponseEntity.ok().body(result);
-	}
-
-
-	// 사용자가 날짜, 시간, 바운더리로 농구장 검색하기
-	//    /api/v1/courts/date=&{date}&time=${time}&start=${latitude}%${longtitude}&end=${latitude}%${longtitude}
+	@ApiOperation("날짜, 시간, 바운더리로 농구장 검색")
 	@GetMapping()
-	public ResponseEntity<Map<String, Object>> getAllByDateByBoundary(
+	public ResponseEntity<List<CourtByDateAndBoundaryResponse>> getAllByDateAndBoundary(
 		@NotNull RequestParamVo requestParamVo, HttpServletRequest request) {
-
-		Map<String, Object> result = new HashMap<>();
-		result.put("courts", courtService.findByDateByBoundary(requestParamVo));
-
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(courtService.findByDateAndBoundary(requestParamVo));
 	}
-
 
 }
