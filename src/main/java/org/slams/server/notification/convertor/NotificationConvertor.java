@@ -51,7 +51,7 @@ public class NotificationConvertor {
                     notification.isRead(),
                     notification.isClicked(),
                     notification.getCreatedAt(),
-                    notification.getUpdateAt()
+                    notification.getUpdatedAt()
             );
         }
 
@@ -71,7 +71,7 @@ public class NotificationConvertor {
                     notification.isRead(),
                     notification.isClicked(),
                     notification.getCreatedAt(),
-                    notification.getUpdateAt()
+                    notification.getUpdatedAt()
             );
         }
 

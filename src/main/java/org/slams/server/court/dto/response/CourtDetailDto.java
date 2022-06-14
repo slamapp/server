@@ -33,7 +33,7 @@ public class CourtDetailDto extends BaseResponse {
 
 	public static CourtDetailDto toDto(Court court) {
 		return new CourtDetailDto(court.getId().toString(), court.getName(), court.getLatitude(), court.getLongitude(),
-			court.getImage(), court.getBasketCount(), court.getTexture(), court.getCreatedAt(), court.getUpdateAt());
+			court.getImage(), court.getBasketCount(), court.getTexture(), court.getCreatedAt(), court.getUpdatedAt());
 	}
 
 }

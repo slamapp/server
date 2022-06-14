@@ -30,6 +30,6 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     @Column(name = "updated_at") // entity 변경할때 시간이 자동 저장
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
 }

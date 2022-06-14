@@ -14,7 +14,7 @@ public interface CourtChatroomMappingRepository extends JpaRepository<CourtChatr
 
     @Transactional
     @Modifying()
-    @Query("UPDATE CourtChatroomMapping c SET c.updateAt = current_timestamp WHERE c.court.id =:courtId")
+    @Query("UPDATE CourtChatroomMapping c SET c.updatedAt = current_timestamp WHERE c.court.id =:courtId")
     void updateUpdatedAtByCourtId(
       @Param("courtId") Long courtId
     );

@@ -17,7 +17,7 @@ public class FavoriteInsertResponseDto extends BaseResponse {
 
     //Entity -> ResponseDto
     public FavoriteInsertResponseDto(Favorite favorite) {
-        super(favorite.getCreatedAt(),favorite.getUpdateAt());
+        super(favorite.getCreatedAt(),favorite.getUpdatedAt());
         favoriteId=favorite.getId();
         courtName=favorite.getCourt().getName();
         courtId=favorite.getCourt().getId();

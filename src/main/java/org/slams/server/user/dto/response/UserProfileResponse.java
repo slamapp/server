@@ -50,7 +50,7 @@ public class UserProfileResponse {
 	public static UserProfileResponse toResponse(User user, Boolean isFollowing, Long followerCount, Long followingCount, List<FavoriteCourtResponse> favoriteCourts) {
 		return new UserProfileResponse(user.getId(), user.getNickname(), user.getProfileImage(),
 			user.getDescription(), user.getProficiency(), user.getPositions(),
-			user.getCreatedAt(), user.getUpdateAt(), isFollowing, followerCount, followingCount, favoriteCourts
+			user.getCreatedAt(), user.getUpdatedAt(), isFollowing, followerCount, followingCount, favoriteCourts
 		);
 	}
 

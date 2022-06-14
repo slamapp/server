@@ -43,7 +43,7 @@ public class UserWithoutEmailDto {
 	public static UserWithoutEmailDto toDto(User user){
 		return new UserWithoutEmailDto(user.getId().toString(), user.getNickname(), user.getProfileImage(), user.getDescription(),
 			user.getRole(), user.getProficiency(), user.getPositions(),
-			user.getCreatedAt(), user.getUpdateAt());
+			user.getCreatedAt(), user.getUpdatedAt());
 	}
 
 }

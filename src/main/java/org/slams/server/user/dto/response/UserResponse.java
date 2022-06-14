@@ -48,7 +48,7 @@ public class UserResponse {
 	public static UserResponse toResponse(User user){
 		return new UserResponse(user.getId(), user.getSocialId(), user.getEmail(), user.getNickname(),
 			user.getProfileImage(), user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(),
-			user.getCreatedAt(), user.getUpdateAt());
+			user.getCreatedAt(), user.getUpdatedAt());
 	}
 
 }

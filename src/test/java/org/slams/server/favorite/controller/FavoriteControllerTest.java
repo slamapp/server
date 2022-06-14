@@ -145,8 +145,8 @@
 //        court.setUpdateAt(now);
 //
 //
-//       FavoriteInsertResponseDto favoriteInsertResponseDto=new FavoriteInsertResponseDto(favorite);
-//       favoriteInsertResponseDto.FavoriteInsertResponseDto(1L,1L,1L,"hey");
+//       FavoriteInsertResponseDto.java favoriteInsertResponseDto=new FavoriteInsertResponseDto.java(favorite);
+//       favoriteInsertResponseDto.FavoriteInsertResponseDto.java(1L,1L,1L,"hey");
 //
 //
 //
@@ -222,7 +222,7 @@
 ////
 ////        Favorite favorite1= Favorite.of(court,user);
 ////        Favorite favorite2 = Favorite.of(court,user);
-//        FavoriteInsertResponseDto favoriteInsertResponseDto=new FavoriteInsertResponseDto(favorite1);
+//        FavoriteInsertResponseDto.java favoriteInsertResponseDto=new FavoriteInsertResponseDto.java(favorite1);
 //        given(favoriteService.insert(any(),any())).willReturn(favoriteInsertResponseDto);
 //
 //

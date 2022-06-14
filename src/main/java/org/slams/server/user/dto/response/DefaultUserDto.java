@@ -45,7 +45,7 @@ public class DefaultUserDto {
 	public static DefaultUserDto toDto(User user) {
 		return new DefaultUserDto(String.valueOf(user.getId()), user.getEmail(), user.getNickname(), user.getProfileImage(),
 			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(),
-			user.getCreatedAt(), user.getUpdateAt());
+			user.getCreatedAt(), user.getUpdatedAt());
 	}
 
 }

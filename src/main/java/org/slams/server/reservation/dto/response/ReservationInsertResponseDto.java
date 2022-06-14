@@ -1,15 +1,11 @@
 package org.slams.server.reservation.dto.response;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.slams.server.common.api.BaseResponse;
-import org.slams.server.court.entity.NewCourt;
-import org.slams.server.reservation.dto.request.ReservationInsertRequestDto;
 import org.slams.server.reservation.entity.Reservation;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @Getter
@@ -25,7 +21,7 @@ public class ReservationInsertResponseDto extends BaseResponse {
 
     // Entity -> Response
     public ReservationInsertResponseDto(Reservation reservation) {
-        super(reservation.getCreatedAt(), reservation.getUpdateAt());
+        super(reservation.getCreatedAt(), reservation.getUpdatedAt());
         reservationId=reservation.getId();
         userId=reservation.getUser().getId();
         courtId=reservation.getCourt().getId();

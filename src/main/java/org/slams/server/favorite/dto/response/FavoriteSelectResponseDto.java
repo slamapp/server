@@ -2,10 +2,7 @@ package org.slams.server.favorite.dto.response;
 
 import lombok.Getter;
 import org.slams.server.common.api.BaseResponse;
-import org.slams.server.court.entity.Court;
 import org.slams.server.favorite.entity.Favorite;
-
-import java.util.Optional;
 
 @Getter
 public class FavoriteSelectResponseDto extends BaseResponse {
@@ -20,7 +17,7 @@ public class FavoriteSelectResponseDto extends BaseResponse {
 
 
     public FavoriteSelectResponseDto(Favorite favorite) {
-        super(favorite.getCreatedAt(),favorite.getUpdateAt());
+        super(favorite.getCreatedAt(),favorite.getUpdatedAt());
         favoriteId=favorite.getId();
         courtId=favorite.getCourt().getId();
         courtName=favorite.getCourt().getName();
