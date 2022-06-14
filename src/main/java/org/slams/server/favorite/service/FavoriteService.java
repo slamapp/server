@@ -1,6 +1,7 @@
 package org.slams.server.favorite.service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.court.entity.Court;
@@ -9,7 +10,7 @@ import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteDeleteResponseDto;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
-import org.slams.server.favorite.dto.response.FavoriteSelectResponseDto;
+import org.slams.server.favorite.dto.response.FavoriteLookUpResponseDto;
 import org.slams.server.favorite.entity.Favorite;
 import org.slams.server.favorite.repository.FavoriteRepository;
 import org.slams.server.user.entity.User;
@@ -22,9 +23,10 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@Service
 @Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Service
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
@@ -41,10 +43,18 @@ public class FavoriteService {
             .orElseThrow(() -> new CourtNotFoundException(
                 MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", Long.parseLong(favoriteInsertRequest.getCourtId()))));
 
-        Favorite favorite = favoriteInsertRequest.toEntity(court, user);
-        favoriteRepository.save(favorite);
-
-        return FavoriteInsertResponse.toResponse(favorite);
+        return FavoriteInsertResponse.toResponse(
+            favoriteRepository.findByCourtAndUser(court, user)
+                .map(favorite -> {
+                    log.warn("Already exists : favorite-courtId({}), userId({})", court.getId(), user.getId());
+                    return favorite;
+                })
+                .orElseGet(() -> {
+                    Favorite favorite = favoriteInsertRequest.toEntity(court, user);
+                    favoriteRepository.save(favorite);
+                    return favorite;
+                })
+        );
     }
 
 
