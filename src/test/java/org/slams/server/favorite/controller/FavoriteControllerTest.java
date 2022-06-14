@@ -32,6 +32,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -170,7 +171,20 @@ class FavoriteControllerTest {
 	}
 
 	@Test
-	void delete() {
+	void delete() throws Exception {
+		// given
+		willDoNothing().given(favoriteService).delete(anyLong());
+
+		// when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/favorites/{favoriteId}", favorite.getId())
+				.header("Authorization", jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		// then
+		resultActions.andExpect(status().isNoContent())
+			.andDo(document("favorites/favorite-delete", preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint())));
 	}
 
 }
