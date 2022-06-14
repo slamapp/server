@@ -59,6 +59,10 @@ public class FavoriteController {
 		return ResponseEntity.ok().body(favoriteService.getAll(userId));
 	}
 
+	@ApiOperation("즐겨찾기 삭제(취소)")
+	@ApiResponses({
+		@ApiResponse(code = 204, message = "삭제(취소) 성공")
+	})
     @DeleteMapping("{favoriteId}")
     public ResponseEntity<Void> delete(@PathVariable Long favoriteId, HttpServletRequest request) {
         TokenGetId token=new TokenGetId(request,jwt);
@@ -67,7 +71,6 @@ public class FavoriteController {
         favoriteService.delete(favoriteId);
 
         return ResponseEntity.noContent().build();
-
     }
 
 
