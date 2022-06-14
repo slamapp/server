@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.slams.server.court.entity.Court;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
 import org.slams.server.favorite.dto.response.FavoriteInsertResponse;
+import org.slams.server.favorite.dto.response.FavoriteLookUpResponse;
 import org.slams.server.favorite.entity.Favorite;
 import org.slams.server.favorite.service.FavoriteService;
 import org.slams.server.user.entity.User;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -131,12 +133,40 @@ class FavoriteControllerTest {
 					fieldWithPath("court.longitude").type(JsonFieldType.NUMBER).description("농구장 경도"),
 					fieldWithPath("court.createdAt").type(JsonFieldType.STRING).description("농구장 정보 최초 생성시간"),
 					fieldWithPath("court.updatedAt").type(JsonFieldType.STRING).description("농구장 정보 최근 수정시간")
-					)
+				)
 			));
 	}
 
 	@Test
-	void getAll() {
+	void getAll() throws Exception {
+		// given
+		FavoriteLookUpResponse response = FavoriteLookUpResponse.toResponse(favorite);
+
+		given(favoriteService.getAll(anyLong())).willReturn(List.of(response));
+
+		// when
+		ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/favorites")
+				.header("Authorization", jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andDo(document("favorites/favorite-getAll", preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				responseFields(
+					fieldWithPath("[].id").type(JsonFieldType.STRING).description("즐겨찾기 구별키"),
+					fieldWithPath("[].createdAt").type(JsonFieldType.STRING).description("즐겨찾기 정보 최초 생성시간"),
+					fieldWithPath("[].updatedAt").type(JsonFieldType.STRING).description("즐겨찾기 정보 최근 수정시간"),
+					fieldWithPath("[].court").type(JsonFieldType.OBJECT).description("즐겨찾기 농구장"),
+					fieldWithPath("[].court.id").type(JsonFieldType.STRING).description("농구장 구별키"),
+					fieldWithPath("[].court.name").type(JsonFieldType.STRING).description("농구장 이름"),
+					fieldWithPath("[].court.latitude").type(JsonFieldType.NUMBER).description("농구장 위도"),
+					fieldWithPath("[].court.longitude").type(JsonFieldType.NUMBER).description("농구장 경도"),
+					fieldWithPath("[].court.createdAt").type(JsonFieldType.STRING).description("농구장 정보 최초 생성시간"),
+					fieldWithPath("[].court.updatedAt").type(JsonFieldType.STRING).description("농구장 정보 최근 수정시간")
+				)
+			));
 	}
 
 	@Test
