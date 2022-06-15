@@ -1,11 +1,15 @@
 package org.slams.server.reservation.controller;
 
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.api.TokenGetId;
+import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
 import org.slams.server.reservation.dto.response.ReservationDeleteResponseDto;
@@ -33,8 +37,17 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final Jwt jwt;
 
-
-    // 경기장 예약하기
+    @ApiOperation("예약 추가")
+    @ApiResponses({
+        @ApiResponse(
+            code = 201, message = "추가 성공"
+        ),
+        @ApiResponse(
+            code = 400
+            , message = "이미 예약이 존재"
+            , response = ErrorResponse.class
+        )
+    })
     @PostMapping()
     public ResponseEntity<ReservationInsertResponse> insert(@Valid @RequestBody ReservationInsertRequest reservationRequest, HttpServletRequest request) {
 
