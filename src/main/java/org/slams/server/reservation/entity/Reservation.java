@@ -3,14 +3,11 @@ package org.slams.server.reservation.entity;
 import lombok.*;
 import org.slams.server.common.BaseEntity;
 import org.slams.server.court.entity.Court;
-import org.slams.server.reservation.dto.request.ReservationInsertRequestDto;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
-import org.slams.server.reservation.dto.response.ReservationUpdateResponseDto;
 import org.slams.server.user.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by dongsung on 2021/12/03.
@@ -19,7 +16,6 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@AllArgsConstructor
 @Builder
 @Table(name="reservation")
 public class Reservation extends BaseEntity {
@@ -45,7 +41,15 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private boolean hasBall;
 
+    public Reservation(Court court, User user, LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
+        validateTime(startTime, endTime);
 
+        this.court = court;
+        this.user = user;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.hasBall = hasBall;
+    }
 
     public void addReservation(Court court, User user) {
         this.court = court;
@@ -64,12 +68,11 @@ public class Reservation extends BaseEntity {
         hasBall=request.getHasBall();
     }
 
-
-    public Reservation(ReservationInsertRequestDto requestDto) {
-        hasBall=requestDto.getHasBall();
-        endTime= requestDto.getEndTime();
-        startTime= requestDto.getStartTime();
+    //== Validation Method ==//
+    private void validateTime(LocalDateTime startTime, LocalDateTime endTime){
+        if(startTime.isAfter(endTime)){
+            throw new IllegalArgumentException("예약 시작시간이 예약 종료시간보다 미래일 수 없습니다.");
+        }
     }
-
 
 }
