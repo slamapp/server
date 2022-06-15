@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Builder
 @Table(name="reservation")
 public class Reservation extends BaseEntity {
     @Id
@@ -41,26 +40,17 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private boolean hasBall;
 
-    public Reservation(Court court, User user, LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
+    @Builder
+    public Reservation(Long id, Court court, User user, LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
         validateTime(startTime, endTime);
 
+        this.id = id;
         this.court = court;
         this.user = user;
         this.startTime = startTime;
         this.endTime = endTime;
         this.hasBall = hasBall;
     }
-
-    public void addReservation(Court court, User user) {
-        this.court = court;
-        this.user=user;
-    }
-
-    public void removeReservation() {
-        this.court.removeReservation(this);
-        this.court=null;
-    }
-
 
     public void update(ReservationUpdateRequestDto request) {
         startTime=request.getStartTime();

@@ -9,12 +9,14 @@ import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.follow.entity.Follow;
+import org.slams.server.follow.exception.FollowAlreadyExistException;
 import org.slams.server.follow.repository.FollowRepository;
-import org.slams.server.reservation.dto.request.ReservationInsertRequestDto;
+import org.slams.server.reservation.dto.request.ReservationInsertRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
 import org.slams.server.reservation.dto.response.*;
 import org.slams.server.reservation.entity.Reservation;
 import org.slams.server.reservation.exception.ForbiddenException;
+import org.slams.server.reservation.exception.ReservationAlreadyExistException;
 import org.slams.server.reservation.exception.ReservationNotFoundException;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.user.entity.User;
@@ -41,30 +43,25 @@ public class ReservationService {
     private final CourtRepository courtRepository;
     private final FollowRepository followRepository;
 
+	@Transactional
+	public ReservationInsertResponse insert(ReservationInsertRequest request, Long userId) {
+		User user = userRepository.getById(userId);
 
+		Court court = courtRepository.findById(request.getCourtId())
+			.orElseThrow(() -> new CourtNotFoundException(
+				MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", request.getCourtId())));
 
-    @Transactional
-    public ReservationInsertResponseDto insert(ReservationInsertRequestDto request, Long userId) {
+		reservationRepository.findByCourtAndUser(court, user)
+			.ifPresent(reservation -> {
+				throw new ReservationAlreadyExistException(
+					MessageFormat.format("이미 저장된 예약이 있습니다. id : {0}", reservation.getId())
+				);
+			});
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_MEMBER.getMessage()));
+		Reservation reservation = request.toEntity(request, court, user);
 
-
-        Court court=courtRepository.findById(request.getCourtId())
-                .orElseThrow(() -> new CourtNotFoundException(ErrorCode.NOT_EXIST_COURT.getMessage()));
-
-
-        Reservation reservation = request.insertRequestDtoToEntity(request);
-        reservation.addReservation(court,user);
-
-        //Todo 동일한 유저가 같은 코트를 예약할 수 없다.
-//        reservationRepository.get
-
-        reservationRepository.save(reservation);
-        return new ReservationInsertResponseDto(reservation);
-
-
-    }
+		return ReservationInsertResponse.of(reservationRepository.save(reservation));
+	}
 
 
     @Transactional

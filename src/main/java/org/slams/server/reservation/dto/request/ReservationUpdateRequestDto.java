@@ -21,15 +21,4 @@ public class ReservationUpdateRequestDto {
     @NotNull(message = "농구공 유무는 필수 값입니다.")
     private Boolean hasBall;
 
-    // requestDto -> Entity
-    public Reservation updateRequestDtoToEntity(ReservationUpdateRequestDto requestDto) {
-        return Reservation.builder()
-                .id(requestDto.getReservationId())
-                .startTime(requestDto.getStartTime())
-                .endTime(requestDto.getEndTime())
-                .hasBall(requestDto.getHasBall())
-                .build();
-    }
-
-
 }

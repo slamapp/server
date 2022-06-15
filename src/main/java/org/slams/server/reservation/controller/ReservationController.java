@@ -1,17 +1,16 @@
 package org.slams.server.reservation.controller;
 
 
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.api.TokenGetId;
-import org.slams.server.reservation.dto.request.ReservationInsertRequestDto;
+import org.slams.server.reservation.dto.request.ReservationInsertRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
 import org.slams.server.reservation.dto.response.ReservationDeleteResponseDto;
 import org.slams.server.reservation.dto.response.ReservationExpiredResponseDto;
-import org.slams.server.reservation.dto.response.ReservationInsertResponseDto;
+import org.slams.server.reservation.dto.response.ReservationInsertResponse;
 import org.slams.server.reservation.dto.response.ReservationUpdateResponseDto;
 import org.slams.server.reservation.service.ReservationService;
 import org.slams.server.user.oauth.jwt.Jwt;
@@ -37,12 +36,12 @@ public class ReservationController {
 
     // 경기장 예약하기
     @PostMapping()
-    public ResponseEntity<ReservationInsertResponseDto> insert(@Valid @RequestBody ReservationInsertRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<ReservationInsertResponse> insert(@Valid @RequestBody ReservationInsertRequest reservationRequest, HttpServletRequest request) {
 
         TokenGetId token=new TokenGetId(request,jwt);
         Long userId=token.getUserId();
 
-        return new ResponseEntity<ReservationInsertResponseDto>(reservationService.insert(requestDto, userId), HttpStatus.CREATED);
+        return new ResponseEntity<ReservationInsertResponse>(reservationService.insert(reservationRequest, userId), HttpStatus.CREATED);
     }
 
 

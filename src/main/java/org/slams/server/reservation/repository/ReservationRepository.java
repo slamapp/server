@@ -80,7 +80,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 //    @Query("SELECT r FROM Reservation r WHERE r.court.id=:courtId")
 //    List<Reservation> findByCourt(@Param("courtId") Long courtId);
 
-
+    Optional<Reservation> findByCourtAndUser(Court court, User user);
 
 
 }
