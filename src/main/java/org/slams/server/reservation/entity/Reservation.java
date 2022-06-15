@@ -41,7 +41,9 @@ public class Reservation extends BaseEntity {
     private boolean hasBall;
 
     @Builder
-    public Reservation(Long id, Court court, User user, LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
+    public Reservation(LocalDateTime createdAt, LocalDateTime updatedAt, Long id, Court court, User user, LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
+        super(createdAt, updatedAt);
+
         validateTime(startTime, endTime);
 
         this.id = id;
