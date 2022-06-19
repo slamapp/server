@@ -2,6 +2,7 @@ package org.slams.server.notification.service;
 
 import org.slams.server.chat.dto.response.ChatContentsResponse;
 import org.slams.server.chat.service.ChatContentsService;
+import org.slams.server.follow.exception.FollowOneselfException;
 import org.slams.server.follow.service.FollowService;
 import org.slams.server.notification.dto.request.FollowNotificationRequest;
 import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
@@ -45,7 +46,7 @@ public class WebsocketNotificationService {
             Long userId
     ){
         if(userId.equals(receiverId)){
-            throw new RuntimeException("자기 자신을 팔로우 할 수 없습니다.");
+            throw new FollowOneselfException("자기자신을 팔로우할 수 없습니다.");
         }
 
         followService.follow(userId, receiverId);
