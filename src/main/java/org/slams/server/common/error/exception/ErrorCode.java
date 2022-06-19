@@ -32,8 +32,7 @@ public enum ErrorCode {
 	NOT_FORBIDDEN_RESERVATION(403,"권한이 없습니다"),
 
 	// Favorite
-	NOT_EXIST_FAVORITE(404,"존재하지 않는 즐겨찾기입니다."),
-
+	FAVORITE_NOT_FOUND(400,"Favorite Not Found"),
 
 	// Follow
 	FOLLOW_ALREADY_EXIST(400, "Follow Already Exists"),

@@ -25,7 +25,7 @@ public class ChatroomMappingConvertor {
                 .courtId(userChatroomMapping.getCourtChatroomMapping().getCourt().getId())
                 .courtName(userChatroomMapping.getCourtChatroomMapping().getCourt().getName())
                 .createdAt(userChatroomMapping.getCreatedAt())
-                .updatedAt(userChatroomMapping.getCourtChatroomMapping().getUpdateAt())
+                .updatedAt(userChatroomMapping.getCourtChatroomMapping().getUpdatedAt())
                 .build();
     }
 }

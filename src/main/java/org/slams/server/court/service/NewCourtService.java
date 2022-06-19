@@ -38,7 +38,7 @@ public class NewCourtService {
 	private final CourtRepository courtRepository;
 	private final UserRepository userRepository;
 
-	public CursorPageResponse<List<NewCourtInReadyLookUpResponse>> getNewCourtsInReady(CursorPageRequest cursorPageRequest){
+	public CursorPageResponse<List<NewCourtInReadyLookUpResponse>> getNewCourtsInReady(CursorPageRequest cursorPageRequest) {
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 
 		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?
@@ -57,7 +57,7 @@ public class NewCourtService {
 		return new CursorPageResponse<>(newCourtList, lastId.toString());
 	}
 
-	public CursorPageResponse<List<NewCourtInDoneLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest){
+	public CursorPageResponse<List<NewCourtInDoneLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest) {
 		PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
 
 		List<NewCourt> newCourts = cursorPageRequest.getIsFirst() ?

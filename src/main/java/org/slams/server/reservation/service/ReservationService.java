@@ -193,7 +193,7 @@ public class ReservationService {
             Long reservationSize = reservationRepository.findByDate(reservation.getStartTime(), reservation.getEndTime(), reservation.getCourt().getId());
             reservationExpiredResponseDtoList.add(
                     ReservationExpiredResponseDto.toResponse(
-                            reservation, reservation.getCourt(), reservation.getCreatedAt(), reservation.getUpdateAt(),reservationSize)
+                            reservation, reservation.getCourt(), reservation.getCreatedAt(), reservation.getUpdatedAt(),reservationSize)
             );
         }
 
@@ -201,6 +201,21 @@ public class ReservationService {
 
         return new CursorPageResponse<>(reservationExpiredResponseDtoList, lastId.toString());
     }
+
+
+//    public List<CourtReservationResponseDto> findCourtReservationsByDate(Long courtId, String date) {
+//        Court court=courtRepository.findById(courtId)
+//            .orElseThrow(() -> new CourtNotFoundException(
+//                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", courtId)));
+//
+//        LocalDate dateTime = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
+//        LocalDateTime startLocalDateTime=dateTime.atStartOfDay();
+//        LocalDateTime endLocalDateTime= dateTime.atTime(23,59,59);
+//
+//        return reservationRepository.findByIdAndDate(courtId,startLocalDateTime,endLocalDateTime).stream()
+//            .map(CourtReservationResponseDto::new)
+//            .collect(Collectors.toList());
+//    }
 
 
 

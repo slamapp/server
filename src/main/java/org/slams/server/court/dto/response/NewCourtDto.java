@@ -25,8 +25,8 @@ public class NewCourtDto {
 	private LocalDateTime updatedAt;
 
 	private NewCourtDto(String id, String name, double latitude, double longitude,
-					   String image, Texture texture, int basketCount, Status status,
-					   LocalDateTime createdAt, LocalDateTime updatedAt) {
+						String image, Texture texture, int basketCount, Status status,
+						LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.name = name;
 		this.latitude = latitude;
@@ -39,10 +39,10 @@ public class NewCourtDto {
 		this.updatedAt = updatedAt;
 	}
 
-	public static NewCourtDto toDto(NewCourt newCourt){
+	public static NewCourtDto toDto(NewCourt newCourt) {
 		return new NewCourtDto(newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
 			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus(),
-			newCourt.getCreatedAt(), newCourt.getUpdateAt());
+			newCourt.getCreatedAt(), newCourt.getUpdatedAt());
 	}
 
 }

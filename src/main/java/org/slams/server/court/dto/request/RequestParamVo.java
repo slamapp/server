@@ -1,40 +1,17 @@
 package org.slams.server.court.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter
+@AllArgsConstructor
 public class RequestParamVo {
-
 
     private String date;
     private String time;
-    private List<String> latitude;
-    private List<String> longitude;
-
-
-    @Override public String toString() {
-        return "RequestParamVo{"
-                + "date='"
-                + date
-                + '\''
-                + ", time='"
-                + time
-                + '\''
-                + ", latitude="
-                + latitude
-                + ", longitude="
-                + longitude
-                +'}';
-    }
-
-
-
-
-
-
+    private List<Double> latitude;
+    private List<Double> longitude;
 
 }

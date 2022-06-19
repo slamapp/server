@@ -13,34 +13,34 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class NewCourtInsertRequest {
 
-    @NotNull(message ="name은 필수 값입니다.")
+	@NotNull(message = "name은 필수 값입니다.")
 //    @Max(value=100,message = "name은 50글자 미만입니다.")
-    private String name;
+	private String name;
 
-    @Positive(message = "위도는 0이상값입니다.")
-    private double latitude;
+	@Positive(message = "위도는 0이상값입니다.")
+	private double latitude;
 
-    @Positive(message = "경도는 0이상값입니다.")
-    private double longitude;
+	@Positive(message = "경도는 0이상값입니다.")
+	private double longitude;
 
-    private String image;
+	private String image;
 
-    private Texture texture;
+	private Texture texture;
 
-    @Min(value=0,message = "농구골대는 0이상값입니다.")
-    private int basketCount;
+	@Min(value = 0, message = "농구골대는 0이상값입니다.")
+	private int basketCount;
 
-    // requestDto -> Entity
-    public NewCourt toEntity(NewCourtInsertRequest request, User proposer) {
-        return NewCourt.builder()
-                .name(request.getName())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .image(request.getImage())
-                .texture(request.getTexture())
-                .basketCount(request.getBasketCount())
-                .proposer(proposer)
-                .build();
-    }
+	// requestDto -> Entity
+	public NewCourt toEntity(NewCourtInsertRequest request, User proposer) {
+		return NewCourt.builder()
+			.name(request.getName())
+			.latitude(request.getLatitude())
+			.longitude(request.getLongitude())
+			.image(request.getImage())
+			.texture(request.getTexture())
+			.basketCount(request.getBasketCount())
+			.proposer(proposer)
+			.build();
+	}
 
 }

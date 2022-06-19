@@ -85,7 +85,7 @@ public class UserService {
 		Long followerCount = followRepository.countByFollowing(user);
 		Long followingCount = followRepository.countByFollower(user);
 
-		List<FavoriteCourtResponse> favoriteCourts = favoriteRepository.findAllByUser(user)
+		List<FavoriteCourtResponse> favoriteCourts = favoriteRepository.findAllByUserOrderByCreatedAtDesc(user)
 			.stream().map(favorite -> new FavoriteCourtResponse(favorite.getCourt().getId(), favorite.getCourt().getName()))
 			.collect(Collectors.toList());
 
