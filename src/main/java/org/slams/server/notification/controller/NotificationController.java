@@ -88,7 +88,6 @@ public class NotificationController {
             String receiverId,
             HttpServletRequest request
     ){
-        var test =1;
         websocketNotificationService.saveFollowNotification(
                Long.parseLong(receiverId),
                new TokenGetId(request,jwt).getUserId()
