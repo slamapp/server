@@ -42,7 +42,7 @@ public class NewCourtDto {
 	public static NewCourtDto toDto(NewCourt newCourt) {
 		return new NewCourtDto(newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
 			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus(),
-			newCourt.getCreatedAt(), newCourt.getUpdateAt());
+			newCourt.getCreatedAt(), newCourt.getUpdatedAt());
 	}
 
 }

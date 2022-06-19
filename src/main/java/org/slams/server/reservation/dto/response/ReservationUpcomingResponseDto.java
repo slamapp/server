@@ -20,7 +20,7 @@ public class ReservationUpcomingResponseDto extends BaseResponse {
 
 
     public ReservationUpcomingResponseDto(Reservation reservation,Long numberOfReservations) {
-        super(reservation.getCreatedAt(), reservation.getUpdateAt());
+        super(reservation.getCreatedAt(), reservation.getUpdatedAt());
         reservationId=reservation.getId();
         courtId=reservation.getCourt().getId();
         courtName=reservation.getCourt().getName();

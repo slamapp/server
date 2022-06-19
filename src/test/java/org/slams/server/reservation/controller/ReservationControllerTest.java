@@ -16,7 +16,6 @@ import org.slams.server.reservation.dto.response.ReservationUpdateResponseDto;
 import org.slams.server.reservation.entity.Reservation;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.reservation.service.ReservationService;
-import org.slams.server.user.dto.response.ProfileImageResponse;
 import org.slams.server.user.entity.Position;
 import org.slams.server.user.entity.Proficiency;
 import org.slams.server.user.entity.Role;
@@ -31,8 +30,6 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.support.ResourcePropertySource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -131,7 +128,7 @@ public class ReservationControllerTest {
                 .build();
 
         user.setCreatedAt(now);
-        user.setUpdateAt(now);
+        user.setUpdatedAt(now);
 
 
 
@@ -146,7 +143,7 @@ public class ReservationControllerTest {
                 .build();
 
         court.setCreatedAt(now);
-        court.setUpdateAt(now);
+        court.setUpdatedAt(now);
 
         court=Court.builder()
                 .id(127L)
@@ -159,7 +156,7 @@ public class ReservationControllerTest {
                 .build();
 
         court.setCreatedAt(now);
-        court.setUpdateAt(now);
+        court.setUpdatedAt(now);
 
         reservation=Reservation.builder()
                 .id(1L)
@@ -171,7 +168,7 @@ public class ReservationControllerTest {
                 .build();
 
         reservation.setCreatedAt(now);
-        reservation.setUpdateAt(now);
+        reservation.setUpdatedAt(now);
 
     }
 
@@ -325,7 +322,7 @@ public class ReservationControllerTest {
                 .build();
 
         user.setCreatedAt(now);
-        user.setUpdateAt(now);
+        user.setUpdatedAt(now);
         userRepository.save(user);
 
         LocalDateTime start=now.plusHours(1);

@@ -3,7 +3,6 @@ package org.slams.server.court.dto.response;
 import lombok.*;
 import org.slams.server.common.api.BaseResponse;
 import org.slams.server.court.entity.Court;
-import org.slams.server.court.entity.Texture;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +24,7 @@ public class CourtInMapDto extends BaseResponse {
 
 	public static CourtInMapDto toDto(Court court) {
 		return new CourtInMapDto(court.getId().toString(), court.getName(), court.getLatitude(), court.getLongitude(),
-			court.getCreatedAt(), court.getUpdateAt());
+			court.getCreatedAt(), court.getUpdatedAt());
 	}
 
 }

@@ -1,7 +1,6 @@
 package org.slams.server.court.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
 import org.slams.server.court.dto.request.RequestParamVo;
@@ -31,14 +30,10 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -116,7 +111,7 @@ public class CourtControllerTest {
 			.build();
 
 		user.setCreatedAt(now);
-		user.setUpdateAt(now);
+		user.setUpdatedAt(now);
 
 
 		// Court 생성
@@ -132,7 +127,7 @@ public class CourtControllerTest {
 			.build();
 
 		newCourt.setCreatedAt(now);
-		newCourt.setUpdateAt(now);
+		newCourt.setUpdatedAt(now);
 
 		court = Court.builder()
 			.id(1L)
@@ -145,7 +140,7 @@ public class CourtControllerTest {
 			.build();
 
 		court.setCreatedAt(now);
-		court.setUpdateAt(now);
+		court.setUpdatedAt(now);
 
 		reservation = Reservation.builder()
 			.id(1L)
@@ -157,7 +152,7 @@ public class CourtControllerTest {
 			.build();
 
 		reservation.setCreatedAt(now);
-		reservation.setUpdateAt(now);
+		reservation.setUpdatedAt(now);
 
 
 	}

@@ -4,9 +4,7 @@ import lombok.Getter;
 import org.slams.server.common.api.BaseResponse;
 import org.slams.server.reservation.entity.Reservation;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 public class ReservationUpdateResponseDto extends BaseResponse {
@@ -19,7 +17,7 @@ public class ReservationUpdateResponseDto extends BaseResponse {
     private Boolean hasBall;
 
     public ReservationUpdateResponseDto(Reservation reservation) {
-        super(reservation.getCreatedAt(), reservation.getUpdateAt());
+        super(reservation.getCreatedAt(), reservation.getUpdatedAt());
         reservationId=reservation.getId();
         courtId=reservation.getCourt().getId();
         startTime=reservation.getStartTime();

@@ -44,7 +44,7 @@ public class ChatContentConvertor {
                             .build()
                     )
                     .createdAt(chatContents.getCreatedAt())
-                    .updatedAt(chatContents.getUpdateAt())
+                    .updatedAt(chatContents.getUpdatedAt())
                     .build();
         }
         if (chatContents.getChatContentType().equals(ChatContentType.LOUDSPEAKER)){
@@ -64,7 +64,7 @@ public class ChatContentConvertor {
                             .startTime(chatContents.getChatLoudSpeakerContent().getStartTime())
                             .build())
                     .createdAt(chatContents.getCreatedAt())
-                    .updatedAt(chatContents.getUpdateAt())
+                    .updatedAt(chatContents.getUpdatedAt())
                     .build();
         }
 

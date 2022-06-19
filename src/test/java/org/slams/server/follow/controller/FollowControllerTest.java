@@ -104,14 +104,14 @@ class FollowControllerTest {
 			.following(user2)
 			.build();
 		follow1.setCreatedAt(LocalDateTime.now());
-		follow1.setUpdateAt(LocalDateTime.now());
+		follow1.setUpdatedAt(LocalDateTime.now());
 		Follow follow2 = Follow.builder()
 			.id(2L)
 			.follower(user3)
 			.following(user2)
 			.build();
 		follow2.setCreatedAt(LocalDateTime.now());
-		follow2.setUpdateAt(LocalDateTime.now());
+		follow2.setUpdatedAt(LocalDateTime.now());
 
 		List<FollowerResponse> followerList = List.of(
 			FollowerResponse.toResponse(follow2),
@@ -179,14 +179,14 @@ class FollowControllerTest {
 			.following(user2)
 			.build();
 		follow1.setCreatedAt(LocalDateTime.now());
-		follow1.setUpdateAt(LocalDateTime.now());
+		follow1.setUpdatedAt(LocalDateTime.now());
 		Follow follow2 = Follow.builder()
 			.id(2L)
 			.follower(user1)
 			.following(user3)
 			.build();
 		follow2.setCreatedAt(LocalDateTime.now());
-		follow2.setUpdateAt(LocalDateTime.now());
+		follow2.setUpdatedAt(LocalDateTime.now());
 
 		List<FollowingResponse> followingList = List.of(
 			FollowingResponse.toResponse(follow2),

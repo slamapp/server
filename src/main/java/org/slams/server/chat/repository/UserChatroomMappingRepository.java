@@ -15,14 +15,14 @@ import java.util.List;
  */
 public interface UserChatroomMappingRepository extends JpaRepository<UserChatroomMapping, Long> {
 
-    @Query("SELECT u FROM UserChatroomMapping u WHERE u.user.id = :userId AND u.id >= :lastId ORDER BY u.courtChatroomMapping.updateAt ASC")
+    @Query("SELECT u FROM UserChatroomMapping u WHERE u.user.id = :userId AND u.id >= :lastId ORDER BY u.courtChatroomMapping.updatedAt ASC")
     List<UserChatroomMapping> findAllByUserIdMoreThenLastIdByCreated(
             @Param("userId") Long userId,
             @Param("lastId") Long lastId,
             Pageable pageable
     );
 
-    @Query("SELECT u FROM UserChatroomMapping u WHERE u.user.id = :userId ORDER BY u.courtChatroomMapping.updateAt DESC")
+    @Query("SELECT u FROM UserChatroomMapping u WHERE u.user.id = :userId ORDER BY u.courtChatroomMapping.updatedAt DESC")
     List<UserChatroomMapping> findAllByUserIdByCreated(
             @Param("userId") Long userId,
             Pageable pageable
@@ -36,14 +36,14 @@ public interface UserChatroomMappingRepository extends JpaRepository<UserChatroo
             @Param("userId") Long userId
     );
 
-    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId AND u.id >= :lastId ORDER BY u.courtChatroomMapping.updateAt ASC")
+    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId AND u.id >= :lastId ORDER BY u.courtChatroomMapping.updatedAt ASC")
     List<String> findIdByUserIdMoreThenLastIdByCreated(
             @Param("userId") Long userId,
             @Param("lastId") Long lastId,
             Pageable pageable
     );
 
-    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId ORDER BY u.courtChatroomMapping.updateAt DESC")
+    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId ORDER BY u.courtChatroomMapping.updatedAt DESC")
     List<String> findIdByUserIdByCreated(
             @Param("userId") Long userId,
             Pageable pageable

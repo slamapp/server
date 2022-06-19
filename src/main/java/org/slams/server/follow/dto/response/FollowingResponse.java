@@ -24,7 +24,7 @@ public class FollowingResponse {
 	}
 
 	public static FollowingResponse toResponse(Follow follow) {
-		return new FollowingResponse(follow.getId(), FollowRecieverDto.toDto(follow.getFollowing()), follow.getCreatedAt(), follow.getUpdateAt());
+		return new FollowingResponse(follow.getId(), FollowRecieverDto.toDto(follow.getFollowing()), follow.getCreatedAt(), follow.getUpdatedAt());
 	}
 
 }
