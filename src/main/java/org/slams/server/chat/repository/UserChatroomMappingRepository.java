@@ -36,14 +36,14 @@ public interface UserChatroomMappingRepository extends JpaRepository<UserChatroo
             @Param("userId") Long userId
     );
 
-    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId AND u.id >= :lastId ORDER BY u.courtChatroomMapping.updatedAt ASC")
+    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId AND u.id >= :lastId ORDER BY u.courtChatroomMapping.updateAt ASC")
     List<String> findIdByUserIdMoreThenLastIdByCreated(
             @Param("userId") Long userId,
             @Param("lastId") Long lastId,
             Pageable pageable
     );
 
-    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId ORDER BY u.courtChatroomMapping.updatedAt DESC")
+    @Query("SELECT u.id FROM UserChatroomMapping u WHERE u.user.id = :userId ORDER BY u.courtChatroomMapping.updateAt DESC")
     List<String> findIdByUserIdByCreated(
             @Param("userId") Long userId,
             Pageable pageable

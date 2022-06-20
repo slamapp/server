@@ -36,8 +36,8 @@ public enum ErrorCode {
 
 	// Follow
 	FOLLOW_ALREADY_EXIST(400, "Follow Already Exists"),
-	FOLLOW_NOT_FOUND(400, "Follow Not Found")
-
+	FOLLOW_NOT_FOUND(400, "Follow Not Found"),
+	DONT_FOLLOW_ONESELF(400, "Do Not Follow Oneself")
 	;
 
 
