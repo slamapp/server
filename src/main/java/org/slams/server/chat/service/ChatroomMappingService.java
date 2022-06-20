@@ -72,9 +72,9 @@ public class ChatroomMappingService {
                 userChatRoomMappingRepository.findAllByUserIdMoreThenLastIdByCreated(userId, cursorRequest.getLastIdParedForLong(), pageable);
     }
 
-    public String findLastId(Long userId, CursorPageRequest cursorRequest){
+    public Long findLastId(Long userId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
-        List<String> ids = cursorRequest.getIsFirst() ?
+        List<Long> ids = cursorRequest.getIsFirst() ?
                 userChatRoomMappingRepository.findIdByUserIdByCreated(userId, pageable):
                 userChatRoomMappingRepository.findIdByUserIdMoreThenLastIdByCreated(userId, cursorRequest.getLastIdParedForLong(), pageable);
 

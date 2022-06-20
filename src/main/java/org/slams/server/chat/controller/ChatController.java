@@ -41,7 +41,7 @@ public class ChatController {
 
         return ResponseEntity.ok(new CursorPageResponse<>(
                 chatroomMappingService.findUserChatRoomByUserId(userId, cursorRequest),
-                chatroomMappingService.findLastId(userId, cursorRequest)
+                String.valueOf(chatroomMappingService.findLastId(userId, cursorRequest))
                 )
         );
     }
@@ -52,10 +52,9 @@ public class ChatController {
             CursorPageRequest cursorRequest,
             HttpServletRequest request
     ){
-        Long userId = new TokenGetId(request,jwt).getUserId();
         return ResponseEntity.ok(new CursorPageResponse<>(
                chatContentsService.findChatContentsListByCourtOrderByCreatedAt(courtId, cursorRequest),
-                chatContentsService.findLastId(courtId, cursorRequest)
+                String.valueOf(chatContentsService.findLastId(courtId, cursorRequest))
                 )
         );
     }
@@ -78,8 +77,6 @@ public class ChatController {
             HttpServletRequest request
             ){
         Long userId = new TokenGetId(request,jwt).getUserId();
-        System.out.println(userId);
-        System.out.println(courtId);
         chatroomMappingService.deleteUserChatRoomByCourtId(courtId, userId);
 
         return ResponseEntity.ok(DeleteUserChatRoomResponse.builder()

@@ -103,9 +103,9 @@ public class ChatContentsService {
         return chatContentConvertor.toDto(chatContents);
     }
 
-    public String findLastId(Long courtId, CursorPageRequest cursorRequest){
+    public Long findLastId(Long courtId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
-        List<String> ids = cursorRequest.getIsFirst() ?
+        List<Long> ids = cursorRequest.getIsFirst() ?
                 chatContentsRepository.findIdByCourtIdByCreated(courtId, pageable):
                 chatContentsRepository.findIdByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastIdParedForLong(), pageable);
 
