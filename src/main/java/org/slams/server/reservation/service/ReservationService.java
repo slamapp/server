@@ -9,17 +9,16 @@ import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.follow.entity.Follow;
-import org.slams.server.follow.exception.FollowAlreadyExistException;
 import org.slams.server.follow.repository.FollowRepository;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
-import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
+import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
 import org.slams.server.reservation.dto.response.*;
 import org.slams.server.reservation.entity.Reservation;
-import org.slams.server.reservation.exception.ForbiddenException;
 import org.slams.server.reservation.exception.ReservationAlreadyExistException;
 import org.slams.server.reservation.exception.ReservationNotFoundException;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.user.entity.User;
+import org.slams.server.user.exception.UserNotAuthorizedException;
 import org.slams.server.user.exception.UserNotFoundException;
 import org.slams.server.user.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
@@ -52,7 +51,7 @@ public class ReservationService {
 				MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", request.getCourtId())));
 
 		reservationRepository.findByCourtAndUser(court, user)
-			.ifPresent(reservation -> {
+			.ifPresent(reservation -> { // 동일한 유저가 같은 코트를 예약할 수 없다
 				throw new ReservationAlreadyExistException(
 					MessageFormat.format("이미 저장된 예약이 있습니다. id : {0}", reservation.getId())
 				);
@@ -65,20 +64,21 @@ public class ReservationService {
 
 
     @Transactional
-    public ReservationUpdateResponseDto update(ReservationUpdateRequestDto requestDto, Long reservationId, Long userId) {
-
-        Reservation reservation=reservationRepository.findById(reservationId)
-                .orElseThrow(()->new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION.getMessage()));
+    public ReservationUpdateResponse update(ReservationUpdateRequest request, Long reservationId, Long userId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new ReservationNotFoundException(
+                MessageFormat.format("저장된 예약을 찾을 수 없습니다. id : {0}", reservationId)
+            ));
 
         // 해당 유저만 수정 가능
         if (!userId.equals(reservation.getUser().getId())) {
-            throw new ForbiddenException(ErrorCode.NOT_FORBIDDEN_RESERVATION.getMessage());
+            throw new UserNotAuthorizedException();
         }
 
-        reservation.update(requestDto);
-        return new ReservationUpdateResponseDto(reservation);
+        reservation.update(request.getStartTime(), request.getEndTime(), request.getHasBall());
+        reservationRepository.flush(); // updatedAt 반영
 
-
+        return ReservationUpdateResponse.of(reservation);
     }
 
     @Transactional
@@ -87,7 +87,7 @@ public class ReservationService {
                 .orElseThrow(() -> new CourtNotFoundException(ErrorCode.NOT_EXIST_RESERVATION.getMessage()));
 
         if (!userId.equals(reservation.getUser().getId())) {
-            throw new ForbiddenException(ErrorCode.NOT_FORBIDDEN_RESERVATION.getMessage());
+            throw new UserNotAuthorizedException();
         }
 
         reservationRepository.delete(reservation);

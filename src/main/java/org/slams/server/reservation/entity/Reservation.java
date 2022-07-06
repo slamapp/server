@@ -3,7 +3,7 @@ package org.slams.server.reservation.entity;
 import lombok.*;
 import org.slams.server.common.BaseEntity;
 import org.slams.server.court.entity.Court;
-import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
+import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
 import org.slams.server.user.entity.User;
 
 import javax.persistence.*;
@@ -54,10 +54,12 @@ public class Reservation extends BaseEntity {
         this.hasBall = hasBall;
     }
 
-    public void update(ReservationUpdateRequestDto request) {
-        startTime=request.getStartTime();
-        endTime=request.getEndTime();
-        hasBall=request.getHasBall();
+    public void update(LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
+        validateTime(startTime, endTime);
+
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.hasBall = hasBall;
     }
 
     //== Validation Method ==//

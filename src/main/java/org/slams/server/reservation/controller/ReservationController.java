@@ -5,17 +5,16 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
-import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
+import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
 import org.slams.server.reservation.dto.response.ReservationDeleteResponseDto;
 import org.slams.server.reservation.dto.response.ReservationExpiredResponseDto;
 import org.slams.server.reservation.dto.response.ReservationInsertResponse;
-import org.slams.server.reservation.dto.response.ReservationUpdateResponseDto;
+import org.slams.server.reservation.dto.response.ReservationUpdateResponse;
 import org.slams.server.reservation.service.ReservationService;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/reservations")
@@ -58,15 +56,23 @@ public class ReservationController {
     }
 
 
-    // 경기장 예약 변경하기
+    @ApiOperation("예약 수정")
+    @ApiResponses({
+        @ApiResponse(
+            code = 202, message = "수정 성공"
+        ),
+        @ApiResponse(
+            code = 403
+            , message = "유저가 해당 예약을 수정할 수 있는 권한이 없음"
+            , response = ErrorResponse.class
+        )
+    })
     @PatchMapping("/{reservationId}")
-    public ResponseEntity<ReservationUpdateResponseDto> update(@RequestBody ReservationUpdateRequestDto requestDto, @PathVariable Long reservationId, HttpServletRequest request) {
+    public ResponseEntity<ReservationUpdateResponse> update(@Valid @RequestBody ReservationUpdateRequest reservationRequest, @PathVariable Long reservationId, HttpServletRequest request) {
+        TokenGetId token = new TokenGetId(request, jwt);
+        Long userId = token.getUserId();
 
-        TokenGetId token=new TokenGetId(request,jwt);
-        Long userId=token.getUserId();
-
-        return new ResponseEntity<ReservationUpdateResponseDto>(reservationService.update(requestDto,reservationId,userId), HttpStatus.CREATED);
-
+        return ResponseEntity.accepted().body(reservationService.update(reservationRequest, reservationId, userId));
     }
 
 

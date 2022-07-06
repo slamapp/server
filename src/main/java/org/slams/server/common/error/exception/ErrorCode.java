@@ -30,7 +30,6 @@ public enum ErrorCode {
 	// Reservation
 	NOT_EXIST_RESERVATION(404,"존재하지 않는 예약입니다."),
 	RESERVATION_ALREADY_EXIST(400, "Reservation Already Exists"),
-	NOT_FORBIDDEN_RESERVATION(403,"권한이 없습니다"),
 
 	// Favorite
 	FAVORITE_NOT_FOUND(400,"Favorite Not Found"),
