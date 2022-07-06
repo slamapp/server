@@ -28,7 +28,7 @@ public class ReservationInsertResponse extends BaseResponse {
 	}
 
 	public static ReservationInsertResponse of(Reservation reservation){
-		return new ReservationInsertResponse(reservation.getCreatedAt(), reservation.getUpdateAt(),
+		return new ReservationInsertResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
 			reservation.getId().toString(), reservation.getCourt().getId().toString(), reservation.getUser().getId().toString(),
 			reservation.getStartTime(), reservation.getEndTime(), reservation.isHasBall());
 	}
