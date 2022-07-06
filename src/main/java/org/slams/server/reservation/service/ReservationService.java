@@ -1,9 +1,9 @@
 package org.slams.server.reservation.service;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
+import org.slams.server.common.api.ListResponse;
 import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
@@ -32,8 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
-@Slf4j
+@RequiredArgsConstructor
 @Service
 public class ReservationService {
 
@@ -62,7 +61,6 @@ public class ReservationService {
 		return ReservationInsertResponse.of(reservationRepository.save(reservation));
 	}
 
-
     @Transactional
     public ReservationUpdateResponse update(ReservationUpdateRequest request, Long reservationId, Long userId) {
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -82,46 +80,32 @@ public class ReservationService {
     }
 
     @Transactional
-    public ReservationDeleteResponseDto delete(Long reservationId, Long userId) {
-        Reservation reservation= reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new CourtNotFoundException(ErrorCode.NOT_EXIST_RESERVATION.getMessage()));
+    public void delete(Long reservationId, Long userId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new ReservationNotFoundException(
+                MessageFormat.format("저장된 예약을 찾을 수 없습니다. id : {0}", reservationId)
+            ));
 
         if (!userId.equals(reservation.getUser().getId())) {
             throw new UserNotAuthorizedException();
         }
 
         reservationRepository.delete(reservation);
-        return new ReservationDeleteResponseDto(reservation);
     }
 
-    @Transactional
-    public List<ReservationUpcomingResponseDto> findUpcoming(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_MEMBER.getMessage()));
+    public ListResponse<ReservationUpcomingResponse> findUpcoming(Long userId) {
+        List<Reservation> reservationList = reservationRepository.findByUserFromStartTime(userId, LocalDateTime.now());
 
-        // user -> reservation -> court 조회
-        LocalDateTime localDateTime=LocalDateTime.now();
+        ListResponse<ReservationUpcomingResponse> reservationUpcomingResponseList = new ListResponse<>();
 
-//        return reservationRepository.findByUserByNow(userId,localDateTime).stream()
-//                .map(ReservationUpcomingResponseDto::new)
-//                .collect(Collectors.toList());
+        for (Reservation reservation : reservationList) {
+            Long reservationCount = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
 
-
-        // 코드 수정 (count 잘못 세어지는거 코드 수정)
-        List<Reservation> reservationList = reservationRepository.findByUserByNow(userId, localDateTime);
-        List<ReservationUpcomingResponseDto> reservationUpcomingResponseDtoList=new ArrayList<>();
-
-        for (Reservation reservation :reservationList) {
-
-            // todo. 여기서 DB 한번 더 뒤지면서 카운트를 센다.
-            Long reservationSize = reservationRepository.findByDate(reservation.getStartTime(), reservation.getEndTime(), reservation.getCourt().getId());
-
-            ReservationUpcomingResponseDto reservationUpcomingResponseDto=new ReservationUpcomingResponseDto(reservation,reservationSize);
-            reservationUpcomingResponseDtoList.add(reservationUpcomingResponseDto);
+            ReservationUpcomingResponse reservationUpcomingResponse = ReservationUpcomingResponse.of(reservation, reservationCount);
+            reservationUpcomingResponseList.addContents(reservationUpcomingResponse);
         }
 
-        return reservationUpcomingResponseDtoList;
-
+        return reservationUpcomingResponseList;
     }
 
 
@@ -187,7 +171,7 @@ public class ReservationService {
         for (Reservation reservation : reservations) {
 
             // todo. 여기서 한번 더 뒤지면서 reservationSize를 센다.
-            Long reservationSize = reservationRepository.findByDate(reservation.getStartTime(), reservation.getEndTime(), reservation.getCourt().getId());
+            Long reservationSize = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
             reservationExpiredResponseDtoList.add(
                     ReservationExpiredResponseDto.toResponse(
                             reservation, reservation.getCourt(), reservation.getCreatedAt(), reservation.getUpdatedAt(),reservationSize)

@@ -7,13 +7,14 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
+import org.slams.server.common.api.ListResponse;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
-import org.slams.server.reservation.dto.response.ReservationDeleteResponseDto;
 import org.slams.server.reservation.dto.response.ReservationExpiredResponseDto;
 import org.slams.server.reservation.dto.response.ReservationInsertResponse;
+import org.slams.server.reservation.dto.response.ReservationUpcomingResponse;
 import org.slams.server.reservation.dto.response.ReservationUpdateResponse;
 import org.slams.server.reservation.service.ReservationService;
 import org.slams.server.user.oauth.jwt.Jwt;
@@ -75,29 +76,36 @@ public class ReservationController {
         return ResponseEntity.accepted().body(reservationService.update(reservationRequest, reservationId, userId));
     }
 
-
-    // 경기장 예약 취소하기
+    @ApiOperation("예약 삭제")
+    @ApiResponses({
+        @ApiResponse(
+            code = 204, message = "삭제 성공"
+        ),
+        @ApiResponse(
+            code = 403
+            , message = "유저가 해당 예약을 삭제할 수 있는 권한이 없음"
+            , response = ErrorResponse.class
+        )
+    })
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<ReservationDeleteResponseDto> update(@PathVariable Long reservationId, HttpServletRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Long reservationId, HttpServletRequest request) {
+        TokenGetId token = new TokenGetId(request, jwt);
+        Long userId = token.getUserId();
 
-        TokenGetId token=new TokenGetId(request,jwt);
-        Long userId=token.getUserId();
+        reservationService.delete(reservationId, userId);
 
-        return new ResponseEntity<ReservationDeleteResponseDto>(reservationService.delete(reservationId,userId), HttpStatus.ACCEPTED);
+        return ResponseEntity.noContent().build();
     }
 
-    // 다가올 예약 목록 조회
-    // /api/v1/reservations/upcoming
+    @ApiOperation("다가올 예약목록 조회")
     @GetMapping("/upcoming")
-    public ResponseEntity<Map<String,Object>>getUpcoming(HttpServletRequest request) {
-        TokenGetId token=new TokenGetId(request,jwt);
-        Long userId=token.getUserId();
+    public ResponseEntity<ListResponse<ReservationUpcomingResponse>> getUpcoming(HttpServletRequest request) {
+        TokenGetId token = new TokenGetId(request, jwt);
+        Long userId = token.getUserId();
 
+        ListResponse<ReservationUpcomingResponse> response = reservationService.findUpcoming(userId);
 
-        Map<String,Object>result=new HashMap<>();
-        result.put("reservations",reservationService.findUpcoming(userId));
-        return ResponseEntity.ok().body(result);
-
+        return ResponseEntity.ok().body(response);
     }
 
     // 토글 상세 조회 API

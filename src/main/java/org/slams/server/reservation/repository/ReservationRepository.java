@@ -25,30 +25,23 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endLocalDateTime") LocalDateTime endLocalDateTime
            );
 
-//    @Query("SELECT r FROM Reservation r WHERE r.user.id=:userId AND r.startTime>:localDateTime")
-//    List<Reservation> findByUserByNow(
-//            @Param("userId") Long userId,
-//            @Param ("localDateTime") LocalDateTime localDateTime);
-    // 수정
     @Query("SELECT r FROM Reservation r WHERE r.user.id=:userId AND r.startTime>:localDateTime")
-    List<Reservation> findByUserByNow(
-            @Param("userId") Long userId,
-            @Param ("localDateTime") LocalDateTime localDateTime);
+    List<Reservation> findByUserFromStartTime(
+        @Param("userId") Long userId,
+        @Param("localDateTime") LocalDateTime localDateTime
+    );
 
     @Query("SELECT r.user.id FROM Reservation r WHERE r.court.id=:courtId")
     List<Long> findBeakerIdByCourtId(
             @Param("courtId") Long courtId
     );
 
-
-//    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.court.id=:courtId")
-    @Query("SELECT COUNT(DISTINCT r.user.id) FROM Reservation r WHERE r.court.id=:courtId AND ((r.startTime BETWEEN :startLocalDateTime AND :endLocalDateTime) OR (r.endTime BETWEEN :startLocalDateTime AND :endLocalDateTime))")
-    Long findByDate(
-            @Param("startLocalDateTime") LocalDateTime startLocalDateTime,
-            @Param("endLocalDateTime") LocalDateTime endLocalDateTime,
-            @Param("courtId") Long courtId
+    @Query("SELECT COUNT(DISTINCT r.user.id) FROM Reservation r WHERE r.court.id=:courtId AND ((r.startTime BETWEEN :startTime AND :endTime) OR (r.endTime BETWEEN :startTime AND :endTime))")
+    Long countUserByCourtAndTime(
+        @Param("courtId") Long courtId,
+        @Param("startTime") LocalDateTime startTime,
+        @Param("endTime") LocalDateTime endTime
     );
-
 
     @Query("SELECT distinct r.user FROM Reservation r WHERE r.court.id=:courtId AND ((:sTime BETWEEN r.startTime AND r.endTime) OR (:eTime BETWEEN r.startTime AND r.endTime))")
     List<User> findByReservation(
