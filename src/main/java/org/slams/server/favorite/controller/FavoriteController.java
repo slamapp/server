@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slams.server.common.api.ListResponse;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.favorite.dto.request.FavoriteInsertRequest;
@@ -50,7 +51,7 @@ public class FavoriteController {
 
 	@ApiOperation("즐겨칮기 목록 조회")
 	@GetMapping()
-	public ResponseEntity<List<FavoriteLookUpResponse>> getAll(HttpServletRequest request) {
+	public ResponseEntity<ListResponse<FavoriteLookUpResponse>> getAll(HttpServletRequest request) {
 		TokenGetId token = new TokenGetId(request, jwt);
 		Long userId = token.getUserId();
 

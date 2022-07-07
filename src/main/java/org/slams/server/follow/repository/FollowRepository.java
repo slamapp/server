@@ -47,4 +47,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	// 팔로우 관계 follower 내가 팔로우 함 / following 누군가 나를 팔로우 함
 	Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
+	Follow getByFollowerAndFollowing(User follower, User Following);
+
 }

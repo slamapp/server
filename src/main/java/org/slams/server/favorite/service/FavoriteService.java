@@ -2,6 +2,7 @@ package org.slams.server.favorite.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slams.server.common.api.ListResponse;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
@@ -55,14 +56,17 @@ public class FavoriteService {
 		);
 	}
 
-	public List<FavoriteLookUpResponse> getAll(Long userId) {
+	public ListResponse<FavoriteLookUpResponse> getAll(Long userId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
 
-		return favoriteRepository.findAllByUserOrderByCreatedAtDesc(user).stream()
+		ListResponse<FavoriteLookUpResponse> favoriteList = new ListResponse<>();
+		favoriteRepository.findAllByUserOrderByCreatedAtDesc(user).stream()
 			.map(FavoriteLookUpResponse::toResponse)
-			.collect(Collectors.toList());
+			.forEach(favoriteList::addContents);
+
+		return favoriteList;
 	}
 
 	@Transactional
