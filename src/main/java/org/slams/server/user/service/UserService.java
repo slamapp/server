@@ -56,7 +56,7 @@ public class UserService {
 			extraUserInfoRequest.getProficiency(), extraUserInfoRequest.getPositions());
 		userRepository.flush(); // updatedAt 반영
 
-		return MyProfileUpdateResponse.toResponse(user);
+		return MyProfileUpdateResponse.of(user);
 	}
 
 	public MyProfileLookUpResponse getMyInfo(Long userId) {
