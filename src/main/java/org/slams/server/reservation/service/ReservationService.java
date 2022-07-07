@@ -49,6 +49,7 @@ public class ReservationService {
 			.orElseThrow(() -> new CourtNotFoundException(
 				MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", request.getCourtId())));
 
+		// todo. 유저가 동일한 시간에 기존 예약이 존재한다면, 예약을 새롭게 추가할 수 없도록 제한한다
 		reservationRepository.findByCourtAndUser(court, user)
 			.ifPresent(reservation -> { // 동일한 유저가 같은 코트를 예약할 수 없다
 				throw new ReservationAlreadyExistException(
@@ -108,6 +109,22 @@ public class ReservationService {
         return reservationUpcomingResponseList;
     }
 
+    public CursorPageResponse<List<ReservationExpiredResponse>> findExpired(Long userId, CursorPageRequest request) {
+        PageRequest pageable = PageRequest.of(0, request.getSize());
+        List<Reservation> reservations = request.getIsFirst() ?
+            reservationRepository.findByUserFromEndTimeOrderByIdDesc(userId, LocalDateTime.now(), pageable) :
+            reservationRepository.findByIdLessThanOrderByIdDesc(request.getLastIdParedForLong(), pageable);
+
+        List<ReservationExpiredResponse> reservationExpiredResponseList = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            Long reservationCount = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
+            reservationExpiredResponseList.add(ReservationExpiredResponse.of(reservation, reservationCount));
+        }
+
+        String lastId = reservations.size() < request.getSize() ? null : reservations.get(reservations.size() - 1).getId().toString();
+
+        return new CursorPageResponse<>(reservationExpiredResponseList, lastId);
+    }
 
     // getDetailByReservationByUser
     @Transactional
@@ -145,42 +162,6 @@ public class ReservationService {
         }
 
         return reservationResponseDtoList;
-    }
-
-
-
-    @Transactional
-    public CursorPageResponse<List<ReservationExpiredResponseDto>> findExpired(Long userId, CursorPageRequest cursorPageRequest) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(
-                        MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
-
-        LocalDateTime localDateTime=LocalDateTime.now();
-
-//        reservationRepository.findByUserByExpiredOrderByDesc(userId,localDateTime);
-
-        PageRequest pageable = PageRequest.of(0, cursorPageRequest.getSize());
-        List<Reservation> reservations = cursorPageRequest.getIsFirst() ?
-                reservationRepository.findByUserByExpiredOrderByDesc(userId, localDateTime,pageable) :
-                reservationRepository.findByUserByAndIdLessThanExpiredOrderByDesc(cursorPageRequest.getLastIdParedForLong(), pageable);
-
-        List<ReservationExpiredResponseDto> reservationExpiredResponseDtoList = new ArrayList<>();
-
-//        int reservationSize= reservationExpiredResponseDtoList.size();
-
-        for (Reservation reservation : reservations) {
-
-            // todo. 여기서 한번 더 뒤지면서 reservationSize를 센다.
-            Long reservationSize = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
-            reservationExpiredResponseDtoList.add(
-                    ReservationExpiredResponseDto.toResponse(
-                            reservation, reservation.getCourt(), reservation.getCreatedAt(), reservation.getUpdatedAt(),reservationSize)
-            );
-        }
-
-        Long lastId = reservations.size() < cursorPageRequest.getSize() ? null : reservations.get(reservations.size() - 1).getId();
-
-        return new CursorPageResponse<>(reservationExpiredResponseDtoList, lastId.toString());
     }
 
 
