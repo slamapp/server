@@ -106,15 +106,12 @@ public class UserService {
 	}
 
 	@Transactional
-	public ProfileImageResponse deleteUserProfileImage(Long userId) {
-
+	public void deleteUserProfileImage(Long userId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
 
-		user.deleteProfileImage();
-
-		return ProfileImageResponse.toResponse(user);
+		user.deleteProfileImage();;
 	}
 
 }

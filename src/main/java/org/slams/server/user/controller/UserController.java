@@ -120,7 +120,7 @@ public class UserController {
 
 	@ApiOperation("내 프로필 이미지 삭제")
 	@DeleteMapping("/myprofile/image")
-	public ResponseEntity<ProfileImageResponse> deleteUserProfileImage(HttpServletRequest request) {
+	public ResponseEntity<Void> deleteUserProfileImage(HttpServletRequest request) {
 		String authorization = request.getHeader("Authorization");
 		String[] tokenString = authorization.split(" ");
 		if (!tokenString[0].equals("Bearer")) {
@@ -129,9 +129,9 @@ public class UserController {
 
 		Jwt.Claims claims = jwt.verify(tokenString[1]);
 
-		ProfileImageResponse profileImageResponse = userService.deleteUserProfileImage(claims.getUserId());
+		userService.deleteUserProfileImage(claims.getUserId());
 
-		return ResponseEntity.ok(profileImageResponse);
+		return ResponseEntity.noContent().build();
 	}
 
 }
