@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.api.ListResponse;
-import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
@@ -19,7 +18,6 @@ import org.slams.server.reservation.exception.ReservationNotFoundException;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slams.server.user.entity.User;
 import org.slams.server.user.exception.UserNotAuthorizedException;
-import org.slams.server.user.exception.UserNotFoundException;
 import org.slams.server.user.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
+    //private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
@@ -126,42 +124,30 @@ public class ReservationService {
         return new CursorPageResponse<>(reservationExpiredResponseList, lastId);
     }
 
-    // getDetailByReservationByUser
-    @Transactional
-    public List<ReservationResponseDto> getDetailByReservationByUser(Long userId, Long courtId, String startTime, String endTime) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_MEMBER.getMessage()));
+    public ListResponse<ReservationDetailResponse> getDetail(Long userId, Long courtId, LocalDateTime startTime, LocalDateTime endTime) {
+        User user = userRepository.getById(userId);
 
+//        LocalDateTime sTime = LocalDateTime.parse(startTime, dateTimeFormatter);
+//        LocalDateTime eTime = LocalDateTime.parse(endTime, dateTimeFormatter);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
-        LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
+        List<User> playerList = reservationRepository.findUsersByCourtIdAndTime(courtId, startTime, endTime);
 
+        ListResponse<ReservationDetailResponse> reservationDetailResponseList = new ListResponse<>();
+        for (User player : playerList) {
+            if (user.getId().equals(player.getId())) {
+                continue;
+            }
 
-        // reservationId -> User 검색 ->
-        List<User> byIdLists = reservationRepository.findByReservation(courtId, sTime, eTime);
-
-        List<ReservationResponseDto> reservationResponseDtoList=new ArrayList<>();
-        Boolean isFollow=false;
-
-
-        for (User foundUser:byIdLists) {
-            User joinUser = foundUser;
-
-            if (user.getId() != joinUser.getId()) {
-                isFollow = followRepository.existsByFollowerAndFollowing(user, foundUser);
-                if (isFollow) {
-                    Optional<Follow> follow=followRepository.findByFollowerAndFollowing(user,foundUser);
-                    reservationResponseDtoList.add(new ReservationResponseDto(joinUser, isFollow,follow.get()));
-                }
-                else {
-                    reservationResponseDtoList.add(new ReservationResponseDto(joinUser, isFollow));
-                }
-
+            boolean isFollow = followRepository.existsByFollowerAndFollowing(user, player);
+            if (isFollow) {
+                Follow follow = followRepository.getByFollowerAndFollowing(user, player);
+                reservationDetailResponseList.addContents(ReservationDetailResponse.of(player, follow.getId().toString()));
+            } else {
+                reservationDetailResponseList.addContents(ReservationDetailResponse.of(player, null));
             }
         }
 
-        return reservationResponseDtoList;
+        return reservationDetailResponseList;
     }
 
 

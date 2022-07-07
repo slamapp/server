@@ -43,12 +43,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         @Param("endTime") LocalDateTime endTime
     );
 
-    @Query("SELECT distinct r.user FROM Reservation r WHERE r.court.id=:courtId AND ((:sTime BETWEEN r.startTime AND r.endTime) OR (:eTime BETWEEN r.startTime AND r.endTime))")
-    List<User> findByReservation(
-
-            @Param("courtId")Long courtId,
-            @Param("sTime") LocalDateTime sTime,
-            @Param("eTime") LocalDateTime eTime);
+    @Query("SELECT distinct r.user FROM Reservation r WHERE r.court.id = :courtId AND ((:startTime BETWEEN r.startTime AND r.endTime) OR (:endTime BETWEEN r.startTime AND r.endTime))")
+    List<User> findUsersByCourtIdAndTime(
+        @Param("courtId") Long courtId,
+        @Param("startTime") LocalDateTime startTime,
+        @Param("endTime") LocalDateTime endTime
+    );
 
     // 유저의 지난 예약 목록(무한 스크롤 - 최초)
     @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.endTime < :localDateTime ORDER BY r.id desc")

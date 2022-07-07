@@ -11,10 +11,7 @@ import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
-import org.slams.server.reservation.dto.response.ReservationExpiredResponse;
-import org.slams.server.reservation.dto.response.ReservationInsertResponse;
-import org.slams.server.reservation.dto.response.ReservationUpcomingResponse;
-import org.slams.server.reservation.dto.response.ReservationUpdateResponse;
+import org.slams.server.reservation.dto.response.*;
 import org.slams.server.reservation.service.ReservationService;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
@@ -23,9 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -116,16 +112,15 @@ public class ReservationController {
 		return ResponseEntity.ok(response);
 	}
 
-	// 토글 상세 조회 API
-	// /api/v1/reservations/{reservationId} -> 변경 api/v1/reservations/{courtId}/{startTIme}/{endTime}
-	@GetMapping("/{courtId}/{startTime}/{endTime}")
-	public ResponseEntity<Map<String, Object>> getDetail(HttpServletRequest request, @PathVariable Long courtId, @PathVariable String startTime, @PathVariable String endTime) {
+	@ApiOperation("예약 상세보기")
+	@GetMapping("/{courtId}")
+	public ResponseEntity<ListResponse<ReservationDetailResponse>> getDetail(HttpServletRequest request, @PathVariable Long courtId, @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
 		TokenGetId token = new TokenGetId(request, jwt);
 		Long userId = token.getUserId();
 
-		Map<String, Object> result = new HashMap<>();
-		result.put("participants", reservationService.getDetailByReservationByUser(userId, courtId, startTime, endTime));
-		return ResponseEntity.ok().body(result);
+		ListResponse<ReservationDetailResponse> response = reservationService.getDetail(userId, courtId, startTime, endTime);
+
+		return ResponseEntity.ok(response);
 	}
 
 //    @ApiOperation("특정 날짜의 농구장 예약 전체조회")
