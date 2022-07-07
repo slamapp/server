@@ -101,8 +101,9 @@ public class UserService {
 		String profileImageUrl = awsS3Uploader.upload(profileImageRequest, "profile");
 
 		user.updateProfileImage(profileImageUrl);
+		userRepository.flush(); // updatedAt 반영
 
-		return ProfileImageResponse.toResponse(user);
+		return ProfileImageResponse.of(user);
 	}
 
 	@Transactional
