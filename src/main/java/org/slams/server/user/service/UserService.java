@@ -47,7 +47,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public ExtraUserInfoResponse addExtraUserInfo(Long userId, ExtraUserInfoRequest extraUserInfoRequest) {
+	public MyProfileUpdateResponse addExtraUserInfo(Long userId, ExtraUserInfoRequest extraUserInfoRequest) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
@@ -56,10 +56,10 @@ public class UserService {
 			extraUserInfoRequest.getProficiency(), extraUserInfoRequest.getPositions());
 		userRepository.flush(); // updatedAt 반영
 
-		return ExtraUserInfoResponse.toResponse(user);
+		return MyProfileUpdateResponse.toResponse(user);
 	}
 
-	public MyProfileResponse getMyInfo(Long userId) {
+	public MyProfileLookUpResponse getMyInfo(Long userId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException(
 				MessageFormat.format("가입한 사용자를 찾을 수 없습니다. id : {0}", userId)));
@@ -67,10 +67,10 @@ public class UserService {
 		Long followerCount = followRepository.countByFollowing(user);
 		Long followingCount = followRepository.countByFollower(user);
 
-		return MyProfileResponse.toResponse(user, followerCount, followingCount);
+		return MyProfileLookUpResponse.toResponse(user, followerCount, followingCount);
 	}
 
-	public UserProfileResponse getUserInfo(Long myId, Long userId) {
+	public UserProfileLookUpResponse getUserInfo(Long myId, Long userId) {
 		if (myId.equals(userId)) {
 			throw new SameUserException("같은 사용자의 접근은 불가능합니다");
 		}
@@ -89,7 +89,7 @@ public class UserService {
 			.stream().map(favorite -> new FavoriteCourtResponse(favorite.getCourt().getId(), favorite.getCourt().getName()))
 			.collect(Collectors.toList());
 
-		return UserProfileResponse.toResponse(user, isFollowing, followerCount, followingCount, favoriteCourts);
+		return UserProfileLookUpResponse.toResponse(user, isFollowing, followerCount, followingCount, favoriteCourts);
 	}
 
 	@Transactional

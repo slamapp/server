@@ -45,7 +45,7 @@ public class UserController {
 
 	@ApiOperation("내 프로필 정보 조회")
 	@GetMapping(value = "/myprofile", produces = "application/json; charset=utf-8;")
-	public ResponseEntity<MyProfileResponse> getMyInfo(HttpServletRequest request) {
+	public ResponseEntity<MyProfileLookUpResponse> getMyInfo(HttpServletRequest request) {
 		String authorization = request.getHeader("Authorization");
 		String[] tokenString = authorization.split(" ");
 		if (!tokenString[0].equals("Bearer")) {
@@ -54,9 +54,9 @@ public class UserController {
 
 		Jwt.Claims claims = jwt.verify(tokenString[1]);
 
-		MyProfileResponse myProfileResponse = userService.getMyInfo(claims.getUserId());
+		MyProfileLookUpResponse myProfileLookUpResponse = userService.getMyInfo(claims.getUserId());
 
-		return ResponseEntity.ok(myProfileResponse);
+		return ResponseEntity.ok(myProfileLookUpResponse);
 	}
 
 	@ApiResponses({
@@ -71,7 +71,7 @@ public class UserController {
 		)
 	})
 	@GetMapping("/{userId}")
-	public ResponseEntity<UserProfileResponse> getUserInfo(HttpServletRequest request, @PathVariable Long userId) {
+	public ResponseEntity<UserProfileLookUpResponse> getUserInfo(HttpServletRequest request, @PathVariable Long userId) {
 		String authorization = request.getHeader("Authorization");
 		String[] tokenString = authorization.split(" ");
 		if (!tokenString[0].equals("Bearer")) {
@@ -80,14 +80,14 @@ public class UserController {
 
 		Jwt.Claims claims = jwt.verify(tokenString[1]);
 
-		UserProfileResponse userProfileResponse = userService.getUserInfo(claims.getUserId(), userId);
+		UserProfileLookUpResponse userProfileLookUpResponse = userService.getUserInfo(claims.getUserId(), userId);
 
-		return ResponseEntity.ok(userProfileResponse);
+		return ResponseEntity.ok(userProfileLookUpResponse);
 	}
 
 	@ApiOperation("내 정보 수정(추가 입력)")
 	@PutMapping("/myprofile")
-	public ResponseEntity<ExtraUserInfoResponse> addExtraUserInfo(HttpServletRequest request, @RequestBody ExtraUserInfoRequest extraUserInfoRequest) {
+	public ResponseEntity<MyProfileUpdateResponse> addExtraUserInfo(HttpServletRequest request, @RequestBody ExtraUserInfoRequest extraUserInfoRequest) {
 		String authorization = request.getHeader("Authorization");
 		String[] tokenString = authorization.split(" ");
 		if (!tokenString[0].equals("Bearer")) {
@@ -96,9 +96,9 @@ public class UserController {
 
 		Jwt.Claims claims = jwt.verify(tokenString[1]);
 
-		ExtraUserInfoResponse extraUserInfoResponse = userService.addExtraUserInfo(claims.getUserId(), extraUserInfoRequest);
+		MyProfileUpdateResponse myProfileUpdateResponse = userService.addExtraUserInfo(claims.getUserId(), extraUserInfoRequest);
 
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(extraUserInfoResponse);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(myProfileUpdateResponse);
 	}
 
 	@ApiOperation("내 프로필 이미지 수정")
