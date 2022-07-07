@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FollowerResponse {
 
-	private Long id;
+	private String id;
 	private FollowCreatorDto creator;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	private FollowerResponse(Long id, FollowCreatorDto creator, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	private FollowerResponse(String id, FollowCreatorDto creator, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.creator = creator;
 		this.createdAt = createdAt;
@@ -24,7 +24,7 @@ public class FollowerResponse {
 	}
 
 	public static FollowerResponse toResponse(Follow follow) {
-		return new FollowerResponse(follow.getId(), FollowCreatorDto.toDto(follow.getFollower()), follow.getCreatedAt(), follow.getUpdatedAt());
+		return new FollowerResponse(follow.getId().toString(), FollowCreatorDto.toDto(follow.getFollower()), follow.getCreatedAt(), follow.getUpdatedAt());
 	}
 
 }
