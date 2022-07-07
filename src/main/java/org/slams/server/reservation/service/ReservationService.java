@@ -24,15 +24,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
-    //private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
@@ -150,21 +151,22 @@ public class ReservationService {
         return reservationDetailResponseList;
     }
 
+    public ListResponse<ReservationByCourtAndDateResponse> getByCourtAndDate(Long courtId, String date) {
+        Court court=courtRepository.findById(courtId)
+            .orElseThrow(() -> new CourtNotFoundException(
+                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", courtId))
+            );
 
-//    public List<CourtReservationResponseDto> findCourtReservationsByDate(Long courtId, String date) {
-//        Court court=courtRepository.findById(courtId)
-//            .orElseThrow(() -> new CourtNotFoundException(
-//                MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", courtId)));
-//
-//        LocalDate dateTime = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-//        LocalDateTime startLocalDateTime=dateTime.atStartOfDay();
-//        LocalDateTime endLocalDateTime= dateTime.atTime(23,59,59);
-//
-//        return reservationRepository.findByIdAndDate(courtId,startLocalDateTime,endLocalDateTime).stream()
-//            .map(CourtReservationResponseDto::new)
-//            .collect(Collectors.toList());
-//    }
+        LocalDate dateTime = LocalDate.parse(date, dateTimeFormatter);
+        LocalDateTime startTime=dateTime.atStartOfDay();
+        LocalDateTime endTime= dateTime.atTime(23,59,59);
 
+        ListResponse<ReservationByCourtAndDateResponse> reservationList = new ListResponse<>();
+        reservationRepository.findByCourtIdAndDateBetweenOrderByStartTime(court.getId(),startTime,endTime).stream()
+            .map(ReservationByCourtAndDateResponse::of)
+            .forEach(reservationList::addContents);
 
+        return reservationList;
+    }
 
 }

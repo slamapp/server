@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,5 +65,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 //    List<Reservation> findByCourt(@Param("courtId") Long courtId);
 
     Optional<Reservation> findByCourtAndUser(Court court, User user);
+
+    @Query("SELECT r FROM Reservation r WHERE r.court.id = :courtId AND r.startTime < :endTime AND r.endTime > :startTime ORDER BY r.startTime")
+    List<Reservation> findByCourtIdAndDateBetweenOrderByStartTime(
+        @Param("courtId") Long courtId,
+        @Param("startTime") LocalDateTime startTime,
+        @Param("endTime") LocalDateTime endTime
+    );
 
 }

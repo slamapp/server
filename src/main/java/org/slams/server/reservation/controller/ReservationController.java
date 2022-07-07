@@ -123,20 +123,15 @@ public class ReservationController {
 		return ResponseEntity.ok(response);
 	}
 
-//    @ApiOperation("특정 날짜의 농구장 예약 전체조회")
-//    @GetMapping("/{courtId}/reservations")
-//    public ResponseEntity<Map<String, Object>> getCourtReservationsByDate(@PathVariable Long courtId, @RequestParam String date, HttpServletRequest request) {
-//        TokenGetId token = new TokenGetId(request, jwt);
-//        Long userId = token.getUserId();
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("courtId", courtId);
-//        result.put("date", date);
-//        result.put("reservations", courtService.findCourtReservationsByDate(courtId, date));
-//
-//
-//        // 여기에 추가로 header 토큰 정보가 들어가야 함.
-//        return ResponseEntity.ok().body(result);
-//    }
+    @ApiOperation("특정 날짜의 농구장 예약 전체조회")
+    @GetMapping()
+    public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date, HttpServletRequest request) {
+        TokenGetId token = new TokenGetId(request, jwt);
+        Long userId = token.getUserId();
+
+		ListResponse<ReservationByCourtAndDateResponse> response = reservationService.getByCourtAndDate(courtId, date);
+
+        return ResponseEntity.ok(response);
+    }
 
 }
