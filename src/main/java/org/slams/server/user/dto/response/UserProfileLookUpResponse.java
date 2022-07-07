@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.slams.server.court.dto.response.BriefCourtInfoDto;
 import org.slams.server.user.entity.Position;
 import org.slams.server.user.entity.Proficiency;
 import org.slams.server.user.entity.User;
@@ -27,12 +28,12 @@ public class UserProfileLookUpResponse {
 	private Boolean isFollowing;
 	private Long followerCount;
 	private Long followingCount;
-	private List<FavoriteCourtResponse> favoriteCourts;
+	private List<BriefCourtInfoDto> favoriteCourts;
 
 	private UserProfileLookUpResponse(String id, String nickname, String profileImage, String description,
 									  Proficiency proficiency, List<Position> positions,
 									  LocalDateTime createdAt, LocalDateTime updatedAt,
-									  Boolean isFollowing, Long followerCount, Long followingCount, List<FavoriteCourtResponse> favoriteCourts) {
+									  Boolean isFollowing, Long followerCount, Long followingCount, List<BriefCourtInfoDto> favoriteCourts) {
 		this.id = id;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
@@ -47,7 +48,7 @@ public class UserProfileLookUpResponse {
 		this.favoriteCourts = favoriteCourts;
 	}
 
-	public static UserProfileLookUpResponse toResponse(User user, Boolean isFollowing, Long followerCount, Long followingCount, List<FavoriteCourtResponse> favoriteCourts) {
+	public static UserProfileLookUpResponse toResponse(User user, Boolean isFollowing, Long followerCount, Long followingCount, List<BriefCourtInfoDto> favoriteCourts) {
 		return new UserProfileLookUpResponse(user.getId().toString(), user.getNickname(), user.getProfileImage(),
 			user.getDescription(), user.getProficiency(), user.getPositions(),
 			user.getCreatedAt(), user.getUpdatedAt(), isFollowing, followerCount, followingCount, favoriteCourts

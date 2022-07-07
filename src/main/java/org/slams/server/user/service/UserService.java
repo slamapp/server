@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.utils.AwsS3Uploader;
 
+import org.slams.server.court.dto.response.BriefCourtInfoDto;
 import org.slams.server.favorite.repository.FavoriteRepository;
 import org.slams.server.follow.repository.FollowRepository;
 import org.slams.server.notification.dto.response.NotificationResponse;
@@ -85,8 +86,8 @@ public class UserService {
 		Long followerCount = followRepository.countByFollowing(user);
 		Long followingCount = followRepository.countByFollower(user);
 
-		List<FavoriteCourtResponse> favoriteCourts = favoriteRepository.findAllByUserOrderByCreatedAtDesc(user)
-			.stream().map(favorite -> new FavoriteCourtResponse(favorite.getCourt().getId(), favorite.getCourt().getName()))
+		List<BriefCourtInfoDto> favoriteCourts = favoriteRepository.findAllByUserOrderByCreatedAtDesc(user)
+			.stream().map(favorite -> BriefCourtInfoDto.toDto(favorite.getCourt()))
 			.collect(Collectors.toList());
 
 		return UserProfileLookUpResponse.toResponse(user, isFollowing, followerCount, followingCount, favoriteCourts);
