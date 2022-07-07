@@ -1,195 +1,180 @@
-package org.slams.server.reservation.controller;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
-import org.slams.server.court.entity.Court;
-import org.slams.server.court.entity.Texture;
-import org.slams.server.court.repository.CourtRepository;
-import org.slams.server.court.service.CourtService;
-import org.slams.server.reservation.dto.request.ReservationInsertRequest;
-import org.slams.server.reservation.dto.request.ReservationUpdateRequestDto;
-import org.slams.server.reservation.dto.response.ReservationDeleteResponseDto;
-import org.slams.server.reservation.dto.response.ReservationInsertResponse;
-import org.slams.server.reservation.dto.response.ReservationUpcomingResponseDto;
-import org.slams.server.reservation.dto.response.ReservationUpdateResponseDto;
-import org.slams.server.reservation.entity.Reservation;
-import org.slams.server.reservation.repository.ReservationRepository;
-import org.slams.server.reservation.service.ReservationService;
-import org.slams.server.user.entity.Position;
-import org.slams.server.user.entity.Proficiency;
-import org.slams.server.user.entity.Role;
-import org.slams.server.user.entity.User;
-import org.slams.server.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.io.support.ResourcePropertySource;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Slf4j
-public class ReservationControllerTest {
-
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private ReservationService reservationService;
-
-    private User user;
-    private Court court;
-    private Reservation reservation;
-
-    // JWT 추가 코드
-    private String jwtToken;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        // JWT 추가 코드
-        // 컨테이너 생성
-        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
-
-        // 환경변수 관리 객체 생성
-        ConfigurableEnvironment env = ctx.getEnvironment();
-
-        // 프로퍼티 관리 객체 생성
-        MutablePropertySources prop = env.getPropertySources();
-
-        // 프로퍼티 관리 객체에 프로퍼티 파일 추가
-        prop.addLast(new ResourcePropertySource("classpath:test.properties"));
-
-        // 프로퍼티 정보 얻기
-        String token = env.getProperty("token");
-        jwtToken = "Bearer " + token;
-
-        // User 생성
-        user = User.builder()
-            .nickname("test")
-            .email("test@naver.com")
-            .id(1L)
-            .socialId("192039")
-            .description("my name is test")
-            .profileImage("desktop Image")
-            .role(Role.USER)
-            .proficiency(Proficiency.INTERMEDIATE.BEGINNER)
-            .positions(Arrays.asList(Position.PF))
-            .build();
-
-        // Court 생성
-        court = Court.builder()
-            .name("관악구민운동장 농구장")
-            .latitude(38.987654)
-            .longitude(12.309472)
-            .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
-            .texture(Texture.ASPHALT)
-            .basketCount(2)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
-            .build();
-
-        court = Court.builder()
-            .id(127L)
-            .name("광진구 농구장")
-            .latitude(45.987654)
-            .longitude(13.309472)
-            .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
-            .texture(Texture.ASPHALT)
-            .basketCount(4)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
-            .build();
-
-        reservation = Reservation.builder()
-            .id(1L)
-            .court(court)
-            .user(user)
-            .hasBall(false)
-            .startTime(LocalDateTime.now().plusDays(1))
-            .endTime(LocalDateTime.now().plusDays(1))
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
-            .build();
-    }
-
-    @Test
-    @DisplayName("[POST] '/api/v1/reservations'")
-    void insert() throws Exception {
-        ReservationInsertRequest givenRequest = ReservationInsertRequest.builder()
-            .courtId(reservation.getCourt().getId())
-            .startTime(reservation.getStartTime())
-            .endTime(reservation.getEndTime())
-            .hasBall(reservation.isHasBall())
-            .build();
-
-        ReservationInsertResponse response = ReservationInsertResponse.of(reservation);
-
-        given(reservationService.insert(any(), any())).willReturn(response);
-
-        // when
-        RequestBuilder request = MockMvcRequestBuilders.post("/api/v1/reservations")
-            .header("Authorization", jwtToken)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(givenRequest));
-
-        // then
-        mockMvc.perform(request)
-            .andExpect(status().isCreated())
-            .andDo(print())
-            .andDo(document("reservations/reservation-insert",
-                requestFields(
-                    fieldWithPath("courtId").type(JsonFieldType.NUMBER).description("농구장 구별키"),
-                    fieldWithPath("startTime").type(JsonFieldType.STRING).description("예약 시작시간"),
-                    fieldWithPath("endTime").type(JsonFieldType.STRING).description("예약 종료시간"),
-                    fieldWithPath("hasBall").type(JsonFieldType.BOOLEAN).description("농구공 여부")
-                ),
-                responseFields(
-                    fieldWithPath("id").type(JsonFieldType.STRING).description("예약 구별키"),
-                    fieldWithPath("userId").type(JsonFieldType.STRING).description("사용자 구별키"),
-                    fieldWithPath("courtId").type(JsonFieldType.STRING).description("농구장 구별키"),
-                    fieldWithPath("startTime").type(JsonFieldType.STRING).description("예약 시작시간"),
-                    fieldWithPath("endTime").type(JsonFieldType.STRING).description("예약 종료시간"),
-                    fieldWithPath("hasBall").type(JsonFieldType.BOOLEAN).description("농구공 여부"),
-                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("예약 정보 최초 생성일자"),
-                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("예약 정보 최근 수정일자")
-                )
-            ));
-    }
-
-
+//package org.slams.server.reservation.controller;
+//
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import lombok.extern.slf4j.Slf4j;
+//import org.junit.jupiter.api.*;
+//import org.slams.server.court.entity.Court;
+//import org.slams.server.court.entity.Texture;
+//import org.slams.server.reservation.dto.request.ReservationInsertRequest;
+//import org.slams.server.reservation.dto.response.ReservationInsertResponse;
+//import org.slams.server.reservation.entity.Reservation;
+//import org.slams.server.reservation.service.ReservationService;
+//import org.slams.server.user.entity.Position;
+//import org.slams.server.user.entity.Proficiency;
+//import org.slams.server.user.entity.Role;
+//import org.slams.server.user.entity.User;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.mock.mockito.MockBean;
+//import org.springframework.context.support.GenericXmlApplicationContext;
+//import org.springframework.core.env.ConfigurableEnvironment;
+//import org.springframework.core.env.MutablePropertySources;
+//import org.springframework.core.io.support.ResourcePropertySource;
+//import org.springframework.http.MediaType;
+//import org.springframework.restdocs.payload.JsonFieldType;
+//import org.springframework.test.web.servlet.MockMvc;
+//import org.springframework.test.web.servlet.RequestBuilder;
+//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+//
+//import java.time.LocalDateTime;
+//import java.util.Arrays;
+//
+//import static org.mockito.ArgumentMatchers.any;
+//import static org.mockito.BDDMockito.given;
+//import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+//import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+//import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+//import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+//import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+//import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+//
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//@AutoConfigureRestDocs
+//@Slf4j
+//public class ReservationControllerTest {
+//
+//    @Autowired
+//    private ObjectMapper objectMapper;
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @MockBean
+//    private ReservationService reservationService;
+//
+//    private User user;
+//    private Court court;
+//    private Reservation reservation;
+//
+//    // JWT 추가 코드
+//    private String jwtToken;
+//
+//    @BeforeEach
+//    void setUp() throws Exception {
+//        // JWT 추가 코드
+//        // 컨테이너 생성
+//        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
+//
+//        // 환경변수 관리 객체 생성
+//        ConfigurableEnvironment env = ctx.getEnvironment();
+//
+//        // 프로퍼티 관리 객체 생성
+//        MutablePropertySources prop = env.getPropertySources();
+//
+//        // 프로퍼티 관리 객체에 프로퍼티 파일 추가
+//        prop.addLast(new ResourcePropertySource("classpath:test.properties"));
+//
+//        // 프로퍼티 정보 얻기
+//        String token = env.getProperty("token");
+//        jwtToken = "Bearer " + token;
+//
+//        // User 생성
+//        user = User.builder()
+//            .nickname("test")
+//            .email("test@naver.com")
+//            .id(1L)
+//            .socialId("192039")
+//            .description("my name is test")
+//            .profileImage("desktop Image")
+//            .role(Role.USER)
+//            .proficiency(Proficiency.INTERMEDIATE.BEGINNER)
+//            .positions(Arrays.asList(Position.PF))
+//            .build();
+//
+//        // Court 생성
+//        court = Court.builder()
+//            .name("관악구민운동장 농구장")
+//            .latitude(38.987654)
+//            .longitude(12.309472)
+//            .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
+//            .texture(Texture.ASPHALT)
+//            .basketCount(2)
+//            .createdAt(LocalDateTime.now())
+//            .updatedAt(LocalDateTime.now())
+//            .build();
+//
+//        court = Court.builder()
+//            .id(127L)
+//            .name("광진구 농구장")
+//            .latitude(45.987654)
+//            .longitude(13.309472)
+//            .image("aHR0cHM6Ly9pYmIuY28vcXMwSnZXYg")
+//            .texture(Texture.ASPHALT)
+//            .basketCount(4)
+//            .createdAt(LocalDateTime.now())
+//            .updatedAt(LocalDateTime.now())
+//            .build();
+//
+//        reservation = Reservation.builder()
+//            .id(1L)
+//            .court(court)
+//            .user(user)
+//            .hasBall(false)
+//            .startTime(LocalDateTime.now().plusDays(1))
+//            .endTime(LocalDateTime.now().plusDays(1))
+//            .createdAt(LocalDateTime.now())
+//            .updatedAt(LocalDateTime.now())
+//            .build();
+//    }
+//
+//    @Test
+//    @DisplayName("[POST] '/api/v1/reservations'")
+//    void insert() throws Exception {
+//        ReservationInsertRequest givenRequest = ReservationInsertRequest.builder()
+//            .courtId(reservation.getCourt().getId())
+//            .startTime(reservation.getStartTime())
+//            .endTime(reservation.getEndTime())
+//            .hasBall(reservation.isHasBall())
+//            .build();
+//
+//        ReservationInsertResponse response = ReservationInsertResponse.of(reservation);
+//
+//        given(reservationService.insert(any(), any())).willReturn(response);
+//
+//        // when
+//        RequestBuilder request = MockMvcRequestBuilders.post("/api/v1/reservations")
+//            .header("Authorization", jwtToken)
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .content(objectMapper.writeValueAsString(givenRequest));
+//
+//        // then
+//        mockMvc.perform(request)
+//            .andExpect(status().isCreated())
+//            .andDo(print())
+//            .andDo(document("reservations/reservation-insert",
+//                requestFields(
+//                    fieldWithPath("courtId").type(JsonFieldType.NUMBER).description("농구장 구별키"),
+//                    fieldWithPath("startTime").type(JsonFieldType.STRING).description("예약 시작시간"),
+//                    fieldWithPath("endTime").type(JsonFieldType.STRING).description("예약 종료시간"),
+//                    fieldWithPath("hasBall").type(JsonFieldType.BOOLEAN).description("농구공 여부")
+//                ),
+//                responseFields(
+//                    fieldWithPath("id").type(JsonFieldType.STRING).description("예약 구별키"),
+//                    fieldWithPath("userId").type(JsonFieldType.STRING).description("사용자 구별키"),
+//                    fieldWithPath("courtId").type(JsonFieldType.STRING).description("농구장 구별키"),
+//                    fieldWithPath("startTime").type(JsonFieldType.STRING).description("예약 시작시간"),
+//                    fieldWithPath("endTime").type(JsonFieldType.STRING).description("예약 종료시간"),
+//                    fieldWithPath("hasBall").type(JsonFieldType.BOOLEAN).description("농구공 여부"),
+//                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("예약 정보 최초 생성일자"),
+//                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("예약 정보 최근 수정일자")
+//                )
+//            ));
+//    }
+//
+//
 //    //  변경하기
 //    @Test
 //    @DisplayName("[PATCH] '/api/v1/reservations/{reservationId}'")
@@ -415,5 +400,5 @@ public class ReservationControllerTest {
 //                        )
 //                ));
 //    }
-
-}
+//
+//}
