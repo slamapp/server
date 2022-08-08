@@ -1,4 +1,4 @@
-package org.slams.server.follow.dto.response;
+package org.slams.server.user.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,20 +7,20 @@ import org.slams.server.user.entity.User;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class FollowRecieverDto {
+public class BriefUserInfoDto {
 
 	private String id;
 	private String nickname;
 	private String profileImage;
 
-	private FollowRecieverDto(String id, String nickname, String profileImage) {
+	private BriefUserInfoDto(String id, String nickname, String profileImage) {
 		this.id = id;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
 	}
 
-	public static FollowRecieverDto toDto(User reciever) {
-		return new FollowRecieverDto(reciever.getId().toString(), reciever.getNickname(), reciever.getProfileImage());
+	public static BriefUserInfoDto toDto(User user){
+		return new BriefUserInfoDto(user.getId().toString(), user.getNickname(), user.getProfileImage());
 	}
 
 }

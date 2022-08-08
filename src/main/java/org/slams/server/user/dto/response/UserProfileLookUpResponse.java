@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.slams.server.court.dto.response.BriefCourtInfoDto;
 import org.slams.server.user.entity.Position;
 import org.slams.server.user.entity.Proficiency;
 import org.slams.server.user.entity.User;
@@ -14,9 +15,9 @@ import java.util.List;
 @Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserProfileResponse {
+public class UserProfileLookUpResponse {
 
-	private Long userId;
+	private String id;
 	private String nickname;
 	private String profileImage;
 	private String description;
@@ -27,13 +28,13 @@ public class UserProfileResponse {
 	private Boolean isFollowing;
 	private Long followerCount;
 	private Long followingCount;
-	private List<FavoriteCourtResponse> favoriteCourts;
+	private List<BriefCourtInfoDto> favoriteCourts;
 
-	private UserProfileResponse(Long userId, String nickname, String profileImage, String description,
-								Proficiency proficiency, List<Position> positions,
-								LocalDateTime createdAt, LocalDateTime updatedAt,
-								Boolean isFollowing, Long followerCount, Long followingCount, List<FavoriteCourtResponse> favoriteCourts) {
-		this.userId = userId;
+	private UserProfileLookUpResponse(String id, String nickname, String profileImage, String description,
+									  Proficiency proficiency, List<Position> positions,
+									  LocalDateTime createdAt, LocalDateTime updatedAt,
+									  Boolean isFollowing, Long followerCount, Long followingCount, List<BriefCourtInfoDto> favoriteCourts) {
+		this.id = id;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
 		this.description = description;
@@ -47,8 +48,8 @@ public class UserProfileResponse {
 		this.favoriteCourts = favoriteCourts;
 	}
 
-	public static UserProfileResponse toResponse(User user, Boolean isFollowing, Long followerCount, Long followingCount, List<FavoriteCourtResponse> favoriteCourts) {
-		return new UserProfileResponse(user.getId(), user.getNickname(), user.getProfileImage(),
+	public static UserProfileLookUpResponse toResponse(User user, Boolean isFollowing, Long followerCount, Long followingCount, List<BriefCourtInfoDto> favoriteCourts) {
+		return new UserProfileLookUpResponse(user.getId().toString(), user.getNickname(), user.getProfileImage(),
 			user.getDescription(), user.getProficiency(), user.getPositions(),
 			user.getCreatedAt(), user.getUpdatedAt(), isFollowing, followerCount, followingCount, favoriteCourts
 		);

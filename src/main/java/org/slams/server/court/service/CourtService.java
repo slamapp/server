@@ -39,7 +39,7 @@ public class CourtService {
 		LocalDateTime startLocalDateTime = localDateTimes.get(0);
 		LocalDateTime endLocalDateTime = localDateTimes.get(1);
 
-		Long reservationMaxCount = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, courtId);
+		Long reservationMaxCount = reservationRepository.countUserByCourtAndTime(courtId, startLocalDateTime, endLocalDateTime);
 
 		return CourtDetailResponse.toResponse(court, reservationMaxCount);
 	}
@@ -66,7 +66,7 @@ public class CourtService {
 
 		List<CourtByDateAndBoundaryResponse> courtByDateAndBoundaryResponseList = new ArrayList<>();
 		for (Court court : courtsByBoundary) {
-			Long reservations = reservationRepository.findByDate(startLocalDateTime, endLocalDateTime, court.getId());
+			Long reservations = reservationRepository.countUserByCourtAndTime(court.getId(), startLocalDateTime, endLocalDateTime);
 
 			courtByDateAndBoundaryResponseList.add(CourtByDateAndBoundaryResponse.toResponse(court, reservations));
 		}

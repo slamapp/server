@@ -11,6 +11,7 @@ import org.slams.server.user.entity.Role;
 import org.slams.server.user.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -18,16 +19,39 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DefaultUserInfoResponse {
 
-	private DefaultUserDto user;
+	private String id;
+	private String email;
+	private String nickname;
+	private String profileImage;
+	private String description;
+	private Role role;
+	private Proficiency proficiency;
+	private List<Position> positions = new ArrayList<>();
 	private List<NotificationResponse> notifications;
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 
-	private DefaultUserInfoResponse(DefaultUserDto user, List<NotificationResponse> notifications) {
-		this.user = user;
+	private DefaultUserInfoResponse(String id, String email, String nickname, String profileImage,
+									String description, Role role, Proficiency proficiency, List<Position> positions,
+									List<NotificationResponse> notifications,
+									LocalDateTime createdAt, LocalDateTime updatedAt) {
+		this.id = id;
+		this.email = email;
+		this.nickname = nickname;
+		this.profileImage = profileImage;
+		this.description = description;
+		this.role = role;
+		this.proficiency = proficiency;
+		this.positions = positions;
 		this.notifications = notifications;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 
 	public static DefaultUserInfoResponse toResponse(User user, List<NotificationResponse> notifications) {
-		return new DefaultUserInfoResponse(DefaultUserDto.toDto(user), notifications);
+		return new DefaultUserInfoResponse(String.valueOf(user.getId()), user.getEmail(), user.getNickname(), user.getProfileImage(),
+			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(), notifications,
+			user.getCreatedAt(), user.getUpdatedAt());
 	}
 
 }

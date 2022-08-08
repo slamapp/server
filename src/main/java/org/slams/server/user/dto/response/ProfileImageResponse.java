@@ -1,22 +1,27 @@
 package org.slams.server.user.dto.response;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.slams.server.common.api.BaseResponse;
 import org.slams.server.user.entity.User;
 
+import java.time.LocalDateTime;
+
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ProfileImageResponse {
+public class ProfileImageResponse extends BaseResponse {
 
-	private UserWithoutEmailDto user;
+	private String id;
+	private String nickname;
+	private String profileImage;
 
-	private ProfileImageResponse(UserWithoutEmailDto user) {
-		this.user = user;
+	private ProfileImageResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, String nickname, String profileImage) {
+		super(createdAt, updatedAt);
+		this.id = id;
+		this.nickname = nickname;
+		this.profileImage = profileImage;
 	}
 
-	public static ProfileImageResponse toResponse(User user){
-		return new ProfileImageResponse(UserWithoutEmailDto.toDto(user));
+	public static ProfileImageResponse of(User user){
+		return new ProfileImageResponse(user.getCreatedAt(), user.getUpdatedAt(), user.getId().toString(), user.getNickname(), user.getProfileImage());
 	}
 
 }

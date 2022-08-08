@@ -23,18 +23,12 @@ public class User extends BaseDto{
     private String id;
     private String nickname;
     private String profileImage;
-    private String description;
-    private Proficiency proficiency;
-    private List<Position> positions;
 
     @Builder
     public User(
             String id,
             String nickname,
-            String profileImage,
-            String description,
-            Proficiency proficiency,
-            List<Position> positions
+            String profileImage
     ){
         checkArgument(id != null, ValidationMessage.NOTNULL_ID);
         checkArgument(isNotEmpty(nickname), ValidationMessage.NOT_EMPTY_NICKNAME);
@@ -42,8 +36,6 @@ public class User extends BaseDto{
         this.id = id;
         this.nickname = nickname;
         this.profileImage = profileImage;
-        this.description = description;
-        this.positions = positions;
 
     }
 }

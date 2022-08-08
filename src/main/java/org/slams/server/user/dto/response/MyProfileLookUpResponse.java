@@ -1,6 +1,7 @@
 package org.slams.server.user.dto.response;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.slams.server.user.entity.Position;
@@ -12,12 +13,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserResponse {
+public class MyProfileLookUpResponse {
 
-	private Long id;
-	private String socialId;
+	private String id;
 	private String email;
 	private String nickname;
 	private String profileImage;
@@ -25,15 +26,16 @@ public class UserResponse {
 	private Role role;
 	private Proficiency proficiency;
 	private List<Position> positions = new ArrayList<>();
+	private Long followerCount;
+	private Long followingCount;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	private UserResponse(Long id, String socialId, String email, String nickname,
-						String profileImage, String description,
-						Role role, Proficiency proficiency, List<Position> positions,
-						 LocalDateTime createdAt, LocalDateTime updatedAt) {
+	private MyProfileLookUpResponse(String id, String email, String nickname, String profileImage,
+								   String description, Role role, Proficiency proficiency, List<Position> positions,
+								   Long followerCount, Long followingCount,
+								   LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
-		this.socialId = socialId;
 		this.email = email;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
@@ -41,13 +43,15 @@ public class UserResponse {
 		this.role = role;
 		this.proficiency = proficiency;
 		this.positions = positions;
+		this.followerCount = followerCount;
+		this.followingCount = followingCount;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
 
-	public static UserResponse toResponse(User user){
-		return new UserResponse(user.getId(), user.getSocialId(), user.getEmail(), user.getNickname(),
-			user.getProfileImage(), user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(),
+	public static MyProfileLookUpResponse toResponse(User user, Long followerCount, Long followingCount) {
+		return new MyProfileLookUpResponse(String.valueOf(user.getId()), user.getEmail(), user.getNickname(), user.getProfileImage(),
+			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(), followerCount, followingCount,
 			user.getCreatedAt(), user.getUpdatedAt());
 	}
 
