@@ -28,6 +28,7 @@ public class UserController {
 	private final UserService userService;
 	private final Jwt jwt;
 
+	@ApiOperation("로그인 시 기본 데이터(사용자 정보, 알림 정보) 조회")
 	@GetMapping("/me")
 	public ResponseEntity<DefaultUserInfoResponse> getDefaultInfo(HttpServletRequest request) {
 		String authorization = request.getHeader("Authorization");
