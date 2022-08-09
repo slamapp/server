@@ -22,15 +22,13 @@ public class SwaggerConfig {
 
 	@Bean
 	public Docket docket() {
-		return new Docket(DocumentationType.OAS_30)
-				.securityContexts(List.of(securityContext()))
-				.securitySchemes(List.of(apikey()))
-				.useDefaultResponseMessages(false)
-				.apiInfo(apiInfo())
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any())
-				.build();
+		return new Docket(DocumentationType.SWAGGER_2)
+			.useDefaultResponseMessages(false)
+			.apiInfo(apiInfo())
+			.select()
+			.apis(RequestHandlerSelectors.any())
+			.paths(PathSelectors.any())
+			.build();
 	}
 
 	private ApiInfo apiInfo() {
@@ -40,23 +38,6 @@ public class SwaggerConfig {
 				.version("1.0.0")
 				.license("Copyright Slam")
 				.build();
-	}
-
-	private SecurityContext securityContext() {
-		return SecurityContext.builder()
-				.securityReferences(defaultAuth())
-				.build();
-	}
-
-	private List<SecurityReference> defaultAuth() {
-		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-		authorizationScopes[0] = authorizationScope;
-		return List.of(new SecurityReference("Authorization", authorizationScopes));
-	}
-
-	private ApiKey apikey(){
-		return new ApiKey("Authorization", "Authorization", "header");
 	}
 
 }
