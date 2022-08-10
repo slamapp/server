@@ -52,9 +52,9 @@ public class NewCourtService {
 			);
 		}
 
-		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+		String lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId().toString();
 
-		return new CursorPageResponse<>(newCourtList, lastId.toString());
+		return new CursorPageResponse<>(newCourtList, lastId);
 	}
 
 	public CursorPageResponse<List<NewCourtInDoneLookUpResponse>> getNewCourtsInDone(CursorPageRequest cursorPageRequest) {
@@ -71,9 +71,9 @@ public class NewCourtService {
 			);
 		}
 
-		Long lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId();
+		String lastId = newCourtList.size() < cursorPageRequest.getSize() ? null : newCourts.get(newCourts.size() - 1).getId().toString();
 
-		return new CursorPageResponse<>(newCourtList, lastId.toString());
+		return new CursorPageResponse<>(newCourtList, lastId);
 	}
 
 	@Transactional

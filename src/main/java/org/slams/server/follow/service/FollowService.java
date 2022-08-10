@@ -41,9 +41,9 @@ public class FollowService {
 		List<FollowerResponse> followerList = new ArrayList<>();
 		followers.forEach(follow -> followerList.add(FollowerResponse.toResponse(follow)));
 
-		Long lastId = followers.size() < cursorPageRequest.getSize() ? null : followers.get(followers.size() - 1).getId();
+		String lastId = followers.size() < cursorPageRequest.getSize() ? null : followers.get(followers.size() - 1).getId().toString();
 
-		return new CursorPageResponse<>(followerList, lastId.toString());
+		return new CursorPageResponse<>(followerList, lastId);
 	}
 
 	public CursorPageResponse<List<FollowingResponse>> followingPage(Long userId, CursorPageRequest cursorPageRequest) {
@@ -59,9 +59,9 @@ public class FollowService {
 		List<FollowingResponse> followingList = new ArrayList<>();
 		followings.forEach(follow -> followingList.add(FollowingResponse.toResponse(follow)));
 
-		Long lastId = followings.size() < cursorPageRequest.getSize() ? null : followings.get(followings.size() - 1).getId();
+		String lastId = followings.size() < cursorPageRequest.getSize() ? null : followings.get(followings.size() - 1).getId().toString();
 
-		return new CursorPageResponse<>(followingList, lastId.toString());
+		return new CursorPageResponse<>(followingList, lastId);
 	}
 
 	@Transactional
