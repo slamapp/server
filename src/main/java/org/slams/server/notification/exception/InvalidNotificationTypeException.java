@@ -1,12 +1,11 @@
 package org.slams.server.notification.exception;
 
+import org.slams.server.common.error.exception.BusinessException;
+import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.common.error.exception.InvalidValueException;
 
-/**
- * Created by yunyun on 2021/12/20.
- */
 public class InvalidNotificationTypeException extends InvalidValueException {
-    public InvalidNotificationTypeException(String value) {
-        super(value);
+    public InvalidNotificationTypeException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

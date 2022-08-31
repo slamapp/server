@@ -10,4 +10,8 @@ public class InvalidValueException extends BusinessException {
 		super(value, errorCode);
 	}
 
+	public InvalidValueException(ErrorCode errorCode) {
+		super(errorCode);
+	}
+
 }

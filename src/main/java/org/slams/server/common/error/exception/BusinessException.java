@@ -1,6 +1,6 @@
 package org.slams.server.common.error.exception;
 
-public class BusinessException extends RuntimeException {
+public class BusinessException extends RuntimeException  implements CustomException{
 
 	private ErrorCode errorCode;
 

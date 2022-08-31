@@ -3,6 +3,7 @@ package org.slams.server.notification.service;
 import lombok.RequiredArgsConstructor;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.error.exception.EntityNotFoundException;
+import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.exception.CourtNotFoundException;
 import org.slams.server.court.repository.CourtRepository;
@@ -113,7 +114,7 @@ public class NotificationService {
                         userId,
                         notificationRepository.findById(cursorRequest.getLastId())
                                 .orElseThrow(
-                                        () -> new NotificationNotFoundException("요청하신 공지는 존재하지 않습니다.")
+                                        () -> new NotificationNotFoundException(ErrorCode.NOT_EXIST_NOTIFICATION)
                                 ).getCreatedAt(),
                         pageable
                 );
@@ -131,7 +132,7 @@ public class NotificationService {
                         userId,
                         notificationRepository.findById(cursorRequest.getLastId())
                                 .orElseThrow(
-                                        () -> new NotificationNotFoundException("요청하신 공지는 존재하지 않습니다.")
+                                        () -> new NotificationNotFoundException(ErrorCode.NOT_EXIST_NOTIFICATION)
                                 ).getCreatedAt(),
                         pageable
                 );

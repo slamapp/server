@@ -1,10 +1,8 @@
 package org.slams.server.common.error;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slams.server.common.error.exception.BusinessException;
-import org.slams.server.common.error.exception.EntityNotFoundException;
-import org.slams.server.common.error.exception.ErrorCode;
-import org.slams.server.common.error.exception.InvalidValueException;
+import org.slams.server.common.error.exception.*;
+import org.slams.server.notification.exception.InvalidNotificationTypeException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -81,10 +79,10 @@ public class GlobalExceptionHandler {
 	}
 
 	// IllegalArgumentException
-	@ExceptionHandler(IllegalArgumentException.class)
-	protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+	@ExceptionHandler({IllegalArgumentException.class, InvalidNotificationTypeException.class})
+	protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(CustomException e) {
 		log.error("handleIllegalArgumentException", e);
-		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
 
 		return ResponseEntity.badRequest().body(errorResponse);
 	}

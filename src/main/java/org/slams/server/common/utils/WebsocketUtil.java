@@ -1,6 +1,6 @@
 package org.slams.server.common.utils;
 
-import org.slams.server.notification.exception.TokenNotFountException;
+import org.slams.server.common.error.exception.BusinessException;
 import org.slams.server.user.exception.InvalidTokenException;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -31,7 +31,7 @@ public class WebsocketUtil {
                 throw new InvalidTokenException("유효한 토큰 형식이 아닙니다.");
             }
         }else{
-            throw new TokenNotFountException("헤더에 토큰이 존재하지 않습니다.");
+            throw new RuntimeException("헤더에 토큰이 존재하지 않습니다."); // 곧 삭제할 코드
         }
 
 

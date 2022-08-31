@@ -37,7 +37,11 @@ public enum ErrorCode {
 	// Follow
 	FOLLOW_ALREADY_EXIST(400, "Follow Already Exists"),
 	FOLLOW_NOT_FOUND(400, "Follow Not Found"),
-	DONT_FOLLOW_ONESELF(400, "Do Not Follow Oneself")
+	DONT_FOLLOW_ONESELF(400, "Do Not Follow Oneself"),
+
+	// Notification
+	NOT_EXIST_NOTIFICATION(404, "Notification Not Found"),
+	INVALID_NOTIFICATION_TYPE(400, "Invalid Notification Type")
 	;
 
 

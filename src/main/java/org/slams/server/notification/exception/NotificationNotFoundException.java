@@ -1,12 +1,13 @@
 package org.slams.server.notification.exception;
 
-import org.slams.server.common.error.exception.EntityNotFoundException;
+import org.slams.server.common.error.exception.BusinessException;
+import org.slams.server.common.error.exception.ErrorCode;
 
-/**
- * Created by yunyun on 2021/12/16.
- */
-public class NotificationNotFoundException extends EntityNotFoundException {
-    public NotificationNotFoundException(String message) {
-        super(message);
+public class NotificationNotFoundException extends BusinessException {
+    public NotificationNotFoundException(ErrorCode errorCode) {
+        super(errorCode);
+    }
+    public NotificationNotFoundException(String message, ErrorCode errorCode) {
+        super(message, errorCode);
     }
 }

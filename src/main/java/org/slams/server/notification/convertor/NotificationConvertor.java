@@ -3,6 +3,7 @@ package org.slams.server.notification.convertor;
 import org.slams.server.common.dto.Court;
 import org.slams.server.common.dto.Follow;
 import org.slams.server.common.dto.User;
+import org.slams.server.common.error.exception.ErrorCode;
 import org.slams.server.notification.exception.InvalidNotificationTypeException;
 import org.slams.server.notification.dto.response.LoudspeakerResponse;
 import org.slams.server.notification.dto.response.NotificationResponse;
@@ -75,7 +76,7 @@ public class NotificationConvertor {
             );
         }
 
-        throw new InvalidNotificationTypeException("존재하지 않는 공지 타입입니다.");
+        throw new InvalidNotificationTypeException(ErrorCode.INVALID_NOTIFICATION_TYPE);
     }
 
 
