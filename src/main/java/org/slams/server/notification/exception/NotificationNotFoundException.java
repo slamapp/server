@@ -1,9 +1,11 @@
 package org.slams.server.notification.exception;
 
 import org.slams.server.common.error.exception.BusinessException;
+import org.slams.server.common.error.exception.EntityNotFoundException;
 import org.slams.server.common.error.exception.ErrorCode;
 
-public class NotificationNotFoundException extends BusinessException {
+public class NotificationNotFoundException extends EntityNotFoundException {
+
     public NotificationNotFoundException(ErrorCode errorCode) {
         super(errorCode);
     }

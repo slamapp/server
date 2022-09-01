@@ -2,6 +2,13 @@ package org.slams.server.common.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slams.server.common.error.exception.*;
+import org.slams.server.court.exception.CourtNotFoundException;
+import org.slams.server.court.exception.InvalidStatusException;
+import org.slams.server.court.exception.NewCourtNotFoundException;
+import org.slams.server.favorite.exception.FavoriteNotFoundException;
+import org.slams.server.follow.exception.FollowAlreadyExistException;
+import org.slams.server.follow.exception.FollowNotFoundException;
+import org.slams.server.follow.exception.FollowOneselfException;
 import org.slams.server.notification.exception.InvalidNotificationTypeException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -62,7 +69,7 @@ public class GlobalExceptionHandler {
 
 	// EntityNotFoundException
 	@ExceptionHandler(EntityNotFoundException.class)
-	protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+	protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(CustomException e) {
 		log.error("handleEntityNotFoundException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
 
@@ -71,7 +78,7 @@ public class GlobalExceptionHandler {
 
 	// InvalidValueException
 	@ExceptionHandler(InvalidValueException.class)
-	protected ResponseEntity<ErrorResponse> handleInvalidValueException(InvalidValueException e) {
+	protected ResponseEntity<ErrorResponse> handleInvalidValueException(CustomException e) {
 		log.error("handleInvalidValueException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
 
@@ -79,7 +86,7 @@ public class GlobalExceptionHandler {
 	}
 
 	// IllegalArgumentException
-	@ExceptionHandler({IllegalArgumentException.class, InvalidNotificationTypeException.class})
+	@ExceptionHandler(IllegalArgumentException.class)
 	protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(CustomException e) {
 		log.error("handleIllegalArgumentException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode());
