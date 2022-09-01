@@ -40,7 +40,7 @@ public enum ErrorCode {
 	DONT_FOLLOW_ONESELF(400, "Do Not Follow Oneself"),
 
 	// Notification
-	NOT_EXIST_NOTIFICATION(404, "Notification Not Found"),
+	NOT_EXIST_NOTIFICATION(400, "Notification Not Found"),
 	INVALID_NOTIFICATION_TYPE(400, "Invalid Notification Type")
 	;
 
