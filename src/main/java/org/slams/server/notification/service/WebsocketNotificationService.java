@@ -1,10 +1,9 @@
 package org.slams.server.notification.service;
 
-import org.slams.server.chat.dto.response.ChatContentsResponse;
-import org.slams.server.chat.service.ChatContentsService;
+import org.slams.server.chat.dto.response.ChatOfChatroomResponse;
+import org.slams.server.chat.service.ChatService;
 import org.slams.server.follow.exception.FollowOneselfException;
 import org.slams.server.follow.service.FollowService;
-import org.slams.server.notification.dto.request.FollowNotificationRequest;
 import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.reservation.repository.ReservationRepository;
@@ -26,14 +25,14 @@ public class WebsocketNotificationService {
     private final SimpMessagingTemplate websocket;
     private final ReservationRepository reservationRepository;
     private final FollowService followService;
-    private final ChatContentsService chatContentsService;
+    private final ChatService chatContentsService;
 
     public WebsocketNotificationService(
             SimpMessagingTemplate websocket,
             NotificationService notificationService,
             ReservationRepository reservationRepository,
             FollowService followService,
-            ChatContentsService chatContentsService){
+            ChatService chatContentsService){
         this.websocket = websocket;
         this.notificationService = notificationService;
         this.reservationRepository = reservationRepository;
@@ -83,7 +82,7 @@ public class WebsocketNotificationService {
             );
         }
 
-        ChatContentsResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(message, senderId);
+        ChatOfChatroomResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(message, senderId);
         websocket.convertAndSend(
                 String.format("/user/%s/chat", message.getCourtId()),
                 chatContentsResponse

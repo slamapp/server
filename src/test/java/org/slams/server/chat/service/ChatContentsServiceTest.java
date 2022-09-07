@@ -3,7 +3,7 @@
 //import org.junit.jupiter.api.*;
 //import org.slams.server.chat.dto.request.CreateChatContentsRequest;
 //import org.slams.server.chat.dto.response.ChatContentsResponse;
-//import org.slams.server.chat.dto.response.subDto.ChatContentType;
+//import org.slams.server.chat.dto.common.ChatContentType;
 //import org.slams.server.chat.entity.ChatContents;
 //import org.slams.server.chat.entity.CourtChatroomMapping;
 //import org.slams.server.chat.repository.ChatContentsRepository;

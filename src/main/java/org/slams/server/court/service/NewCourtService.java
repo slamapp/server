@@ -1,7 +1,7 @@
 package org.slams.server.court.service;
 
 import lombok.RequiredArgsConstructor;
-import org.slams.server.chat.service.ChatroomMappingService;
+import org.slams.server.chat.service.ChatroomService;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtInsertRequest;
@@ -32,7 +32,7 @@ import java.util.List;
 @Service
 public class NewCourtService {
 
-	private final ChatroomMappingService chatroomMappingService;
+	private final ChatroomService chatroomService;
 
 	private final NewCourtRepository newCourtRepository;
 	private final CourtRepository courtRepository;
@@ -116,7 +116,7 @@ public class NewCourtService {
 			.build());
 
 		// 채팅방 생성
-		chatroomMappingService.saveChatRoom(court.getId());
+		chatroomService.saveChatRoom(court.getId());
 
 		return NewCourtResponse.toResponse(newCourt, supervisor);
 	}

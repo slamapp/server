@@ -4,27 +4,21 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slams.server.chat.service.ChatroomMappingService;
+import org.slams.server.chat.service.ChatroomService;
 import org.slams.server.court.dto.request.CourtDummyExcelDto;
 import org.slams.server.court.entity.Court;
 import org.slams.server.court.entity.Texture;
 import org.slams.server.court.repository.DummyCourtRepository;
-import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
 import org.slams.server.notification.service.NotificationService;
-import org.slams.server.reservation.entity.Reservation;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +29,7 @@ public class DummyCourtQuery {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final DummyCourtRepository dummyCourtRepository;
-    private final ChatroomMappingService chatroomMappingService;
+    private final ChatroomService chatroomService;
     private final NotificationService notificationService;
     private final ReservationRepository reservationRepository;
 
@@ -43,11 +37,11 @@ public class DummyCourtQuery {
 
     public DummyCourtQuery(
             DummyCourtRepository dummyCourtRepository,
-            ChatroomMappingService chatroomMappingService,
+            ChatroomService chatroomService,
             NotificationService notificationService,
             ReservationRepository reservationRepository
     ){
-        this.chatroomMappingService = chatroomMappingService;
+        this.chatroomService = chatroomService;
         this.dummyCourtRepository = dummyCourtRepository;
         this.notificationService = notificationService;
         this.reservationRepository = reservationRepository;
@@ -76,7 +70,7 @@ public class DummyCourtQuery {
         List<Court> saveDetail=dummyCourtRepository.saveAll(details);
 
         // chat Room Service 넣기
-        details.stream().map(Court::getId).forEach(chatroomMappingService::saveChatRoom);
+        details.stream().map(Court::getId).forEach(chatroomService::saveChatRoom);
 
     }
 
@@ -116,7 +110,7 @@ public class DummyCourtQuery {
 
             }
             dummyCourtRepository.saveAll(dataList);
-            dataList.stream().map(Court::getId).forEach(chatroomMappingService::saveChatRoom);
+            dataList.stream().map(Court::getId).forEach(chatroomService::saveChatRoom);
         } catch (Exception e) {
 
             logger.info(e.getMessage());
