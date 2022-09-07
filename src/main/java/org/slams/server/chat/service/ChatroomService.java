@@ -2,8 +2,10 @@ package org.slams.server.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.slams.server.chat.convertor.ChatroomMappingConvertor;
-import org.slams.server.chat.dto.request.CreateChatRoomRequest;
+import org.slams.server.chat.dto.common.ChatroomType;
 import org.slams.server.chat.dto.response.ChatroomResponse;
+import org.slams.server.chat.dto.response.ResultOfCreatingOfChatroomResponse;
+import org.slams.server.chat.dto.response.ResultOfCreatingOfCourtChatroomResponse;
 import org.slams.server.chat.entity.CourtChatroomMapping;
 import org.slams.server.chat.entity.UserChatroomMapping;
 import org.slams.server.chat.repository.CourtChatroomMappingRepository;
@@ -18,6 +20,7 @@ import org.slams.server.user.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -26,7 +29,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatroomMappingService {
+public class ChatroomService {
 
     private final UserChatroomMappingRepository userChatRoomMappingRepository;
     private final ChatroomMappingConvertor chatroomMappingConvertor;
@@ -45,7 +48,16 @@ public class ChatroomMappingService {
     }
 
     /** 채팅방 최초 입장 **/
-    public ChatroomResponse saveUserChatRoom(Long userId, Long courtId){
+    public ResultOfCreatingOfChatroomResponse saveUserChatroom(Long userId, Long chatroomId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
+
+        return ResultOfCreatingOfChatroomResponse.builder()
+                .chatroomId("SIDOFIDLIFDJL")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+    public ResultOfCreatingOfCourtChatroomResponse saveUserCourtChatroom(Long userId, Long courtId){
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
         CourtChatroomMapping courtChatroomMapping = courtChatroomMappingRepository.findByCourtId(courtId);
         return chatroomMappingConvertor.toDto(
@@ -55,13 +67,20 @@ public class ChatroomMappingService {
         );
     }
 
-    public List<ChatroomResponse> findUserChatRoomByUserId(Long userId, CursorPageRequest cursorRequest){
-        return chatroomMappingConvertor.toDtoList(
-                cursorPageForFindAllByUserId(userId, cursorRequest)
+    public List<ChatroomResponse> findUserChatroomListByUserId(Long userId, CursorPageRequest cursorRequest){
+        return List.of(
+                ChatroomResponse.builder()
+                        .chatroomId("LIDSLDIJFL")
+                        .chatroomName("")
+                        .chatroomType(ChatroomType.PERSONAL)
+                        .lastChat("마지막 채팅 내용")
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build()
         );
     }
 
-    public void deleteUserChatRoomByCourtId(Long courtId, Long userId){
+    public void deleteUserChatroomByCourtId(Long courtId, Long userId){
             userChatRoomMappingRepository.deleteUserChatRoomByCourtId(courtId, userId);
     }
 

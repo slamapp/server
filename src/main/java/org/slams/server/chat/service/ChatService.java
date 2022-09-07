@@ -2,9 +2,9 @@ package org.slams.server.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.slams.server.chat.convertor.ChatContentConvertor;
-import org.slams.server.chat.dto.request.CreateChatContentsRequest;
-import org.slams.server.chat.dto.response.subDto.ChatContentType;
-import org.slams.server.chat.dto.response.ChatContentsResponse;
+import org.slams.server.chat.dto.common.ChatType;
+import org.slams.server.chat.dto.request.CreateChatOfCourtChatroomRequest;
+import org.slams.server.chat.dto.response.ChatOfChatroomResponse;
 import org.slams.server.chat.entity.*;
 import org.slams.server.chat.repository.ChatContentsRepository;
 import org.slams.server.chat.repository.ChatConversationContentRepository;
@@ -30,7 +30,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatContentsService {
+public class ChatService {
 
     private final ChatContentsRepository chatContentsRepository;
     private final ChatContentConvertor chatContentConvertor;
@@ -41,14 +41,14 @@ public class ChatContentsService {
     private final ChatLoudSpeakerContentRepository chatLoudSpeakerContentRepository;
 
 
-    public List<ChatContentsResponse> findChatContentsListByCourtOrderByCreatedAt(Long courtId, CursorPageRequest cursorRequest){
+    public List<ChatOfChatroomResponse> findChatContentsListByCourtOrderByCreatedAt(Long courtId, CursorPageRequest cursorRequest){
         return chatContentConvertor.toDtoList(
                 cursorPageForFindAllByUserId(courtId, cursorRequest)
         );
     }
 
     @Transactional
-    public ChatContentsResponse saveChatConversationContent(CreateChatContentsRequest request, Long userId){
+    public ChatOfChatroomResponse saveChatConversationContent(CreateChatOfCourtChatroomRequest request, Long userId){
         Court court = courtRepository.findById(request.getCourtId())
                 .orElseThrow(() -> new CourtNotFoundException("해당 농구장이 존재하지 않습니다."));
 
@@ -59,7 +59,7 @@ public class ChatContentsService {
                 ChatConversationContent.of(request.getContent()));
 
         ChatContents chatContents = ChatContents.createConversationContent(
-                ChatContentType.CONVERSATION,
+                ChatType.DEFAULT,
                 court,
                 user,
                 chatConversationContent
@@ -71,7 +71,7 @@ public class ChatContentsService {
 
 
     @Transactional
-    public ChatContentsResponse saveChatLoudSpeakerContent(LoudspeakerNotificationRequest request, Long userId){
+    public ChatOfChatroomResponse saveChatLoudSpeakerContent(LoudspeakerNotificationRequest request, Long userId){
         Court court = courtRepository.findById(Long.valueOf(request.getCourtId()))
                 .orElseThrow(() -> new CourtNotFoundException("해당 농구장이 존재하지 않습니다."));
 
@@ -82,7 +82,7 @@ public class ChatContentsService {
                 ChatLoudSpeakerContent.of(request.getStartTime().getHour())
         );
         ChatContents chatContents = ChatContents.createLoudspeakerContent(
-                ChatContentType.LOUDSPEAKER,
+                ChatType.LOUDSPEAKER,
                 court,
                 user,
                 chatLoudSpeakerContent
@@ -99,7 +99,7 @@ public class ChatContentsService {
                 chatContentsRepository.findAllByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastIdParedForLong(), pageable);
     }
 
-    public ChatContentsResponse sendChatContent(ChatContents chatContents){
+    public ChatOfChatroomResponse sendChatContent(ChatContents chatContents){
         return chatContentConvertor.toDto(chatContents);
     }
 
