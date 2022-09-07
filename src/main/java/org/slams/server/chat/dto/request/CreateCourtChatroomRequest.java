@@ -8,11 +8,11 @@ import lombok.Getter;
  */
 
 @Getter
-public class CreateChatRoomRequest {
+public class CreateCourtChatroomRequest {
     private final Long courtId;
 
     @Builder
-    public CreateChatRoomRequest(Long courtId){
+    public CreateCourtChatroomRequest(Long courtId){
         this.courtId = courtId;
     }
 }
