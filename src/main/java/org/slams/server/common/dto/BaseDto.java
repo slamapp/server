@@ -8,4 +8,10 @@ import java.time.LocalDateTime;
 public class BaseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public BaseDto(){
+
+    }
+    public BaseDto(LocalDateTime createdAt, LocalDateTime updatedAt) {
+    }
 }

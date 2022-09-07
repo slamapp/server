@@ -8,12 +8,12 @@ import lombok.Getter;
  */
 
 @Getter
-public class DeleteUserChatRoomResponse {
+public class ResultOfDeletingUserChatroomResponse {
 
     private final Long courtId;
 
     @Builder
-    public DeleteUserChatRoomResponse(Long courtId){
+    public ResultOfDeletingUserChatroomResponse(Long courtId){
         this.courtId = courtId;
     }
 }
