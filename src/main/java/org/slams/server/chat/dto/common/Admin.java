@@ -1,14 +1,17 @@
 package org.slams.server.chat.dto.common;
 
+import lombok.Getter;
+
+@Getter
 public class Admin {
-    private final String id;
-    private final ChatroomMemberType chatroomMemberType;
+    private final String adminId;
+    private final ChatroomParticipantsType chatroomParticipantsType;
 
     public Admin(
-            String id,
-            ChatroomMemberType chatroomMemberType
+            String adminId,
+            ChatroomParticipantsType chatroomParticipantsType
     ) {
-        this.id = id;
-        this.chatroomMemberType = chatroomMemberType;
+        this.adminId = adminId;
+        this.chatroomParticipantsType = chatroomParticipantsType;
     }
 }

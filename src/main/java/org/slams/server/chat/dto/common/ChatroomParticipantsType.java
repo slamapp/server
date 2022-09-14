@@ -1,6 +1,6 @@
 package org.slams.server.chat.dto.common;
 
-public enum ChatroomMemberType {
+public enum ChatroomParticipantsType {
     DEFAULT,
     OWNER,
     MAINTAINER

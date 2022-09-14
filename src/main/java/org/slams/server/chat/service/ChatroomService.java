@@ -2,10 +2,8 @@ package org.slams.server.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.slams.server.chat.convertor.ChatroomMappingConvertor;
-import org.slams.server.chat.dto.common.ChatroomType;
-import org.slams.server.chat.dto.response.ChatroomResponse;
-import org.slams.server.chat.dto.response.ResultOfCreatingOfChatroomResponse;
-import org.slams.server.chat.dto.response.ResultOfCreatingOfCourtChatroomResponse;
+import org.slams.server.chat.dto.common.*;
+import org.slams.server.chat.dto.response.*;
 import org.slams.server.chat.entity.CourtChatroomMapping;
 import org.slams.server.chat.entity.UserChatroomMapping;
 import org.slams.server.chat.repository.CourtChatroomMappingRepository;
@@ -48,40 +46,45 @@ public class ChatroomService {
     }
 
     /** 채팅방 최초 입장 **/
-    public ResultOfCreatingOfChatroomResponse saveUserChatroom(Long userId, Long chatroomId){
+    public ResultOfCreatingOfChatroomToParticipateInResponse saveUserChatroom(Long userId, String chatroomId){
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
 
-        return ResultOfCreatingOfChatroomResponse.builder()
-                .chatroomId("SIDOFIDLIFDJL")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+        return ResultOfCreatingOfChatroomToParticipateInResponse.builder()
+                .chatroom(CourtChatroom.builder()
+                        .admins(null)
+                        .type(ChatroomType.PERSONAL)
+                        .participants(null)
+                        .lastChat(null)
+                        .court(null)
+                        .build()
+                ).build();
     }
-    public ResultOfCreatingOfCourtChatroomResponse saveUserCourtChatroom(Long userId, Long courtId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
-        CourtChatroomMapping courtChatroomMapping = courtChatroomMappingRepository.findByCourtId(courtId);
-        return chatroomMappingConvertor.toDto(
-                userChatRoomMappingRepository.save(
-                UserChatroomMapping.of(user, courtChatroomMapping, courtId)
-            )
-        );
+    public ResultOfCreatingOfCourtChatroomToParticipateInResponse saveUserCourtChatroom(Long userId, String courtId){
+        Long courtIdConvertedIntoLong = Long.valueOf(courtId);
+        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
+        CourtChatroomMapping courtChatroomMapping = courtChatroomMappingRepository.findByCourtId(courtIdConvertedIntoLong);
+        return new ResultOfCreatingOfCourtChatroomToParticipateInResponse(null);
     }
 
     public List<ChatroomResponse> findUserChatroomListByUserId(Long userId, CursorPageRequest cursorRequest){
         return List.of(
                 ChatroomResponse.builder()
-                        .chatroomId("LIDSLDIJFL")
-                        .chatroomName("")
-                        .chatroomType(ChatroomType.PERSONAL)
-                        .lastChat("마지막 채팅 내용")
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
+                        .chatroom(
+                                ChatroomCommon.of(
+                                        "chatroom_id",
+                                        null,
+                                        null,
+                                        ChatroomType.PERSONAL,
+                                        null,
+                                        null
+                                        )
+                        )
                         .build()
         );
     }
 
-    public void deleteUserChatroomByCourtId(Long courtId, Long userId){
-            userChatRoomMappingRepository.deleteUserChatRoomByCourtId(courtId, userId);
+    public void deleteUserChatroomByCourtId(String courtId, Long userId){
+            userChatRoomMappingRepository.deleteUserChatRoomByCourtId(Long.valueOf(courtId), userId);
     }
 
     public List<UserChatroomMapping> cursorPageForFindAllByUserId(Long userId, CursorPageRequest cursorRequest){
@@ -91,11 +94,11 @@ public class ChatroomService {
                 userChatRoomMappingRepository.findAllByUserIdMoreThenLastIdByCreated(userId, cursorRequest.getLastIdParedForLong(), pageable);
     }
 
-    public Long findLastId(Long userId, CursorPageRequest cursorRequest){
+    public String findLastId(String userId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
         List<Long> ids = cursorRequest.getIsFirst() ?
-                userChatRoomMappingRepository.findIdByUserIdByCreated(userId, pageable):
-                userChatRoomMappingRepository.findIdByUserIdMoreThenLastIdByCreated(userId, cursorRequest.getLastIdParedForLong(), pageable);
+                userChatRoomMappingRepository.findIdByUserIdByCreated(Long.valueOf(userId), pageable):
+                userChatRoomMappingRepository.findIdByUserIdMoreThenLastIdByCreated(Long.valueOf(userId), cursorRequest.getLastIdParedForLong(), pageable);
 
         // 빈 배열 일 때
         if (ids.size() -1 < 0) {
@@ -107,7 +110,7 @@ public class ChatroomService {
                 return null;
             }else {
                 // 마지막 데이터가 아닐 때
-                return ids.get(ids.size() - 1);
+                return String.valueOf(ids.get(ids.size() - 1));
             }
 
         }

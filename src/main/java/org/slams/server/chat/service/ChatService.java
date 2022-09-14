@@ -41,7 +41,7 @@ public class ChatService {
     private final ChatLoudSpeakerContentRepository chatLoudSpeakerContentRepository;
 
 
-    public List<ChatOfChatroomResponse> findChatContentsListByCourtOrderByCreatedAt(Long courtId, CursorPageRequest cursorRequest){
+    public List<ChatOfChatroomResponse> findChatContentsListByCourtOrderByCreatedAt(String courtId, CursorPageRequest cursorRequest){
         return chatContentConvertor.toDtoList(
                 cursorPageForFindAllByUserId(courtId, cursorRequest)
         );
@@ -92,22 +92,22 @@ public class ChatService {
         return chatContentConvertor.toDto(chatContents);
     }
 
-    public List<ChatContents> cursorPageForFindAllByUserId(Long courtId, CursorPageRequest cursorRequest){
+    public List<ChatContents> cursorPageForFindAllByUserId(String courtId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
         return cursorRequest.getIsFirst() ?
-                chatContentsRepository.findAllByCourtIdByCreated(courtId, pageable):
-                chatContentsRepository.findAllByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastIdParedForLong(), pageable);
+                chatContentsRepository.findAllByCourtIdByCreated(Long.valueOf(courtId), pageable):
+                chatContentsRepository.findAllByCourtIdMoreThenLastIdByCreated(Long.valueOf(courtId), cursorRequest.getLastIdParedForLong(), pageable);
     }
 
     public ChatOfChatroomResponse sendChatContent(ChatContents chatContents){
         return chatContentConvertor.toDto(chatContents);
     }
 
-    public Long findLastId(Long courtId, CursorPageRequest cursorRequest){
+    public Long findLastId(String courtId, CursorPageRequest cursorRequest){
         PageRequest pageable = PageRequest.of(0, cursorRequest.getSize());
         List<Long> ids = cursorRequest.getIsFirst() ?
-                chatContentsRepository.findIdByCourtIdByCreated(courtId, pageable):
-                chatContentsRepository.findIdByCourtIdMoreThenLastIdByCreated(courtId, cursorRequest.getLastIdParedForLong(), pageable);
+                chatContentsRepository.findIdByCourtIdByCreated(Long.valueOf(courtId), pageable):
+                chatContentsRepository.findIdByCourtIdMoreThenLastIdByCreated(Long.valueOf(courtId), cursorRequest.getLastIdParedForLong(), pageable);
 
         // 빈 배열 일 때
         if (ids.size() -1 < 0) {

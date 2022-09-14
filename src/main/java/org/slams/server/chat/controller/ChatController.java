@@ -4,20 +4,25 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.slams.server.chat.dto.common.ChatroomCommon;
 import org.slams.server.chat.dto.common.ChatroomType;
+import org.slams.server.chat.dto.request.CreateChatroomRequest;
 import org.slams.server.chat.dto.response.*;
 import org.slams.server.chat.service.ChatService;
 import org.slams.server.chat.service.ChatroomService;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.api.TokenGetId;
+import org.slams.server.court.dto.response.NewCourtInsertResponse;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -34,7 +39,7 @@ public class ChatController {
     private final ChatService chatContentsService;
     private final Jwt jwt;
 
-    @Operation(summary = "[DEFAULT] 채팅방 생성", description = "chatroom id에 의해, 사용자가 참여하고 있는 채팅 리스트에서 본 채팅방 생성")
+    @Operation(summary = "[DEFAULT] 채팅방 생성", description = "채팅방 생성")
     @ApiResponses({
             @ApiResponse(
                     code = 201
@@ -42,14 +47,19 @@ public class ChatController {
             )
     })
     @PostMapping("/chatroom")
-    public ResponseEntity<ResultOfCreatingOfChatroomResponse> createChatByChatroomId(
+    public ResponseEntity<ResultOfCreatingOfChatroomResponse> createChatroom(
             HttpServletRequest request,
-            @RequestParam(value = "chatroomType") ChatroomType chatroomType
+            @RequestBody CreateChatroomRequest createChatroomRequest
             ){
-        Long userId = new TokenGetId(request,jwt).getUserId();
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body();
+        Long creatorId = new TokenGetId(request,jwt).getUserId();
+        return new ResponseEntity<ResultOfCreatingOfChatroomResponse>(
+                ResultOfCreatingOfChatroomResponse.builder()
+                        .chatroomId("CHATROOM_ID")
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build(),
+                HttpStatus.CREATED
+        );
     }
 
     @Operation(summary = "채팅방 리스트 조회", description = "user id에 의해 사용자가 참여하고 있는 채팅방 리스트 조희")
@@ -68,7 +78,7 @@ public class ChatController {
 
         return ResponseEntity.ok(new CursorPageResponse<>(
                 chatroomService.findUserChatroomListByUserId(userId, cursorRequest),
-                String.valueOf(chatroomService.findLastId(userId, cursorRequest))
+                String.valueOf(chatroomService.findLastId(userId.toString(), cursorRequest))
                 )
         );
     }
@@ -82,7 +92,7 @@ public class ChatController {
     })
     @GetMapping("/chatroom/{chatroomId}")
     public ResponseEntity<CursorPageResponse<List<ChatOfChatroomResponse>>> findChatListByChatroomId(
-            @PathVariable Long chatroomId,
+            @PathVariable String chatroomId,
             CursorPageRequest cursorRequest,
             HttpServletRequest request
     ){
@@ -101,8 +111,8 @@ public class ChatController {
             )
     })
     @PostMapping("/chatroom/{chatroomId}")
-    public ResponseEntity<ResultOfCreatingOfChatroomResponse> createChatroomByUserId(
-            @PathVariable Long chatroomId,
+    public ResponseEntity<ResultOfCreatingOfChatroomToParticipateInResponse> createChatroomByUserId(
+            @PathVariable String chatroomId,
             HttpServletRequest request
     ){
         Long userId = new TokenGetId(request,jwt).getUserId();
@@ -116,14 +126,15 @@ public class ChatController {
                     , message = "삭제 성공"
             )
     })
-    @DeleteMapping("/chatroom/{chatroomId}")
+    @DeleteMapping("/chatroom")
     public ResponseEntity<ResultOfDeletingUserChatroomResponse> deleteChatroomByUserIdAndChatroomId(
-            @PathVariable Long chatroomId,
+            @Parameter(name = "삭제할 채팅 구별키 리스트", required = true, example = "[chatroom_id, chatroom_id]", description = "예시 -> [chatroom_id, chatroom_id]")
+            @RequestParam List<String> chatroomIds,
             HttpServletRequest request
     ){
         Long userId = new TokenGetId(request,jwt).getUserId();
         return ResponseEntity.ok(ResultOfDeletingUserChatroomResponse.builder()
-                .courtId(chatroomId)
+                .chatroomIds(chatroomIds)
                 .build()
         );
     }
@@ -139,7 +150,7 @@ public class ChatController {
     })
     @GetMapping("/court/{courtId}")
     public ResponseEntity<CursorPageResponse<List<ChatOfChatroomResponse>>> findChatByCourtId(
-            @PathVariable Long courtId,
+            @PathVariable String courtId,
             CursorPageRequest cursorRequest,
             HttpServletRequest request
     ){
@@ -159,15 +170,12 @@ public class ChatController {
             )
     })
     @PostMapping("/court/{courtId}")
-    public ResponseEntity<ResultOfCreatingOfCourtChatroomResponse> createChatroomByUserIdAndCourtId(
-            @PathVariable Long courtId,
+    public ResponseEntity<ResultOfCreatingOfCourtChatroomToParticipateInResponse> createChatroomByUserIdAndCourtId(
+            @PathVariable String courtId,
             HttpServletRequest request
     ){
         Long userId = new TokenGetId(request,jwt).getUserId();
-        //
-        ResultOfCreatingOfCourtChatroomResponse chatroomResponse = chatroomService.saveUserCourtChatroom(userId, courtId);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(chatroomResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatroomService.saveUserCourtChatroom(userId, courtId));
     }
 
     @Operation(summary = "[COURT] 사용자의 참여 채팅방 삭제", description = "court id에 의해, 사용자가 참여하고 있는 COURT 채팅 리스트에서 본 채팅방을 삭제")
@@ -178,16 +186,17 @@ public class ChatController {
             )
     })
     @DeleteMapping("/court/{courtId}")
-    public ResponseEntity<ResultOfDeletingUserChatroomResponse> deleteCourtChatroomByUserIdAndCourtId(
-            @PathVariable Long courtId,
+    public ResponseEntity<ResultOfDeletingOfUserCourtChatroomResponse> deleteCourtChatroomByUserIdAndCourtId(
+            @PathVariable String courtId,
             HttpServletRequest request
             ){
         Long userId = new TokenGetId(request,jwt).getUserId();
         chatroomService.deleteUserChatroomByCourtId(courtId, userId);
 
-        return ResponseEntity.ok(ResultOfDeletingUserChatroomResponse.builder()
-                .courtId(courtId)
-                .build()
+        return ResponseEntity.ok(ResultOfDeletingOfUserCourtChatroomResponse.builder()
+                        .courtId(null)
+                        .chatroomId(null)
+                        .build()
         );
     }
 

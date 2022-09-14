@@ -2,12 +2,13 @@ package org.slams.server.chat.dto.common;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.slams.server.common.dto.Court;
 import org.slams.server.common.dto.User;
 
 import java.util.List;
 
 @Getter
-public class UserChatroom extends ChatroomCommon {
+public class UserChatroom extends ChatroomCommon implements Chatroom{
 
     @Builder
     public UserChatroom(
@@ -17,5 +18,10 @@ public class UserChatroom extends ChatroomCommon {
             Chat lastChat
     ) {
         super(admins, type, participants, lastChat);
+    }
+
+    @Override
+    public Court getCourt() {
+        return null;
     }
 }
