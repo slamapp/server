@@ -1,5 +1,7 @@
 package org.slams.server.common.api;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,6 +13,7 @@ public class CursorPageRequest {
 	private String lastId;
 	private Boolean isFirst;
 
+	@ApiModelProperty(hidden = true)
 	public Long getLastIdParedForLong() {
 		return lastId == null ? null : Long.parseLong(lastId);
 	}
