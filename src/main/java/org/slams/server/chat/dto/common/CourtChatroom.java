@@ -9,7 +9,7 @@ import org.slams.server.common.dto.User;
 import java.util.List;
 
 @Getter
-public class CourtChatroom extends ChatroomCommon implements Chatroom{
+public class CourtChatroom extends Chatroom {
 
     @ApiModelProperty(value = "채팅방의 농구장 정보", required = true)
     private final Court court;

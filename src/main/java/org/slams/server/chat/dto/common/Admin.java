@@ -4,14 +4,14 @@ import lombok.Getter;
 
 @Getter
 public class Admin {
-    private final String adminId;
-    private final ChatroomParticipantsType chatroomParticipantsType;
+    private final String id;
+    private final ChatroomParticipantsType participantsType;
 
     public Admin(
-            String adminId,
-            ChatroomParticipantsType chatroomParticipantsType
+            String id,
+            ChatroomParticipantsType participantsType
     ) {
-        this.adminId = adminId;
-        this.chatroomParticipantsType = chatroomParticipantsType;
+        this.id = id;
+        this.participantsType = participantsType;
     }
 }

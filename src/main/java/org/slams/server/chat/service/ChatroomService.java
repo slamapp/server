@@ -37,6 +37,7 @@ public class ChatroomService {
 
     /** 채팅방 생성 -> 농구장 생성시 함께 생성됨 **/
     public void saveChatRoom(Long courtId){
+
         Court court = courtRepository.findById(courtId)
                 .orElseThrow(() -> new CourtNotFoundException("해당 농구장이 존재하지 않습니다."));
 
@@ -50,36 +51,24 @@ public class ChatroomService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
 
         return ResultOfCreatingOfChatroomToParticipateInResponse.builder()
-                .chatroom(CourtChatroom.builder()
-                        .admins(null)
-                        .type(ChatroomType.PERSONAL)
-                        .participants(null)
-                        .lastChat(null)
-                        .court(null)
-                        .build()
-                ).build();
+                .id()
+                .name()
+                .admins()
+                .type()
+                .participants()
+                .lastChat()
+        .build();
     }
     public ResultOfCreatingOfCourtChatroomToParticipateInResponse saveUserCourtChatroom(Long userId, String courtId){
         Long courtIdConvertedIntoLong = Long.valueOf(courtId);
         User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
         CourtChatroomMapping courtChatroomMapping = courtChatroomMappingRepository.findByCourtId(courtIdConvertedIntoLong);
-        return new ResultOfCreatingOfCourtChatroomToParticipateInResponse(null);
+        return new ResultOfCreatingOfCourtChatroomToParticipateInResponse(null, null, null, null, null);
     }
 
     public List<ChatroomResponse> findUserChatroomListByUserId(Long userId, CursorPageRequest cursorRequest){
         return List.of(
-                ChatroomResponse.builder()
-                        .chatroom(
-                                ChatroomCommon.of(
-                                        "chatroom_id",
-                                        null,
-                                        null,
-                                        ChatroomType.PERSONAL,
-                                        null,
-                                        null
-                                        )
-                        )
-                        .build()
+                null
         );
     }
 

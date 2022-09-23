@@ -1,31 +1,57 @@
 package org.slams.server.chat.dto.common;
 
+
+
 import io.swagger.annotations.ApiModelProperty;
-import org.slams.server.common.dto.Court;
+import lombok.Getter;
+import org.slams.server.common.dto.BaseDto;
 import org.slams.server.common.dto.User;
 
 import java.util.List;
 
-public interface Chatroom {
-
+@Getter
+public class Chatroom extends BaseDto {
     @ApiModelProperty(value = "채팅방 구별키", required = true)
-    public String getId();
-
+    private String id;
     @ApiModelProperty(value = "채팅방 이름")
-    public String getName();
+    private String name;
+    @ApiModelProperty(value = "채팅 관리자", required = true)
+    private final List<Admin> admins;
+    @ApiModelProperty(value = "채팅타입 [PERSONAL,GROUP,COURT]", required = true)
+    private final ChatroomType type;
 
-    @ApiModelProperty(value = "관리자 정보", required = true)
-    public List<Admin> getAdmins();
+    @ApiModelProperty(value = "채팅 맴버", required = true)
+    private final List<User> participants;
+    @ApiModelProperty(value = "마지막 채팅 내용", required = true)
+    private final Chat lastChat;
 
-    @ApiModelProperty(value = "채팅방 타입", required = true)
-    public ChatroomType getType();
 
-    @ApiModelProperty(value = "채팅방 참여자", required = true)
-    public List<User> getParticipants();
+    public Chatroom(
+            String id,
+            String name,
+            List<Admin> admins,
+            ChatroomType type,
+            List<User> participants,
+            Chat lastChat
+    ) {
+        this.id = id;
+        this.name = name;
+        this.admins = admins;
+        this.type = type;
+        this.participants = participants;
+        this.lastChat = lastChat;
+    }
 
-    @ApiModelProperty(value = "채팅방의 마지막 채팅 내용", required = true)
-    public Chat getLastChat();
+    public Chatroom(
+            List<Admin> admins,
+            ChatroomType type,
+            List<User> participants,
+            Chat lastChat
+    ) {
+        this.admins = admins;
+        this.type = type;
+        this.participants = participants;
+        this.lastChat = lastChat;
+    }
 
-    @ApiModelProperty(value = "농구장 정보")
-    public Court getCourt();
 }

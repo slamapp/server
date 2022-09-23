@@ -14,10 +14,10 @@ import java.util.List;
 public class ResultOfDeletingUserChatroomResponse {
 
     @ApiModelProperty(value = "채팅방에서 나온 채팅방의 구별키", required = true)
-    private final List<String> chatroomIds;
+    private final List<String> ids;
 
     @Builder
-    public ResultOfDeletingUserChatroomResponse(List<String> chatroomIds){
-        this.chatroomIds = chatroomIds;
+    public ResultOfDeletingUserChatroomResponse(List<String> ids){
+        this.ids = ids;
     }
 }

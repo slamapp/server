@@ -1,19 +1,24 @@
 package org.slams.server.chat.dto.response;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
-import org.slams.server.chat.dto.common.Chatroom;
+import org.slams.server.chat.dto.common.*;
+import org.slams.server.common.dto.User;
+
+import java.util.List;
 
 @Getter
-public class ResultOfCreatingOfChatroomToParticipateInResponse {
-    @ApiModelProperty(value = "참여할 채팅방 정보", required = true)
-    private final Chatroom chatroom;
+public class ResultOfCreatingOfChatroomToParticipateInResponse extends Chatroom {
 
     @Builder
     public ResultOfCreatingOfChatroomToParticipateInResponse(
-            Chatroom chatroom
+            String id,
+            String name,
+            List<Admin> admins,
+            ChatroomType type,
+            List<User> participants,
+            Chat lastChat
     ) {
-        this.chatroom = chatroom;
+        super(id, name, admins, type, participants, lastChat);
     }
 }

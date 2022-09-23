@@ -1,22 +1,21 @@
 package org.slams.server.chat.dto.response;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
-import org.slams.server.chat.dto.common.ChatroomCommon;
+import org.slams.server.chat.dto.common.Admin;
+import org.slams.server.chat.dto.common.Chat;
+import org.slams.server.chat.dto.common.Chatroom;
 import org.slams.server.chat.dto.common.ChatroomType;
-import org.slams.server.common.dto.BaseDto;
+import org.slams.server.common.dto.User;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Getter
-public class ChatroomResponse extends BaseDto {
-    private final ChatroomCommon chatroom;
+public class ChatroomResponse extends Chatroom {
 
     @Builder
-    public ChatroomResponse(
-            ChatroomCommon chatroom
-    ) {
-       this.chatroom = chatroom;
+    public ChatroomResponse(List<Admin> admins, ChatroomType type, List<User> participants, Chat lastChat) {
+        super(admins, type, participants, lastChat);
     }
 }
