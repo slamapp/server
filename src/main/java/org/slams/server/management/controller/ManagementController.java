@@ -2,6 +2,7 @@ package org.slams.server.management.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.slams.server.common.annotation.UserId;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtRequest;
@@ -46,32 +47,16 @@ public class ManagementController {
 
 	@ApiOperation("농구장 등록 승인")
 	@PatchMapping("/newCourt/accept")
-	public ResponseEntity<NewCourtResponse> accept(HttpServletRequest request, @RequestBody NewCourtRequest newCourtRequest) {
-		String authorization = request.getHeader("Authorization");
-		String[] tokenString = authorization.split(" ");
-		if (!tokenString[0].equals("Bearer")) {
-			throw new InvalidTokenException("토큰 정보가 올바르지 않습니다.");
-		}
-
-		Jwt.Claims claims = jwt.verify(tokenString[1]);
-
+	public ResponseEntity<NewCourtResponse> accept(@UserId Long userId, @RequestBody NewCourtRequest newCourtRequest) {
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(newCourtService.acceptNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), claims.getUserId()));
+			.body(newCourtService.acceptNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), userId));
 	}
 
 	@ApiOperation("농구장 등록 거절")
 	@PatchMapping("/newCourt/deny")
-	public ResponseEntity<NewCourtResponse> deny(HttpServletRequest request, @RequestBody NewCourtRequest newCourtRequest) {
-		String authorization = request.getHeader("Authorization");
-		String[] tokenString = authorization.split(" ");
-		if (!tokenString[0].equals("Bearer")) {
-			throw new InvalidTokenException("토큰 정보가 올바르지 않습니다.");
-		}
-
-		Jwt.Claims claims = jwt.verify(tokenString[1]);
-
+	public ResponseEntity<NewCourtResponse> deny(@UserId Long userId, @RequestBody NewCourtRequest newCourtRequest) {
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(newCourtService.denyNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), claims.getUserId()));
+			.body(newCourtService.denyNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), userId));
 	}
 
 }
