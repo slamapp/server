@@ -15,13 +15,12 @@ public class Chatroom extends BaseDto {
     private String id;
     @ApiModelProperty(value = "채팅방 이름")
     private String name;
-    @ApiModelProperty(value = "채팅 관리자", required = true)
-    private final List<Admin> admins;
+    @ApiModelProperty(value = "채팅 관리자(사용자)의 구별키", required = true)
+    private final List<String> admins;
     @ApiModelProperty(value = "채팅타입 [PERSONAL,GROUP,COURT]", required = true)
     private final ChatroomType type;
-
     @ApiModelProperty(value = "채팅 맴버", required = true)
-    private final List<User> participants;
+    private final List<Participant> participants;
     @ApiModelProperty(value = "마지막 채팅 내용", required = true)
     private final Chat lastChat;
 
@@ -29,9 +28,9 @@ public class Chatroom extends BaseDto {
     public Chatroom(
             String id,
             String name,
-            List<Admin> admins,
+            List<String> admins,
             ChatroomType type,
-            List<User> participants,
+            List<Participant> participants,
             Chat lastChat
     ) {
         this.id = id;
@@ -43,9 +42,9 @@ public class Chatroom extends BaseDto {
     }
 
     public Chatroom(
-            List<Admin> admins,
+            List<String> admins,
             ChatroomType type,
-            List<User> participants,
+            List<Participant> participants,
             Chat lastChat
     ) {
         this.admins = admins;

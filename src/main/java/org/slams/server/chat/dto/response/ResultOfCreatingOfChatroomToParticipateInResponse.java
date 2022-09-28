@@ -3,7 +3,6 @@ package org.slams.server.chat.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import org.slams.server.chat.dto.common.*;
-import org.slams.server.common.dto.User;
 
 import java.util.List;
 
@@ -14,9 +13,9 @@ public class ResultOfCreatingOfChatroomToParticipateInResponse extends Chatroom 
     public ResultOfCreatingOfChatroomToParticipateInResponse(
             String id,
             String name,
-            List<Admin> admins,
+            List<String> admins,
             ChatroomType type,
-            List<User> participants,
+            List<Participant> participants,
             Chat lastChat
     ) {
         super(id, name, admins, type, participants, lastChat);

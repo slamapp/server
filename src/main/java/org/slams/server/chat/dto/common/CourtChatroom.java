@@ -11,19 +11,19 @@ import java.util.List;
 @Getter
 public class CourtChatroom extends Chatroom {
 
-    @ApiModelProperty(value = "채팅방의 농구장 정보", required = true)
-    private final Court court;
+    @ApiModelProperty(value = "채팅방의 농구장 구별키", required = true)
+    private final String courtId;
 
 
     @Builder
     public CourtChatroom(
-            List<Admin> admins,
+            List<String> admins,
             ChatroomType type,
-            List<User> participants,
+            List<Participant> participants,
             Chat lastChat,
-            Court court
+            String courtId
     ) {
         super(admins, type, participants, lastChat);
-        this.court = court;
+        this.courtId = courtId;
     }
 }

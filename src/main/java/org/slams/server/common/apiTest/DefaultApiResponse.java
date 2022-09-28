@@ -8,10 +8,10 @@ import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public class ApiResponse<T> {
+public class DefaultApiResponse<T> {
 
 	private T contents;
-	private Map<String, Reference> reference;
-	private String lastId;
+	private MetaReference reference;
+
 
 }

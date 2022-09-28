@@ -51,12 +51,12 @@ public class ChatroomService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 사용자는 존재하지 않습니다."));
 
         return ResultOfCreatingOfChatroomToParticipateInResponse.builder()
-                .id()
-                .name()
-                .admins()
-                .type()
-                .participants()
-                .lastChat()
+                .id("IDX")
+                .name("NAME")
+                .admins(null)
+                .type(null)
+                .participants(null)
+                .lastChat(null)
         .build();
     }
     public ResultOfCreatingOfCourtChatroomToParticipateInResponse saveUserCourtChatroom(Long userId, String courtId){

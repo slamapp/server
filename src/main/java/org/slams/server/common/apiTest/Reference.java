@@ -1,6 +1,6 @@
 package org.slams.server.common.apiTest;
 
-import org.slams.server.common.dto.reference.BaseReferenceDto;
+import org.slams.server.common.dto.referenceDto.BaseReferenceDto;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,4 +15,5 @@ public class Reference<T extends BaseReferenceDto> extends HashMap<String, T> {
         }
         return reference;
     }
+
 }

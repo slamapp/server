@@ -14,9 +14,9 @@ import org.slams.server.common.dto.Loudspeaker;
 
 @Getter
 public class ChatOfChatroomResponse extends Chat {
-    @ApiModelProperty(value = "확성기 정보")
-    @JsonProperty("loudSpeaker")
-    private final Loudspeaker loudspeaker;
+    @ApiModelProperty(value = "확성기 정보 구별키")
+    @JsonProperty("loudSpeaker_id")
+    private final String loudspeakerId;
 
     @Builder
     public ChatOfChatroomResponse(
@@ -25,10 +25,10 @@ public class ChatOfChatroomResponse extends Chat {
             ChatType type,
             String creatorId,
             boolean isHidden,
-            Loudspeaker loudspeaker
+            String loudspeakerId
     ) {
         super(id, text, type, creatorId, isHidden);
-        this.loudspeaker = loudspeaker;
+        this.loudspeakerId = loudspeakerId;
     }
 
 }

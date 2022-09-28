@@ -8,12 +8,12 @@ public class ChatParticipants {
     @ApiModelProperty(value = "참여자 구별키", required = true)
     private final String id;
     @ApiModelProperty(value = "참여자의 타입", required = true)
-    private final ChatroomParticipantsType typeOfParticipant;
+    private final TypeOfParticipants typeOfParticipant;
 
 
     public ChatParticipants(
             String id,
-            ChatroomParticipantsType typeOfParticipant
+            TypeOfParticipants typeOfParticipant
     ) {
         this.id = id;
         this.typeOfParticipant = typeOfParticipant;
