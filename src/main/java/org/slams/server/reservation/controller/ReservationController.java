@@ -4,10 +4,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.slams.server.common.annotation.UserId;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.common.api.ListResponse;
-import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,11 +42,9 @@ public class ReservationController {
 		)
 	})
 	@PostMapping()
-	public ResponseEntity<ReservationInsertResponse> insert(@Valid @RequestBody ReservationInsertRequest reservationRequest, HttpServletRequest request) {
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
-		return new ResponseEntity<ReservationInsertResponse>(reservationService.insert(reservationRequest, userId), HttpStatus.CREATED);
+	public ResponseEntity<ReservationInsertResponse> insert(@Valid @RequestBody ReservationInsertRequest reservationRequest, @UserId Long userId) {
+		return new ResponseEntity<ReservationInsertResponse>(
+			reservationService.insert(reservationRequest, userId), HttpStatus.CREATED);
 	}
 
 	@ApiOperation("예약 수정")
@@ -62,11 +59,9 @@ public class ReservationController {
 		)
 	})
 	@PatchMapping("/{reservationId}")
-	public ResponseEntity<ReservationUpdateResponse> update(@Valid @RequestBody ReservationUpdateRequest reservationRequest, @PathVariable Long reservationId, HttpServletRequest request) {
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
-		return ResponseEntity.accepted().body(reservationService.update(reservationRequest, reservationId, userId));
+	public ResponseEntity<ReservationUpdateResponse> update(@Valid @RequestBody ReservationUpdateRequest reservationRequest, @PathVariable Long reservationId, @UserId Long userId) {
+		return ResponseEntity.accepted().body(
+			reservationService.update(reservationRequest, reservationId, userId));
 	}
 
 	@ApiOperation("예약 삭제")
@@ -81,10 +76,7 @@ public class ReservationController {
 		)
 	})
 	@DeleteMapping("/{reservationId}")
-	public ResponseEntity<Void> update(@PathVariable Long reservationId, HttpServletRequest request) {
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
+	public ResponseEntity<Void> update(@PathVariable Long reservationId, @UserId Long userId) {
 		reservationService.delete(reservationId, userId);
 
 		return ResponseEntity.noContent().build();
@@ -92,10 +84,7 @@ public class ReservationController {
 
 	@ApiOperation("다가올 예약목록 조회")
 	@GetMapping("/upcoming")
-	public ResponseEntity<ListResponse<ReservationUpcomingResponse>> getUpcoming(HttpServletRequest request) {
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
+	public ResponseEntity<ListResponse<ReservationUpcomingResponse>> getUpcoming(@UserId Long userId) {
 		ListResponse<ReservationUpcomingResponse> response = reservationService.findUpcoming(userId);
 
 		return ResponseEntity.ok().body(response);
@@ -103,10 +92,7 @@ public class ReservationController {
 
 	@ApiOperation("지난 예약목록 조회")
 	@GetMapping("/expired")
-	public ResponseEntity<CursorPageResponse<List<ReservationExpiredResponse>>> getExpired(CursorPageRequest cursorPageRequest, HttpServletRequest request) {
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
+	public ResponseEntity<CursorPageResponse<List<ReservationExpiredResponse>>> getExpired(CursorPageRequest cursorPageRequest, @UserId Long userId) {
 		CursorPageResponse<List<ReservationExpiredResponse>> response = reservationService.findExpired(userId, cursorPageRequest);
 
 		return ResponseEntity.ok(response);
@@ -114,24 +100,18 @@ public class ReservationController {
 
 	@ApiOperation("예약 상세보기")
 	@GetMapping("/{courtId}")
-	public ResponseEntity<ListResponse<ReservationDetailResponse>> getDetail(HttpServletRequest request, @PathVariable Long courtId, @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
-		TokenGetId token = new TokenGetId(request, jwt);
-		Long userId = token.getUserId();
-
+	public ResponseEntity<ListResponse<ReservationDetailResponse>> getDetail(@UserId Long userId, @PathVariable Long courtId, @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
 		ListResponse<ReservationDetailResponse> response = reservationService.getDetail(userId, courtId, startTime, endTime);
 
 		return ResponseEntity.ok(response);
 	}
 
-    @ApiOperation("특정 날짜의 농구장 예약 전체조회")
-    @GetMapping()
-    public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date, HttpServletRequest request) {
-        TokenGetId token = new TokenGetId(request, jwt);
-        Long userId = token.getUserId();
-
+	@ApiOperation("특정 날짜의 농구장 예약 전체조회")
+	@GetMapping()
+	public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date, @UserId Long userId) {
 		ListResponse<ReservationByCourtAndDateResponse> response = reservationService.getByCourtAndDate(courtId, date);
 
-        return ResponseEntity.ok(response);
-    }
+		return ResponseEntity.ok(response);
+	}
 
 }

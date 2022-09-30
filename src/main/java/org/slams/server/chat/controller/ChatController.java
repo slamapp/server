@@ -6,16 +6,14 @@ import org.slams.server.chat.dto.response.ChatroomResponse;
 import org.slams.server.chat.dto.response.DeleteUserChatRoomResponse;
 import org.slams.server.chat.service.ChatContentsService;
 import org.slams.server.chat.service.ChatroomMappingService;
+import org.slams.server.common.annotation.UserId;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
-import org.slams.server.common.api.TokenGetId;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -35,10 +33,8 @@ public class ChatController {
     @GetMapping("/list")
     public ResponseEntity<CursorPageResponse<List<ChatroomResponse>>> findUserChatRoomByUserId(
             CursorPageRequest cursorRequest,
-            HttpServletRequest request
+            @UserId Long userId
     ){
-        Long userId = new TokenGetId(request,jwt).getUserId();
-
         return ResponseEntity.ok(new CursorPageResponse<>(
                 chatroomMappingService.findUserChatRoomByUserId(userId, cursorRequest),
                 String.valueOf(chatroomMappingService.findLastId(userId, cursorRequest))
@@ -49,8 +45,7 @@ public class ChatController {
     @GetMapping("/court/{courtId}")
     public ResponseEntity<CursorPageResponse<List<ChatContentsResponse>>> findChatContentByChatRoomId(
             @PathVariable Long courtId,
-            CursorPageRequest cursorRequest,
-            HttpServletRequest request
+            CursorPageRequest cursorRequest
     ){
         return ResponseEntity.ok(new CursorPageResponse<>(
                chatContentsService.findChatContentsListByCourtOrderByCreatedAt(courtId, cursorRequest),
@@ -62,10 +57,8 @@ public class ChatController {
     @PostMapping("/court/{courtId}")
     public ResponseEntity<ChatroomResponse> createUserChatRoom(
             @PathVariable Long courtId,
-            HttpServletRequest request
+            @UserId Long userId
     ){
-        Long userId = new TokenGetId(request,jwt).getUserId();
-        //
         ChatroomResponse chatroomResponse = chatroomMappingService.saveUserChatRoom(userId, courtId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(chatroomResponse);
@@ -74,9 +67,8 @@ public class ChatController {
     @DeleteMapping("/court/{courtId}")
     public ResponseEntity<DeleteUserChatRoomResponse> deleteUserChatRoom(
             @PathVariable Long courtId,
-            HttpServletRequest request
+            @UserId Long userId
             ){
-        Long userId = new TokenGetId(request,jwt).getUserId();
         chatroomMappingService.deleteUserChatRoomByCourtId(courtId, userId);
 
         return ResponseEntity.ok(DeleteUserChatRoomResponse.builder()
