@@ -1,10 +1,8 @@
 package org.slams.server.common.config;
 
-import org.slams.server.common.config.resolver.UserIdResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,7 +13,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Value("${slam.cors.allowedOrigins}")
 	private List<String> allowedOrigins;
-	private UserIdResolver userIdResolver;
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
@@ -24,10 +21,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
 			.allowedMethods("*")
 			.maxAge(3600);
 	}
-
-	@Override
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(userIdResolver);
-	}
-
 }
