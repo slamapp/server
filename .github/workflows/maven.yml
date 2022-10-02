@@ -5,9 +5,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
+    branches: [ feature/common-71 ]
 
 jobs:
   build:
@@ -27,7 +25,7 @@ jobs:
     - name: Docker Build
       run : |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
-        docker build --no-cache -t backend . 
+        docker build -t backend . 
         docker tag backend ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
         docker push ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7}
     - name: Add public IP to AWS security group
@@ -50,5 +48,5 @@ jobs:
         envs: GITHUB_SHA 
         script: | 
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
-          sudo docker tag ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} backend
-          sudo docker service update slam-dev --image backend:latest --force
+          sudo docker tag ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} backend-prod
+          sudo docker service update slam-prod --image backend-prod:latest --force
