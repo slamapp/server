@@ -26,7 +26,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endLocalDateTime") LocalDateTime endLocalDateTime
            );
 
-    @Query("SELECT r FROM Reservation r WHERE r.user.id=:userId AND r.startTime>:localDateTime")
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id=:userId AND r.startTime>:localDateTime")
     List<Reservation> findByUserFromStartTime(
         @Param("userId") Long userId,
         @Param("localDateTime") LocalDateTime localDateTime
@@ -66,7 +66,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Optional<Reservation> findByCourtAndUser(Court court, User user);
 
-    @Query("SELECT r FROM Reservation r WHERE r.court.id = :courtId AND r.startTime < :endTime AND r.endTime > :startTime ORDER BY r.startTime")
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.user WHERE r.court.id = :courtId AND r.startTime < :endTime AND r.endTime > :startTime ORDER BY r.startTime")
     List<Reservation> findByCourtIdAndDateBetweenOrderByStartTime(
         @Param("courtId") Long courtId,
         @Param("startTime") LocalDateTime startTime,
