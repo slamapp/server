@@ -27,6 +27,7 @@ spring:
             scope:
               - profile_nickname
               - profile_image
+              - account_email
             redirect-uri: ${KAKAO_REDIRECT_URI}
             authorization-grant-type: authorization_code
             client-authentication-method: POST
