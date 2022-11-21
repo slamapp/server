@@ -58,7 +58,6 @@ public class Jwt {
 	@Getter
 	public static class Claims {
 		Long userId;
-		String email;
 		String[] roles;
 		Date iat; // token 발행일자
 		Date exp; // token 만료일자
@@ -71,11 +70,6 @@ public class Jwt {
 				this.userId = userId.asLong();
 			}
 
-			Claim email = decodedJWT.getClaim("email");
-			if(!email.isNull()){
-				this.email = email.asString();
-			}
-
 			Claim roles = decodedJWT.getClaim("roles");
 			if (!roles.isNull()) {
 				this.roles = roles.asArray(String.class);
@@ -85,22 +79,11 @@ public class Jwt {
 			this.exp = decodedJWT.getExpiresAt();
 		}
 
-		public static Claims from(Long userId, String email, String[] roles) {
+		public static Claims from(Long userId, String[] roles) {
 			Claims claims = new Claims();
 			claims.userId = userId;
-			claims.email = email;
 			claims.roles = roles;
 			return claims;
-		}
-
-		public Map<String, Object> asMap() {
-			Map<String, Object> map = new HashMap<>();
-			map.put("userId", userId);
-			map.put("email", email);
-			map.put("roles", roles);
-			map.put("iat", iat());
-			map.put("exp", exp());
-			return map;
 		}
 
 		public long iat() {
@@ -115,7 +98,6 @@ public class Jwt {
 		public String toString() {
 			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
 				.append("userId", userId)
-				.append("email", email)
 				.append("roles", Arrays.toString(roles))
 				.append("iat", iat)
 				.append("exp", exp)

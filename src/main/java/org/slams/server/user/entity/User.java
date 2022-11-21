@@ -32,7 +32,7 @@ public class User extends BaseEntity {
 	private String socialId;
 
 	@Pattern(regexp = "\\b[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,4}\\b")
-	@Column(name = "email", nullable = false, length = 50, unique = true)
+	@Column(name = "email", length = 50, unique = true)
 	private String email;
 
 	@Column(name = "nickname", nullable = false, length = MAX_NICKNAME_LENGTH)
@@ -58,7 +58,6 @@ public class User extends BaseEntity {
 	private User(String socialId, String email, String nickname, String profileImage,
 				 String description, Role role, Proficiency proficiency, List<Position> positions) {
 		Assert.notNull(socialId, "socialId는 null이 될 수 없습니다.");
-		Assert.notNull(email, "email은 null이 될 수 없습니다.");
 		Assert.notNull(role, "role은 null이 될 수 없습니다.");
 
 		validateNickname(nickname);
