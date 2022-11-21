@@ -19,6 +19,7 @@ import java.util.List;
 public class MyProfileLookUpResponse {
 
 	private String id;
+	private String email;
 	private String nickname;
 	private String profileImage;
 	private String description;
@@ -30,11 +31,12 @@ public class MyProfileLookUpResponse {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	private MyProfileLookUpResponse(String id, String nickname, String profileImage,
+	private MyProfileLookUpResponse(String id, String email, String nickname, String profileImage,
 								   String description, Role role, Proficiency proficiency, List<Position> positions,
 								   Long followerCount, Long followingCount,
 								   LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
+		this.email = email;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
 		this.description = description;
@@ -48,7 +50,7 @@ public class MyProfileLookUpResponse {
 	}
 
 	public static MyProfileLookUpResponse toResponse(User user, Long followerCount, Long followingCount) {
-		return new MyProfileLookUpResponse(String.valueOf(user.getId()), user.getNickname(), user.getProfileImage(),
+		return new MyProfileLookUpResponse(String.valueOf(user.getId()), user.getEmail(), user.getNickname(), user.getProfileImage(),
 			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(), followerCount, followingCount,
 			user.getCreatedAt(), user.getUpdatedAt());
 	}
