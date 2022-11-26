@@ -79,6 +79,7 @@ public class Jwt {
 			this.exp = decodedJWT.getExpiresAt();
 		}
 
+
 		public static Claims from(Long userId, String[] roles) {
 			Claims claims = new Claims();
 			claims.userId = userId;

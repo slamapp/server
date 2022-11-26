@@ -1,5 +1,6 @@
 package org.slams.server.reservation.dto.response;
 
+
 import lombok.Getter;
 import org.slams.server.common.api.BaseResponse;
 import org.slams.server.reservation.entity.Reservation;
