@@ -26,11 +26,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endLocalDateTime") LocalDateTime endLocalDateTime
            );
 
-    @Query("SELECT r FROM Reservation r WHERE r.user.id=:userId AND r.startTime>:localDateTime")
-    List<Reservation> findByUserFromStartTime(
-        @Param("userId") Long userId,
-        @Param("localDateTime") LocalDateTime localDateTime
-    );
+	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id=:userId AND r.startTime>:localDateTime")
+	List<Reservation> findByUserFromStartTime(
+		@Param("userId") Long userId,
+		@Param("localDateTime") LocalDateTime localDateTime
+	);
 
     @Query("SELECT r.user.id FROM Reservation r WHERE r.court.id=:courtId")
     List<Long> findBeakerIdByCourtId(
@@ -52,12 +52,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     );
 
     // 유저의 지난 예약 목록(무한 스크롤 - 최초)
-    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.endTime < :localDateTime ORDER BY r.id desc")
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id = :userId AND r.endTime < :localDateTime ORDER BY r.id desc")
     List<Reservation> findByUserFromEndTimeOrderByIdDesc(
         @Param("userId") Long userId, @Param("localDateTime") LocalDateTime localDateTime, Pageable pageable
     );
     // 유저의 지난 예약 목록(무한 스크롤)
-    @Query("SELECT r FROM Reservation r WHERE r.id < :lastId order by r.id desc")
+
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.id < :lastId order by r.id desc")
     List<Reservation> findByIdLessThanOrderByIdDesc(@Param("lastId") Long lastId, Pageable pageable);
 
     // byCourtId
@@ -66,11 +67,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Optional<Reservation> findByCourtAndUser(Court court, User user);
 
-    @Query("SELECT r FROM Reservation r WHERE r.court.id = :courtId AND r.startTime < :endTime AND r.endTime > :startTime ORDER BY r.startTime")
-    List<Reservation> findByCourtIdAndDateBetweenOrderByStartTime(
-        @Param("courtId") Long courtId,
-        @Param("startTime") LocalDateTime startTime,
-        @Param("endTime") LocalDateTime endTime
-    );
+	@Query("SELECT r FROM Reservation r JOIN FETCH r.user WHERE r.court.id = :courtId AND r.startTime < :endTime AND r.endTime > :startTime ORDER BY r.startTime")
+	List<Reservation> findByCourtIdAndDateBetweenOrderByStartTime(
+		@Param("courtId") Long courtId,
+		@Param("startTime") LocalDateTime startTime,
+		@Param("endTime") LocalDateTime endTime
+	);
+
 
 }

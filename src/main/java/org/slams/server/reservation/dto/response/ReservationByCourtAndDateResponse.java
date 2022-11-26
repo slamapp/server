@@ -1,11 +1,14 @@
 package org.slams.server.reservation.dto.response;
 
+
+import lombok.Getter;
 import org.slams.server.common.api.BaseResponse;
 import org.slams.server.reservation.entity.Reservation;
 import org.slams.server.user.dto.response.BriefUserInfoDto;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class ReservationByCourtAndDateResponse extends BaseResponse {
 
 	private String id;
@@ -24,7 +27,7 @@ public class ReservationByCourtAndDateResponse extends BaseResponse {
 		this.user = user;
 	}
 
-	public static ReservationByCourtAndDateResponse of(Reservation reservation){
+	public static ReservationByCourtAndDateResponse of(Reservation reservation) {
 		return new ReservationByCourtAndDateResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
 			reservation.getId().toString(), reservation.getStartTime(), reservation.getEndTime(), reservation.isHasBall(), BriefUserInfoDto.toDto(reservation.getUser()));
 	}
