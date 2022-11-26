@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   pull_request:
-      branches: [ main ]
+      branches: [ develop ]
       
 jobs:
   build:
@@ -49,6 +49,6 @@ jobs:
         envs: GITHUB_SHA 
         script: | 
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} 
-          sudo docker tag ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} backend-prod
-          sudo docker service update slam-prod --image backend-prod:latest --force
+          sudo docker tag ${{ secrets.DOCKER_USERNAME }}/backend:${GITHUB_SHA::7} backend
+          sudo docker service update slam-dev --image backend:latest --force
 
