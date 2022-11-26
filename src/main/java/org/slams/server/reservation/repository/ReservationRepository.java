@@ -57,6 +57,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         @Param("userId") Long userId, @Param("localDateTime") LocalDateTime localDateTime, Pageable pageable
     );
     // 유저의 지난 예약 목록(무한 스크롤)
+
     @Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.id < :lastId order by r.id desc")
     List<Reservation> findByIdLessThanOrderByIdDesc(@Param("lastId") Long lastId, Pageable pageable);
 
@@ -72,5 +73,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 		@Param("startTime") LocalDateTime startTime,
 		@Param("endTime") LocalDateTime endTime
 	);
+
 
 }
