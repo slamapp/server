@@ -20,7 +20,6 @@ import java.util.List;
 public class DefaultUserInfoResponse {
 
 	private String id;
-	private String email;
 	private String nickname;
 	private String profileImage;
 	private String description;
@@ -31,12 +30,11 @@ public class DefaultUserInfoResponse {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	private DefaultUserInfoResponse(String id, String email, String nickname, String profileImage,
+	private DefaultUserInfoResponse(String id, String nickname, String profileImage,
 									String description, Role role, Proficiency proficiency, List<Position> positions,
 									List<NotificationResponse> notifications,
 									LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
-		this.email = email;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
 		this.description = description;
@@ -49,7 +47,7 @@ public class DefaultUserInfoResponse {
 	}
 
 	public static DefaultUserInfoResponse toResponse(User user, List<NotificationResponse> notifications) {
-		return new DefaultUserInfoResponse(String.valueOf(user.getId()), user.getEmail(), user.getNickname(), user.getProfileImage(),
+		return new DefaultUserInfoResponse(String.valueOf(user.getId()), user.getNickname(), user.getProfileImage(),
 			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(), notifications,
 			user.getCreatedAt(), user.getUpdatedAt());
 	}
