@@ -18,13 +18,7 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-
-    @Query("SELECT r FROM Reservation r WHERE (r.startTime between :startLocalDateTime and :endLocalDateTime) and r.court.id=:courtId")
-    List<Reservation> findAllByCourtAndDate(
-            @Param("courtId")Long courtId,
-            @Param("startLocalDateTime") LocalDateTime startLocalDateTime,
-            @Param("endLocalDateTime") LocalDateTime endLocalDateTime
-           );
+	boolean existsByUserAndEndTimeGreaterThanAndStartTimeLessThan(User user, LocalDateTime startTime, LocalDateTime endTime);
 
 	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id=:userId AND r.startTime>:localDateTime")
 	List<Reservation> findByUserFromStartTime(
@@ -59,10 +53,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 유저의 지난 예약 목록(무한 스크롤)
     @Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.id < :lastId order by r.id desc")
     List<Reservation> findByIdLessThanOrderByIdDesc(@Param("lastId") Long lastId, Pageable pageable);
-
-    // byCourtId
-//    @Query("SELECT r FROM Reservation r WHERE r.court.id=:courtId")
-//    List<Reservation> findByCourt(@Param("courtId") Long courtId);
 
     Optional<Reservation> findByCourtAndUser(Court court, User user);
 
