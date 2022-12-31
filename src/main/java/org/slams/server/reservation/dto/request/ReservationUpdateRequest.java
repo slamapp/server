@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReservationUpdateRequest {
 
-    @NotNull(message = "예약 id는 필수 값입니다.")
-    private Long reservationId;
-
     @Future(message = "예약은 현재보다 미래만 가능합니다.")
     private LocalDateTime startTime;
 
