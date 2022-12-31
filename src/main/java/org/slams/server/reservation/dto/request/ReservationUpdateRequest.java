@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Builder
@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReservationUpdateRequest {
 
-    @Future(message = "예약은 현재보다 미래만 가능합니다.")
-    private LocalDateTime startTime;
+	@Future(message = "예약은 현재보다 미래만 가능합니다.")
+	private Instant startTime;
 
-    @Future(message = "예약은 현재보다 미래만 가능합니다.")
-    private LocalDateTime endTime;
+	@Future(message = "예약은 현재보다 미래만 가능합니다.")
+	private Instant endTime;
 
-    @NotNull(message = "농구공 유무는 필수 값입니다.")
-    private Boolean hasBall;
+	@NotNull(message = "농구공 유무는 필수 값입니다.")
+	private Boolean hasBall;
 
 }
