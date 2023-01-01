@@ -5,7 +5,9 @@ import org.slams.server.common.api.BaseResponse;
 import org.slams.server.court.dto.response.CourtInMapDto;
 import org.slams.server.reservation.entity.Reservation;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Getter
 public class ReservationUpcomingResponse extends BaseResponse {
@@ -13,10 +15,10 @@ public class ReservationUpcomingResponse extends BaseResponse {
     private String id;
     private CourtInMapDto court;
     private Long numberOfReservations;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Instant startTime;
+    private Instant endTime;
 
-    private ReservationUpcomingResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, CourtInMapDto court, Long numberOfReservations, LocalDateTime startTime, LocalDateTime endTime) {
+    private ReservationUpcomingResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, CourtInMapDto court, Long numberOfReservations, Instant startTime, Instant endTime) {
         super(createdAt, updatedAt);
         this.id = id;
         this.court = court;
@@ -27,7 +29,7 @@ public class ReservationUpcomingResponse extends BaseResponse {
 
     public static ReservationUpcomingResponse of(Reservation reservation, Long numberOfReservations){
         return new ReservationUpcomingResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
-            reservation.getId().toString(), CourtInMapDto.toDto(reservation.getCourt()), numberOfReservations, reservation.getStartTime(), reservation.getEndTime());
+            reservation.getId().toString(), CourtInMapDto.toDto(reservation.getCourt()), numberOfReservations, reservation.getStartTime().toInstant(ZoneOffset.UTC), reservation.getEndTime().toInstant(ZoneOffset.UTC));
     }
 
 }
