@@ -2,7 +2,6 @@ package org.slams.server.management.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.slams.server.common.annotation.UserId;
 import org.slams.server.common.api.CursorPageRequest;
 import org.slams.server.common.api.CursorPageResponse;
 import org.slams.server.court.dto.request.NewCourtRequest;
@@ -10,11 +9,13 @@ import org.slams.server.court.dto.response.NewCourtInDoneLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtInReadyLookUpResponse;
 import org.slams.server.court.dto.response.NewCourtResponse;
 import org.slams.server.court.service.NewCourtService;
+import org.slams.server.user.exception.InvalidTokenException;
 import org.slams.server.user.oauth.jwt.Jwt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -45,16 +46,32 @@ public class ManagementController {
 
 	@ApiOperation("농구장 등록 승인")
 	@PatchMapping("/newCourt/accept")
-	public ResponseEntity<NewCourtResponse> accept(@RequestBody NewCourtRequest newCourtRequest, @UserId Long userId) {
+	public ResponseEntity<NewCourtResponse> accept(HttpServletRequest request, @RequestBody NewCourtRequest newCourtRequest) {
+		String authorization = request.getHeader("Authorization");
+		String[] tokenString = authorization.split(" ");
+		if (!tokenString[0].equals("Bearer")) {
+			throw new InvalidTokenException("토큰 정보가 올바르지 않습니다.");
+		}
+
+		Jwt.Claims claims = jwt.verify(tokenString[1]);
+
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(newCourtService.acceptNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), userId));
+			.body(newCourtService.acceptNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), claims.getUserId()));
 	}
 
 	@ApiOperation("농구장 등록 거절")
 	@PatchMapping("/newCourt/deny")
-	public ResponseEntity<NewCourtResponse> deny(@RequestBody NewCourtRequest newCourtRequest, @UserId Long userId) {
+	public ResponseEntity<NewCourtResponse> deny(HttpServletRequest request, @RequestBody NewCourtRequest newCourtRequest) {
+		String authorization = request.getHeader("Authorization");
+		String[] tokenString = authorization.split(" ");
+		if (!tokenString[0].equals("Bearer")) {
+			throw new InvalidTokenException("토큰 정보가 올바르지 않습니다.");
+		}
+
+		Jwt.Claims claims = jwt.verify(tokenString[1]);
+
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(newCourtService.denyNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), userId));
+			.body(newCourtService.denyNewCourt(Long.parseLong(newCourtRequest.getNewCourtId()), claims.getUserId()));
 	}
 
 }
