@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.slams.server.common.dto.Follow;
 import org.slams.server.notification.entity.NotificationType;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -29,8 +30,8 @@ public class NotificationResponse {
 
     private final Boolean isClicked;
 
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
 
     private NotificationResponse(
@@ -40,8 +41,8 @@ public class NotificationResponse {
             LoudspeakerResponse loudspeaker,
             boolean isRead,
             boolean isClicked,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            Instant createdAt,
+            Instant updatedAt
     ){
         this.id = id;
         this.type = type;
@@ -59,8 +60,8 @@ public class NotificationResponse {
             Follow follow,
             boolean isRead,
             boolean isClicked,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            Instant createdAt,
+            Instant updatedAt
     ){
         return new NotificationResponse(id, type, follow, null, isRead, isClicked, createdAt, updatedAt);
     }
@@ -71,8 +72,8 @@ public class NotificationResponse {
             LoudspeakerResponse loudspeaker,
             boolean isRead,
             boolean isClicked,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            Instant createdAt,
+            Instant updatedAt
     ){
         return new NotificationResponse(id, type, null, loudspeaker, isRead, isClicked, createdAt, updatedAt);
     }

@@ -6,6 +6,7 @@ import org.slams.server.common.dto.Court;
 import org.slams.server.common.dto.User;
 import org.slams.server.notification.common.ValidationMessage;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -19,14 +20,14 @@ public class LoudspeakerResponse {
     private String id;
     private User user;
     private Court court;
-    private LocalDateTime startTime;
+    private Instant startTime;
 
     @Builder
     public LoudspeakerResponse(
             String id,
             User user,
             Court court,
-            LocalDateTime startTime
+            Instant startTime
     ){
         checkArgument(id != null, ValidationMessage.NOTNULL_ID);
         checkArgument(user != null, ValidationMessage.NOTNULL_USER);
