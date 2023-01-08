@@ -8,6 +8,10 @@ import org.slams.server.common.BaseEntity;
 
 import javax.persistence.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -27,22 +31,21 @@ public class ChatLoudSpeakerContent extends BaseEntity {
     @Column(nullable = false)
     private int startTime;
 
+    @Column(nullable = false)
+    private LocalDateTime startDate;
+
 
     @Builder
-    public ChatLoudSpeakerContent(Long id, int startTime){
-        checkArgument(0<= startTime && startTime<25, "경기 시작시간은 0이상 24시이하만 가능합니다.");
-
+    public ChatLoudSpeakerContent(Long id, LocalDateTime startDate){
         this.id = id;
-        this.startTime = startTime;
+        this.startDate = startDate;
     }
 
-    private ChatLoudSpeakerContent(int startTime){
-        checkArgument(0<= startTime && startTime<25, "경기 시작시간은 0이상 24시이하만 가능합니다.");
-
-        this.startTime = startTime;
+    private ChatLoudSpeakerContent(LocalDateTime startDate){
+        this.startDate = startDate;
     }
 
-    public static ChatLoudSpeakerContent of(int startTime){
-        return new ChatLoudSpeakerContent(startTime);
+    public static ChatLoudSpeakerContent of(LocalDateTime startDate){
+        return new ChatLoudSpeakerContent(startDate);
     }
 }
