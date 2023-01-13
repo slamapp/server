@@ -1,12 +1,11 @@
 package org.slams.server.notification.service;
 
-import org.slams.server.chat.dto.response.ChatContentsResponse;
 import org.slams.server.chat.service.ChatContentsService;
+import org.slams.server.common.dto.TypeOfDataToRefresh;
+import org.slams.server.common.dto.TypeOfDataToRefreshResponse;
 import org.slams.server.follow.exception.FollowOneselfException;
 import org.slams.server.follow.service.FollowService;
-import org.slams.server.notification.dto.request.FollowNotificationRequest;
 import org.slams.server.notification.dto.request.LoudspeakerNotificationRequest;
-import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.reservation.repository.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +49,11 @@ public class WebsocketNotificationService {
         }
 
         followService.follow(userId, receiverId);
-        NotificationResponse notification = notificationService.saveForFollowNotification(receiverId, userId);
+//        NotificationResponse notification = notificationService.saveForFollowNotification(receiverId, userId);
 
         websocket.convertAndSend(
                 String.format("/user/%s/notification", receiverId),
-                notification
+                TypeOfDataToRefreshResponse.of(TypeOfDataToRefresh.NOTIFICATION)
         );
     }
 
@@ -76,17 +75,17 @@ public class WebsocketNotificationService {
             if (receiverId.equals(senderId)){
                 continue;
             }
-            NotificationResponse notification = notificationService.saveForLoudSpeakerNotification(message, receiverId, senderId);
+//            NotificationResponse notification = notificationService.saveForLoudSpeakerNotification(message, receiverId, senderId);
             websocket.convertAndSend(
                     String.format("/user/%s/notification", receiverId),
-                    notification
+                    TypeOfDataToRefreshResponse.of(TypeOfDataToRefresh.NOTIFICATION)
             );
         }
 
-        ChatContentsResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(message, senderId);
+//        ChatContentsResponse chatContentsResponse = chatContentsService.saveChatLoudSpeakerContent(message, senderId);
         websocket.convertAndSend(
                 String.format("/user/%s/chat", message.getCourtId()),
-                chatContentsResponse
+                TypeOfDataToRefreshResponse.of(TypeOfDataToRefresh.CHAT)
         );
     }
 }
