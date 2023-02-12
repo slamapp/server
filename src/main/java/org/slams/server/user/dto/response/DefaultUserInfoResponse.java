@@ -1,23 +1,21 @@
 package org.slams.server.user.dto.response;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.slams.server.common.api.BaseResponse;
 import org.slams.server.notification.dto.response.NotificationResponse;
 import org.slams.server.user.entity.Position;
 import org.slams.server.user.entity.Proficiency;
 import org.slams.server.user.entity.Role;
 import org.slams.server.user.entity.User;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class DefaultUserInfoResponse {
+public class DefaultUserInfoResponse extends BaseResponse {
 
 	private String id;
 	private String nickname;
@@ -27,13 +25,11 @@ public class DefaultUserInfoResponse {
 	private Proficiency proficiency;
 	private List<Position> positions = new ArrayList<>();
 	private List<NotificationResponse> notifications;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
 
-	private DefaultUserInfoResponse(String id, String nickname, String profileImage,
-									String description, Role role, Proficiency proficiency, List<Position> positions,
-									List<NotificationResponse> notifications,
-									LocalDateTime createdAt, LocalDateTime updatedAt) {
+	private DefaultUserInfoResponse(Instant createdAt, Instant updatedAt,
+									String id, String nickname, String profileImage, String description,
+									Role role, Proficiency proficiency, List<Position> positions, List<NotificationResponse> notifications) {
+		super(createdAt, updatedAt);
 		this.id = id;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
@@ -42,14 +38,12 @@ public class DefaultUserInfoResponse {
 		this.proficiency = proficiency;
 		this.positions = positions;
 		this.notifications = notifications;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 
 	public static DefaultUserInfoResponse toResponse(User user, List<NotificationResponse> notifications) {
-		return new DefaultUserInfoResponse(String.valueOf(user.getId()), user.getNickname(), user.getProfileImage(),
-			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(), notifications,
-			user.getCreatedAt(), user.getUpdatedAt());
+		return new DefaultUserInfoResponse(user.getCreatedAt().toInstant(ZoneOffset.UTC), user.getUpdatedAt().toInstant(ZoneOffset.UTC),
+			String.valueOf(user.getId()), user.getNickname(), user.getProfileImage(),
+			user.getDescription(), user.getRole(), user.getProficiency(), user.getPositions(), notifications);
 	}
 
 }

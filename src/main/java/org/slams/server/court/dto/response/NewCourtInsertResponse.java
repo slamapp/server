@@ -21,8 +21,6 @@ public class NewCourtInsertResponse extends BaseResponse {
 	private Texture texture;
 	private int basketCount;
 	private Status status;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
 
 	private NewCourtInsertResponse(Instant createdAt, Instant updatedAt,
 								   String id, String name, double latitude, double longitude,
