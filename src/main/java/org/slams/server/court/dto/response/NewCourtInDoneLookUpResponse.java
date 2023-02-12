@@ -1,19 +1,18 @@
 package org.slams.server.court.dto.response;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.slams.server.common.api.BaseResponse;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
 import org.slams.server.court.entity.Texture;
 import org.slams.server.user.dto.response.CreatorDto;
 import org.slams.server.user.dto.response.SupervisorDto;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneOffset;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class NewCourtInDoneLookUpResponse {
+public class NewCourtInDoneLookUpResponse extends BaseResponse {
 
 	private String id;
 	private String name;
@@ -23,14 +22,14 @@ public class NewCourtInDoneLookUpResponse {
 	private Texture texture;
 	private int basketCount;
 	private Status status;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
 	private CreatorDto creator;
 	private SupervisorDto supervisor;
 
-	private NewCourtInDoneLookUpResponse(String id, String name, double latitude, double longitude,
+	private NewCourtInDoneLookUpResponse(Instant createdAt, Instant updatedAt,
+										 String id, String name, double latitude, double longitude,
 										 String image, Texture texture, int basketCount, Status status,
-										 LocalDateTime createdAt, LocalDateTime updatedAt, CreatorDto creator, SupervisorDto supervisor) {
+										 CreatorDto creator, SupervisorDto supervisor) {
+		super(createdAt, updatedAt);
 		this.id = id;
 		this.name = name;
 		this.latitude = latitude;
@@ -39,16 +38,15 @@ public class NewCourtInDoneLookUpResponse {
 		this.texture = texture;
 		this.basketCount = basketCount;
 		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 		this.creator = creator;
 		this.supervisor = supervisor;
 	}
 
 	public static NewCourtInDoneLookUpResponse toResponse(NewCourt newCourt) {
-		return new NewCourtInDoneLookUpResponse(newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
+		return new NewCourtInDoneLookUpResponse(newCourt.getCreatedAt().toInstant(ZoneOffset.UTC), newCourt.getUpdatedAt().toInstant(ZoneOffset.UTC),
+			newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
 			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus(),
-			newCourt.getCreatedAt(), newCourt.getUpdatedAt(), CreatorDto.toDto(newCourt.getProposer()), SupervisorDto.toDto(newCourt.getSupervisor())
+			CreatorDto.toDto(newCourt.getProposer()), SupervisorDto.toDto(newCourt.getSupervisor())
 		);
 	}
 

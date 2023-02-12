@@ -4,7 +4,8 @@ import lombok.*;
 import org.slams.server.common.api.BaseResponse;
 import org.slams.server.court.entity.Court;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneOffset;
 
 @Getter
 public class CourtInMapDto extends BaseResponse {
@@ -14,7 +15,7 @@ public class CourtInMapDto extends BaseResponse {
 	private double latitude;
 	private double longitude;
 
-	private CourtInMapDto(String id, String name, double latitude, double longitude, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	private CourtInMapDto(Instant createdAt, Instant updatedAt, String id, String name, double latitude, double longitude) {
 		super(createdAt, updatedAt);
 		this.id = id;
 		this.name = name;
@@ -23,8 +24,8 @@ public class CourtInMapDto extends BaseResponse {
 	}
 
 	public static CourtInMapDto toDto(Court court) {
-		return new CourtInMapDto(court.getId().toString(), court.getName(), court.getLatitude(), court.getLongitude(),
-			court.getCreatedAt(), court.getUpdatedAt());
+		return new CourtInMapDto(court.getCreatedAt().toInstant(ZoneOffset.UTC), court.getUpdatedAt().toInstant(ZoneOffset.UTC),
+		court.getId().toString(), court.getName(), court.getLatitude(), court.getLongitude());
 	}
 
 }
