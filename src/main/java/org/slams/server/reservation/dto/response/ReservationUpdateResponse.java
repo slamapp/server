@@ -16,7 +16,7 @@ public class ReservationUpdateResponse extends BaseResponse {
 	private Instant endTime;
 	private Boolean hasBall;
 
-	private ReservationUpdateResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, Instant startTime, Instant endTime, Boolean hasBall) {
+	private ReservationUpdateResponse(Instant createdAt, Instant updatedAt, String id, Instant startTime, Instant endTime, Boolean hasBall) {
 		super(createdAt, updatedAt);
 		this.id = id;
 		this.startTime = startTime;
@@ -25,7 +25,7 @@ public class ReservationUpdateResponse extends BaseResponse {
 	}
 
 	public static ReservationUpdateResponse of(Reservation reservation) {
-		return new ReservationUpdateResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
+		return new ReservationUpdateResponse(reservation.getCreatedAt().toInstant(ZoneOffset.UTC), reservation.getUpdatedAt().toInstant(ZoneOffset.UTC),
 			reservation.getId().toString(), reservation.getStartTime().toInstant(ZoneOffset.UTC), reservation.getEndTime().toInstant(ZoneOffset.UTC), reservation.isHasBall());
 	}
 
