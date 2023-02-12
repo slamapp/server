@@ -1,30 +1,28 @@
 package org.slams.server.follow.dto.response;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.slams.server.common.api.BaseResponse;
 import org.slams.server.follow.entity.Follow;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class FollowerResponse {
+public class FollowerResponse extends BaseResponse {
 
 	private String id;
 	private FollowCreatorDto creator;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
 
-	private FollowerResponse(String id, FollowCreatorDto creator, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	private FollowerResponse(Instant createdAt, Instant updatedAt, String id, FollowCreatorDto creator) {
+		super(createdAt, updatedAt);
 		this.id = id;
 		this.creator = creator;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 
 	public static FollowerResponse toResponse(Follow follow) {
-		return new FollowerResponse(follow.getId().toString(), FollowCreatorDto.toDto(follow.getFollower()), follow.getCreatedAt(), follow.getUpdatedAt());
+		return new FollowerResponse(follow.getCreatedAt().toInstant(ZoneOffset.UTC), follow.getUpdatedAt().toInstant(ZoneOffset.UTC),
+			follow.getId().toString(), FollowCreatorDto.toDto(follow.getFollower()));
 	}
 
 }
