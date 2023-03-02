@@ -17,6 +17,7 @@ spring:
           auto: update
 
 
+
   security:
     oauth2:
       client:

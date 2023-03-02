@@ -22,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -79,7 +81,7 @@ public class ChatContentsService {
                 .orElseThrow(() -> new UserNotFoundException("해당 작성자는 존재하지 않는 사용자입니다."));
 
         ChatLoudSpeakerContent chatLoudSpeakerContent = chatLoudSpeakerContentRepository.save(
-                ChatLoudSpeakerContent.of(request.getStartTime().getHour())
+                ChatLoudSpeakerContent.of(request.getStartTime().atOffset(ZoneOffset.UTC).toLocalDateTime())
         );
         ChatContents chatContents = ChatContents.createLoudspeakerContent(
                 ChatContentType.LOUDSPEAKER,

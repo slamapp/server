@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -64,8 +65,8 @@ public class NotificationService {
         Loudspeaker loudSpeakerNotification = Loudspeaker.of(
                 sender,
                 court,
-                request.getStartTime(),
-                request.getEndTime()
+                request.getStartTime().atOffset(ZoneOffset.UTC).toLocalDateTime(),
+                request.getEndTime().atOffset(ZoneOffset.UTC).toLocalDateTime()
         );
 
         return notificationConvertor.toDto(notificationRepository.save(

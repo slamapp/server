@@ -10,6 +10,7 @@ import org.slams.server.notification.entity.Notification;
 import org.slams.server.notification.entity.NotificationType;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,12 +47,12 @@ public class NotificationConvertor {
                                     .image(notification.getLoudSpeaker().getCourt().getImage())
                                     .basketCount(notification.getLoudSpeaker().getCourt().getBasketCount())
                                     .build())
-                            .startTime(notification.getLoudSpeaker().getStartTime())
+                            .startTime(notification.getLoudSpeaker().getStartTime().toInstant(ZoneOffset.UTC))
                             .build(),
                     notification.isRead(),
                     notification.isClicked(),
-                    notification.getCreatedAt(),
-                    notification.getUpdatedAt()
+                    notification.getCreatedAt().toInstant(ZoneOffset.UTC),
+                    notification.getUpdatedAt().toInstant(ZoneOffset.UTC)
             );
         }
 
@@ -70,8 +71,8 @@ public class NotificationConvertor {
                             .build(),
                     notification.isRead(),
                     notification.isClicked(),
-                    notification.getCreatedAt(),
-                    notification.getUpdatedAt()
+                    notification.getCreatedAt().toInstant(ZoneOffset.UTC),
+                    notification.getUpdatedAt().toInstant(ZoneOffset.UTC)
             );
         }
 

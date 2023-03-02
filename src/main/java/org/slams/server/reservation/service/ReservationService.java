@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +50,9 @@ public class ReservationService {
 				MessageFormat.format("등록된 농구장을 찾을 수 없습니다. id : {0}", request.getCourtId())));
 
 		// todo. 유저가 동일한 시간에 기존 예약이 존재한다면, 예약을 새롭게 추가할 수 없도록 제한한다
-		reservationRepository.findByCourtAndUser(court, user)
-			.ifPresent(reservation -> { // 동일한 유저가 같은 코트를 예약할 수 없다
-				throw new ReservationAlreadyExistException(
-					MessageFormat.format("이미 저장된 예약이 있습니다. id : {0}", reservation.getId())
-				);
-			});
+        if (reservationRepository.existsByUserAndEndTimeGreaterThanAndStartTimeLessThan(user, request.getStartTime().atOffset(ZoneOffset.UTC).toLocalDateTime(), request.getEndTime().atOffset(ZoneOffset.UTC).toLocalDateTime())) {
+            throw new ReservationAlreadyExistException("이미 저장된 예약이 있습니다.");
+        }
 
 		Reservation reservation = request.toEntity(request, court, user);
 
@@ -73,7 +71,7 @@ public class ReservationService {
             throw new UserNotAuthorizedException();
         }
 
-        reservation.update(request.getStartTime(), request.getEndTime(), request.getHasBall());
+        reservation.update(request.getStartTime().atOffset(ZoneOffset.UTC).toLocalDateTime(), request.getEndTime().atOffset(ZoneOffset.UTC).toLocalDateTime(), request.getHasBall());
         reservationRepository.flush(); // updatedAt 반영
 
         return ReservationUpdateResponse.of(reservation);

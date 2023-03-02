@@ -5,7 +5,9 @@ import lombok.Getter;
 import org.slams.server.common.api.BaseResponse;
 import org.slams.server.reservation.entity.Reservation;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Getter
 public class ReservationInsertResponse extends BaseResponse {
@@ -13,11 +15,11 @@ public class ReservationInsertResponse extends BaseResponse {
 	private String id;
 	private String courtId;
 	private String userId;
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
+	private Instant startTime;
+	private Instant endTime;
 	private boolean hasBall;
 
-	private ReservationInsertResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, String courtId, String userId, LocalDateTime startTime, LocalDateTime endTime, boolean hasBall) {
+	private ReservationInsertResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, String courtId, String userId, Instant startTime, Instant endTime, boolean hasBall) {
 		super(createdAt, updatedAt);
 		this.id = id;
 		this.courtId = courtId;
@@ -27,10 +29,10 @@ public class ReservationInsertResponse extends BaseResponse {
 		this.hasBall = hasBall;
 	}
 
-	public static ReservationInsertResponse of(Reservation reservation){
+	public static ReservationInsertResponse of(Reservation reservation) {
 		return new ReservationInsertResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
 			reservation.getId().toString(), reservation.getCourt().getId().toString(), reservation.getUser().getId().toString(),
-			reservation.getStartTime(), reservation.getEndTime(), reservation.isHasBall());
+			reservation.getStartTime().toInstant(ZoneOffset.UTC), reservation.getEndTime().toInstant(ZoneOffset.UTC), reservation.isHasBall());
 	}
 
 }
