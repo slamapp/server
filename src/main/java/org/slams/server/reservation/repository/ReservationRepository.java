@@ -20,7 +20,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 	boolean existsByUserAndEndTimeGreaterThanAndStartTimeLessThan(User user, LocalDateTime startTime, LocalDateTime endTime);
 
-	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id=:userId AND r.startTime>:localDateTime")
+	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id=:userId AND r.startTime>:localDateTime ORDER BY r.startTime ASC, r.endTime ASC")
 	List<Reservation> findByUserFromStartTime(
 		@Param("userId") Long userId,
 		@Param("localDateTime") LocalDateTime localDateTime
@@ -53,6 +53,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 유저의 지난 예약 목록(무한 스크롤)
     @Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.id < :lastId order by r.id desc")
     List<Reservation> findByIdLessThanOrderByIdDesc(@Param("lastId") Long lastId, Pageable pageable);
+
+	// 유저의 지난 예약 목록 최신순(무한 스크롤 - 최초)
+	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id = :userId AND r.endTime < :localDateTime ORDER BY r.startTime desc")
+	List<Reservation> findByUserFromEndTimeOrderByStartTimeDesc(
+		@Param("userId") Long userId, @Param("localDateTime") LocalDateTime localDateTime, Pageable pageable
+	);
+	// 유저의 지난 예약 목록 최신순(무한 스크롤)
+	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.endTime < :lastStartTime ORDER BY r.startTime desc")
+	List<Reservation> findByStartTimeLessThanOrderByStartTimeDesc(@Param("lastStartTime") LocalDateTime lastStartTime, Pageable pageable);
 
     Optional<Reservation> findByCourtAndUser(Court court, User user);
 

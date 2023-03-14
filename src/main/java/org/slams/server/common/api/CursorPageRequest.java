@@ -14,4 +14,5 @@ public class CursorPageRequest {
 	public Long getLastIdParedForLong() {
 		return lastId == null ? null : Long.parseLong(lastId);
 	}
+
 }
