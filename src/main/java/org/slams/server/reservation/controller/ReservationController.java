@@ -125,10 +125,7 @@ public class ReservationController {
 
     @ApiOperation("특정 날짜의 농구장 예약 전체조회")
     @GetMapping()
-    public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date, HttpServletRequest request) {
-        TokenGetId token = new TokenGetId(request, jwt);
-        Long userId = token.getUserId();
-
+    public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date) {
 		ListResponse<ReservationByCourtAndDateResponse> response = reservationService.getByCourtAndDate(courtId, date);
 
         return ResponseEntity.ok(response);

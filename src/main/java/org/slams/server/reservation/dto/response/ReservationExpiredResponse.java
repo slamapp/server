@@ -18,7 +18,8 @@ public class ReservationExpiredResponse extends BaseResponse {
 	private Instant endTime;
 	private Long numberOfReservations;
 
-	private ReservationExpiredResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, CourtInMapDto court, Instant startTime, Instant endTime, Long numberOfReservations) {
+	private ReservationExpiredResponse(Instant createdAt, Instant updatedAt,
+									   String id, CourtInMapDto court, Instant startTime, Instant endTime, Long numberOfReservations) {
 		super(createdAt, updatedAt);
 		this.id = id;
 		this.court = court;
@@ -28,7 +29,7 @@ public class ReservationExpiredResponse extends BaseResponse {
 	}
 
 	public static ReservationExpiredResponse of(Reservation reservation, Long numberofReservations) {
-		return new ReservationExpiredResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
+		return new ReservationExpiredResponse(reservation.getCreatedAt().toInstant(ZoneOffset.UTC), reservation.getUpdatedAt().toInstant(ZoneOffset.UTC),
 			reservation.getId().toString(), CourtInMapDto.toDto(reservation.getCourt()), reservation.getStartTime().toInstant(ZoneOffset.UTC), reservation.getEndTime().toInstant(ZoneOffset.UTC), numberofReservations);
 	}
 

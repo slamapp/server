@@ -19,7 +19,7 @@ public class ReservationInsertResponse extends BaseResponse {
 	private Instant endTime;
 	private boolean hasBall;
 
-	private ReservationInsertResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, String courtId, String userId, Instant startTime, Instant endTime, boolean hasBall) {
+	private ReservationInsertResponse(Instant createdAt, Instant updatedAt, String id, String courtId, String userId, Instant startTime, Instant endTime, boolean hasBall) {
 		super(createdAt, updatedAt);
 		this.id = id;
 		this.courtId = courtId;
@@ -30,7 +30,7 @@ public class ReservationInsertResponse extends BaseResponse {
 	}
 
 	public static ReservationInsertResponse of(Reservation reservation) {
-		return new ReservationInsertResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
+		return new ReservationInsertResponse(reservation.getCreatedAt().toInstant(ZoneOffset.UTC), reservation.getUpdatedAt().toInstant(ZoneOffset.UTC),
 			reservation.getId().toString(), reservation.getCourt().getId().toString(), reservation.getUser().getId().toString(),
 			reservation.getStartTime().toInstant(ZoneOffset.UTC), reservation.getEndTime().toInstant(ZoneOffset.UTC), reservation.isHasBall());
 	}
