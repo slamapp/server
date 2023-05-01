@@ -10,6 +10,7 @@ import org.slams.server.court.repository.CourtRepository;
 import org.slams.server.follow.entity.Follow;
 import org.slams.server.follow.repository.FollowRepository;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
+import org.slams.server.reservation.dto.request.ReservationPageRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
 import org.slams.server.reservation.dto.response.*;
 import org.slams.server.reservation.entity.Reservation;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -106,22 +108,39 @@ public class ReservationService {
         return reservationUpcomingResponseList;
     }
 
-    public CursorPageResponse<List<ReservationExpiredResponse>> findExpired(Long userId, CursorPageRequest request) {
-        PageRequest pageable = PageRequest.of(0, request.getSize());
-        List<Reservation> reservations = request.getIsFirst() ?
-            reservationRepository.findByUserFromEndTimeOrderByIdDesc(userId, LocalDateTime.now(), pageable) :
-            reservationRepository.findByIdLessThanOrderByIdDesc(request.getLastIdParedForLong(), pageable);
+	public CursorPageResponse<List<ReservationExpiredResponse>> findExpired(Long userId, CursorPageRequest request) {
+		PageRequest pageable = PageRequest.of(0, request.getSize());
+		List<Reservation> reservations = request.getIsFirst() ?
+			reservationRepository.findByUserFromEndTimeOrderByIdDesc(userId, LocalDateTime.now(), pageable) :
+			reservationRepository.findByIdLessThanOrderByIdDesc(request.getLastIdParedForLong(), pageable);
 
-        List<ReservationExpiredResponse> reservationExpiredResponseList = new ArrayList<>();
-        for (Reservation reservation : reservations) {
-            Long reservationCount = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
-            reservationExpiredResponseList.add(ReservationExpiredResponse.of(reservation, reservationCount));
-        }
+		List<ReservationExpiredResponse> reservationExpiredResponseList = new ArrayList<>();
+		for (Reservation reservation : reservations) {
+			Long reservationCount = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
+			reservationExpiredResponseList.add(ReservationExpiredResponse.of(reservation, reservationCount));
+		}
 
-        String lastId = reservations.size() < request.getSize() ? null : reservations.get(reservations.size() - 1).getId().toString();
+		String lastId = reservations.size() < request.getSize() ? null : reservations.get(reservations.size() - 1).getId().toString();
 
-        return new CursorPageResponse<>(reservationExpiredResponseList, lastId);
-    }
+		return new CursorPageResponse<>(reservationExpiredResponseList, lastId);
+	}
+
+	public ReservationPageResponse<List<ReservationExpiredResponse>> findExpiredOrderByStartTimeDesc(Long userId, ReservationPageRequest request) {
+		PageRequest pageable = PageRequest.of(0, request.getSize());
+		List<Reservation> reservations = request.getIsFirst() ?
+			reservationRepository.findByUserFromEndTimeOrderByStartTimeDesc(userId, LocalDateTime.now(), pageable) :
+			reservationRepository.findByStartTimeLessThanOrderByStartTimeDesc(request.getLastStartTime().atOffset(ZoneOffset.UTC).toLocalDateTime(), pageable);
+
+		List<ReservationExpiredResponse> reservationExpiredResponseList = new ArrayList<>();
+		for (Reservation reservation : reservations) {
+			Long reservationCount = reservationRepository.countUserByCourtAndTime(reservation.getCourt().getId(), reservation.getStartTime(), reservation.getEndTime());
+			reservationExpiredResponseList.add(ReservationExpiredResponse.of(reservation, reservationCount));
+		}
+
+		Instant lastStartTime = reservations.size() < request.getSize() ? null : reservations.get(reservations.size() - 1).getStartTime().toInstant(ZoneOffset.UTC);
+
+		return new ReservationPageResponse<>(reservationExpiredResponseList, lastStartTime);
+	}
 
     public ListResponse<ReservationDetailResponse> getDetail(Long userId, Long courtId, LocalDateTime startTime, LocalDateTime endTime) {
         User user = userRepository.getById(userId);
