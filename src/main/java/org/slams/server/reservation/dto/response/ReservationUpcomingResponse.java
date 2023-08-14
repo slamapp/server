@@ -18,7 +18,7 @@ public class ReservationUpcomingResponse extends BaseResponse {
     private Instant startTime;
     private Instant endTime;
 
-    private ReservationUpcomingResponse(LocalDateTime createdAt, LocalDateTime updatedAt, String id, CourtInMapDto court, Long numberOfReservations, Instant startTime, Instant endTime) {
+    private ReservationUpcomingResponse(Instant createdAt, Instant updatedAt, String id, CourtInMapDto court, Long numberOfReservations, Instant startTime, Instant endTime) {
         super(createdAt, updatedAt);
         this.id = id;
         this.court = court;
@@ -28,7 +28,7 @@ public class ReservationUpcomingResponse extends BaseResponse {
     }
 
     public static ReservationUpcomingResponse of(Reservation reservation, Long numberOfReservations){
-        return new ReservationUpcomingResponse(reservation.getCreatedAt(), reservation.getUpdatedAt(),
+        return new ReservationUpcomingResponse(reservation.getCreatedAt().toInstant(ZoneOffset.UTC), reservation.getUpdatedAt().toInstant(ZoneOffset.UTC),
             reservation.getId().toString(), CourtInMapDto.toDto(reservation.getCourt()), numberOfReservations, reservation.getStartTime().toInstant(ZoneOffset.UTC), reservation.getEndTime().toInstant(ZoneOffset.UTC));
     }
 

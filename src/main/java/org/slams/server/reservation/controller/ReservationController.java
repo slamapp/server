@@ -10,6 +10,7 @@ import org.slams.server.common.api.ListResponse;
 import org.slams.server.common.api.TokenGetId;
 import org.slams.server.common.error.ErrorResponse;
 import org.slams.server.reservation.dto.request.ReservationInsertRequest;
+import org.slams.server.reservation.dto.request.ReservationPageRequest;
 import org.slams.server.reservation.dto.request.ReservationUpdateRequest;
 import org.slams.server.reservation.dto.response.*;
 import org.slams.server.reservation.service.ReservationService;
@@ -103,11 +104,11 @@ public class ReservationController {
 
 	@ApiOperation("지난 예약목록 조회")
 	@GetMapping("/expired")
-	public ResponseEntity<CursorPageResponse<List<ReservationExpiredResponse>>> getExpired(CursorPageRequest cursorPageRequest, HttpServletRequest request) {
+	public ResponseEntity<ReservationPageResponse<List<ReservationExpiredResponse>>> getExpired(ReservationPageRequest pageRequest, HttpServletRequest request) {
 		TokenGetId token = new TokenGetId(request, jwt);
 		Long userId = token.getUserId();
 
-		CursorPageResponse<List<ReservationExpiredResponse>> response = reservationService.findExpired(userId, cursorPageRequest);
+		ReservationPageResponse<List<ReservationExpiredResponse>> response = reservationService.findExpiredOrderByStartTimeDesc(userId, pageRequest);
 
 		return ResponseEntity.ok(response);
 	}
@@ -125,13 +126,10 @@ public class ReservationController {
 
     @ApiOperation("특정 날짜의 농구장 예약 전체조회")
     @GetMapping()
-    public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date, HttpServletRequest request) {
-        TokenGetId token = new TokenGetId(request, jwt);
-        Long userId = token.getUserId();
-
+    public ResponseEntity<ListResponse<ReservationByCourtAndDateResponse>> getByCourtAndDate(@RequestParam Long courtId, @RequestParam String date) {
 		ListResponse<ReservationByCourtAndDateResponse> response = reservationService.getByCourtAndDate(courtId, date);
 
-        return ResponseEntity.ok(response);
-    }
+		return ResponseEntity.ok(response);
+	}
 
 }

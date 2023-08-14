@@ -1,17 +1,17 @@
 package org.slams.server.court.dto.response;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.slams.server.common.api.BaseResponse;
 import org.slams.server.court.entity.NewCourt;
 import org.slams.server.court.entity.Status;
 import org.slams.server.court.entity.Texture;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class NewCourtInsertResponse {
+public class NewCourtInsertResponse extends BaseResponse {
 
 	private String id;
 	private String name;
@@ -21,12 +21,11 @@ public class NewCourtInsertResponse {
 	private Texture texture;
 	private int basketCount;
 	private Status status;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
 
-	private NewCourtInsertResponse(String id, String name, double latitude, double longitude,
-								   String image, Texture texture, int basketCount, Status status,
-								   LocalDateTime createdAt, LocalDateTime updatedAt) {
+	private NewCourtInsertResponse(Instant createdAt, Instant updatedAt,
+								   String id, String name, double latitude, double longitude,
+								   String image, Texture texture, int basketCount, Status status) {
+		super(createdAt, updatedAt);
 		this.id = id;
 		this.name = name;
 		this.latitude = latitude;
@@ -35,14 +34,12 @@ public class NewCourtInsertResponse {
 		this.texture = texture;
 		this.basketCount = basketCount;
 		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 
 	public static NewCourtInsertResponse toResponse(NewCourt newCourt) {
-		return new NewCourtInsertResponse(newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
-			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus(),
-			newCourt.getCreatedAt(), newCourt.getUpdatedAt());
+		return new NewCourtInsertResponse(newCourt.getCreatedAt().toInstant(ZoneOffset.UTC), newCourt.getUpdatedAt().toInstant(ZoneOffset.UTC),
+			newCourt.getId().toString(), newCourt.getName(), newCourt.getLatitude(), newCourt.getLongitude(),
+			newCourt.getImage(), newCourt.getTexture(), newCourt.getBasketCount(), newCourt.getStatus());
 	}
 
 }
