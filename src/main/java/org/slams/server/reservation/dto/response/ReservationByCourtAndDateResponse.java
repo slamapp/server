@@ -16,7 +16,7 @@ public class ReservationByCourtAndDateResponse extends BaseResponse {
 	private Instant endTime;
 	private boolean hasBall;
 	private BriefUserInfoDto user;
-
+  
 	private ReservationByCourtAndDateResponse(Instant createdAt, Instant updatedAt,
 											  String id, Instant startTime, Instant endTime, boolean hasBall, BriefUserInfoDto user) {
 		super(createdAt, updatedAt);

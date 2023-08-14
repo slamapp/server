@@ -20,6 +20,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 	boolean existsByUserAndEndTimeGreaterThanAndStartTimeLessThan(User user, LocalDateTime startTime, LocalDateTime endTime);
 
+
 	@Query("SELECT r FROM Reservation r JOIN FETCH r.court WHERE r.user.id=:userId AND r.startTime>:localDateTime ORDER BY r.startTime ASC, r.endTime ASC")
 	List<Reservation> findByUserFromStartTime(
 		@Param("userId") Long userId,
